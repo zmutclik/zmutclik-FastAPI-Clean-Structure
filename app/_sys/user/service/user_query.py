@@ -17,17 +17,17 @@ class UserQueryService:
         self.user_repo = user_repo
 
     async def user_get(self, user_id: str) -> Optional[UserSchema]:
-        user = self.user_repo.get(user_id)
-        if not user:
+        data_get = self.user_repo.get(user_id)
+        if not data_get:
             raise UserNotFoundException
-        return UserSchema.model_validate(user)
+        return UserSchema.model_validate(data_get)
 
     async def user_get_by(self, username: Union[str, None], email: Union[str, None], nohp: Union[str, None]) -> Optional[UserSchema]:
-        user = self.user_repo.get_by(username, email, nohp)
-        if not user:
+        data_get = self.user_repo.get_by(username, email, nohp)
+        if not data_get:
             raise UserNotFoundException
 
-        return UserSchema.model_validate(user)
+        return UserSchema.model_validate(data_get)
 
     async def datatable(self, params: dict[str, Any]):
         query = select(User, User.id.label("DT_RowId")).where(User.deleted_at == None)

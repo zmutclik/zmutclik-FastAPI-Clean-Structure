@@ -17,16 +17,16 @@ class PrivilegeQueryService:
         self.privilege_repo = privilege_repo
 
     async def privilege_get_by_id(self, privilege_id: str) -> Optional[PrivilegeSchema]:
-        user = self.privilege_repo.get_by_id(privilege_id)
-        if not user:
+        data_get = self.privilege_repo.get_by_id(privilege_id)
+        if not data_get:
             raise PrivilegeNotFoundException
-        return PrivilegeSchema.model_validate(user)
+        return PrivilegeSchema.model_validate(data_get)
 
     async def privilege_get(self, privilege: str) -> Optional[PrivilegeSchema]:
-        user = self.privilege_repo.get(privilege)
-        if not user:
+        data_get = self.privilege_repo.get(privilege)
+        if not data_get:
             raise PrivilegeNotFoundException
-        return PrivilegeSchema.model_validate(user)
+        return PrivilegeSchema.model_validate(data_get)
 
     async def datatable(self, params: dict[str, Any]):
         query = select(Privilege, Privilege.id.label("DT_RowId")).where(Privilege.deleted_at == None)

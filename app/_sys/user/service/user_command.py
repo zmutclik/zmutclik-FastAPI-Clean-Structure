@@ -13,7 +13,7 @@ class UserCommandService:
         self.user_repo = user_repo
         self.user_privilege_repo = user_privilege_repo
 
-    async def create_user(
+    async def create(
         self,
         username: str,
         email: str,
@@ -26,7 +26,7 @@ class UserCommandService:
         if await self.user_repo.get_by(username, email, nohp):
             raise DuplicateEmailOrNicknameOrNoHPException
 
-        user = User.create(
+        data_create = User.create(
             username=username,
             email=email,
             nohp=nohp,
@@ -34,22 +34,22 @@ class UserCommandService:
             password1=password1,
             password2=password2,
         )
-        user = await self.user_repo.save(user=user)
+        data_saved = await self.user_repo.save(user=data_create)
 
         for item in privileges:
-            user_privilege = UserPrivilege.create(user.id, item)
+            user_privilege = UserPrivilege.create(data_saved.id, item)
             await self.user_privilege_repo.save(user_privilege=user_privilege)
 
         await self.user_privilege_repo.commit()
 
-        return UserSchema.model_validate(user)
+        return UserSchema.model_validate(data_saved)
 
     async def update_password(self, user_id: int, password1: str, password2: str) -> UserSchema:
-        user = await self.user_repo.get(user_id)
-        if not user:
+        data_get = await self.user_repo.get(user_id)
+        if not data_get:
             raise UserNotFoundException
-        user = user.change_password(password1, password2)
-        return UserSchema.model_validate(user)
+        data_updated = data_get.change_password(password1, password2)
+        return UserSchema.model_validate(data_updated)
 
     async def update(
         self,
@@ -59,8 +59,8 @@ class UserCommandService:
         full_name: Union[str, None],
         privileges: list[int],
     ) -> UserSchema:
-        user = await self.user_repo.get(user_id)
-        if not user:
+        data_get = await self.user_repo.get(user_id)
+        if not data_get:
             raise UserNotFoundException
 
         updates = {}
@@ -71,7 +71,7 @@ class UserCommandService:
         if nohp:
             updates["nohp"] = nohp
 
-        user = await self.user_repo.update(user, updates)
+        data_updated = await self.user_repo.update(data_get, updates)
 
         await self.user_privilege_repo.delete_in_user(user_id=user_id)
         for item in privileges:
@@ -79,4 +79,12 @@ class UserCommandService:
             await self.user_privilege_repo.save(user_privilege=user_privilege)
         await self.user_privilege_repo.commit()
 
-        return UserSchema.model_validate(user)
+        return UserSchema.model_validate(data_updated)
+
+    
+    async def delete(self, user_id: int,username:str) -> None:
+        data_get = await self.user_repo.get(user_id)
+        if not data_get:
+            raise UserNotFoundException
+        
+        await self.user_repo.delete(data_get, username)
