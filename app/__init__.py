@@ -50,8 +50,8 @@ def on_auth_error(request: Request, exc: Exception):
 
 
 def init_middleware(app: FastAPI) -> None:
+    app.add_middleware(SQLAlchemyMiddleware)
     app.add_middleware(
-        SQLAlchemyMiddleware,
         AuthenticationMiddleware,
         backend=AuthBackend(),
         on_error=on_auth_error,
