@@ -1,0 +1,18 @@
+from core.exceptions import CustomException
+
+
+class DecodeTokenException(CustomException):
+    code = 400
+    error_code = 10000
+    message = "token decode error"
+
+
+class ExpiredTokenException(CustomException):
+    code = 400
+    error_code = 10001
+    message = "expired token"
+
+class InactiveUserScopeException(CustomException):
+    code = 401
+    error_code = 10002
+    message = "inactive user scope"

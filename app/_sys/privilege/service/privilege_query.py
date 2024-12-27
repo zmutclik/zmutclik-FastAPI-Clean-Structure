@@ -1,0 +1,40 @@
+from typing import Union, Optional, Any
+from pythondi import inject
+
+from sqlalchemy import or_, select
+from datatables import DataTable
+
+from core.db.session import async_engine
+from app._sys.privilege.domain import Privilege
+from app._sys.privilege.repository import PrivilegeRepo
+from app._sys.privilege.schema import PrivilegeSchema
+from app._sys.privilege.exceptions import PrivilegeNotFoundException
+
+
+class PrivilegeQueryService:
+    @inject()
+    def __init__(self, privilege_repo: PrivilegeRepo):
+        self.privilege_repo = privilege_repo
+
+    async def privilege_get_by_id(self, privilege_id: str) -> Optional[PrivilegeSchema]:
+        user = self.privilege_repo.get_by_id(privilege_id)
+        if not user:
+            raise PrivilegeNotFoundException
+        return PrivilegeSchema.model_validate(user)
+
+    async def privilege_get(self, privilege: str) -> Optional[PrivilegeSchema]:
+        user = self.privilege_repo.get(privilege)
+        if not user:
+            raise PrivilegeNotFoundException
+        return PrivilegeSchema.model_validate(user)
+
+    async def datatable(self, params: dict[str, Any]):
+        query = select(Privilege, Privilege.id.label("DT_RowId")).where(Privilege.deleted_at == None)
+        datatable: DataTable = DataTable(
+            request_params=params,
+            table=query,
+            column_names=["DT_RowId", "id", "privilege", "desc"],
+            engine=async_engine,
+            # callbacks=callbacks,
+        )
+        return datatable.output_result()
