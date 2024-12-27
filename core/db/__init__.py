@@ -1,12 +1,9 @@
-from sqlalchemy.ext.declarative import declarative_base
 from .session import session
+from .base import Base, BaseLogs
 
 __all__ = [
     "session",
+    "Base",
+    "BaseLogs",
 ]
 
-Base = declarative_base()
-BaseLogs = declarative_base()
-BaseUser = declarative_base()
-BaseSysT = declarative_base()
-BaseSeSS = declarative_base()

@@ -4,9 +4,10 @@ from fastapi.responses import JSONResponse
 
 from core import config
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware
+from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware,SQLAlchemyMiddleware
 from core.exceptions import CustomException
 from core.di import init_di
+from core.db.session import init_db
 
 from api import router
 
@@ -50,11 +51,17 @@ def on_auth_error(request: Request, exc: Exception):
 
 def init_middleware(app: FastAPI) -> None:
     app.add_middleware(
+        SQLAlchemyMiddleware,
         AuthenticationMiddleware,
         backend=AuthBackend(),
         on_error=on_auth_error,
     )
+    
 
+def init_startup(app: FastAPI) -> None:
+    @app.on_event("startup")
+    async def startup_event():
+        await init_db()
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -69,6 +76,7 @@ def create_app() -> FastAPI:
     init_cors(app=app)
     init_listeners(app=app)
     init_middleware(app=app)
+    # init_startup(app=app)
     init_di()
     return app
 

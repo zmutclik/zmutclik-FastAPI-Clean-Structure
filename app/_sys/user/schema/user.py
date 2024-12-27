@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from typing import Optional
 from pydantic import BaseModel, Field
 
 from .user_privilege import UserPrivilegeSchema
@@ -15,4 +15,4 @@ class UserSchema(BaseModel):
     created_at: datetime = Field(None, description="Create Time")
     updated_at: datetime = Field(None, description="Update Time")
 
-    PRIVILEGE: list[UserPrivilegeSchema] = Field(None, description="List Privilege")
+    # PRIVILEGE: Optional[list[UserPrivilegeSchema]] = Field(None, description="List Privilege")

@@ -14,7 +14,7 @@ from app._sys.user.domain import User
 
 class UserRepo:
     __metaclass__ = ABCMeta
-
+    
     @abstractmethod
     async def get(self, user_id: int) -> Optional[User]:
         pass

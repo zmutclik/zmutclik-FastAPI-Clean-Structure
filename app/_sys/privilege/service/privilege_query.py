@@ -20,13 +20,13 @@ class PrivilegeQueryService:
         data_get = self.privilege_repo.get_by_id(privilege_id)
         if not data_get:
             raise PrivilegeNotFoundException
-        return PrivilegeSchema.model_validate(data_get)
+        return data_get
 
     async def privilege_get(self, privilege: str) -> Optional[PrivilegeSchema]:
         data_get = self.privilege_repo.get(privilege)
         if not data_get:
             raise PrivilegeNotFoundException
-        return PrivilegeSchema.model_validate(data_get)
+        return data_get
 
     async def datatable(self, params: dict[str, Any]):
         query = select(Privilege, Privilege.id.label("DT_RowId")).where(Privilege.deleted_at == None)

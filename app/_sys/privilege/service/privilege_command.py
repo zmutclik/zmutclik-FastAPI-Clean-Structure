@@ -15,9 +15,9 @@ class PrivilegeCommandService:
     async def create(self, privilege: str, desc: str) -> PrivilegeSchema:
         if await self.privilege_repo.get(privilege):
             raise PrivilegeDuplicateException
-        priv = Privilege.create(privilege=privilege, desc=desc)
-        user = await self.privilege_repo.save(privilege=priv)
-        return PrivilegeSchema.model_validate(user)
+        date_create = Privilege.create(privilege=privilege, desc=desc)
+        data_saved = await self.privilege_repo.save(privilege=date_create)
+        return PrivilegeSchema.model_validate(data_saved)
 
     async def update(self, privilege_id: int, privilege: Union[str, None], desc: Union[str, None]) -> PrivilegeSchema:
         data_get = await self.privilege_repo.get_by_id(privilege_id)
@@ -33,7 +33,7 @@ class PrivilegeCommandService:
             updates["desc"] = desc
 
         data_updated = await self.privilege_repo.update(data_get, updates)
-        return PrivilegeSchema.model_validate(data_updated)
+        return data_updated
     
     async def delete(self, privilege_id: int,username:str) -> None:
         data_get = await self.privilege_repo.get_by_id(privilege_id)

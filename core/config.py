@@ -19,7 +19,7 @@ class DevelopmentConfig(Config):
 
 
 class LocalConfig(Config):
-    DB_URL: str = f"mysql+aiomysql://fastapi:fastapi@localhost:3307/db"
+    DB_URL: str = f"mysql+aiomysql://root:blackant@192.168.80.11:3307/db"
 
 
 class ProductionConfig(Config):

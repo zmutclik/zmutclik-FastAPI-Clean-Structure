@@ -5,12 +5,12 @@ from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from core.db import BaseUser as Base
+from core.db import Base
 from core.db.mixins import TimestampLogMixin
 
 
-class Scope(TimestampLogMixin):
-    __tablename__ = "privilege"
+class Scope(Base, TimestampLogMixin):
+    __tablename__ = "scope"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     scope = Column(String(64), unique=True, index=True)

@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
 
-from core.db import BaseUser as Base
+from core.db import Base
 
 
 class UserPrivilege(Base):
@@ -14,7 +14,7 @@ class UserPrivilege(Base):
     user_id = Column(Integer, ForeignKey("user.id"))
     privilege_id = Column(Integer, ForeignKey("privilege.id"))
 
-    USER = relationship("UsersTable", back_populates="PRIVILEGE")
+    USER = relationship("User", back_populates="PRIVILEGE")
     PRIVILEGE = relationship("Privilege", back_populates="USERPRIVILEGE")
 
     @hybrid_property

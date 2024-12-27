@@ -17,7 +17,7 @@ class ScopeCommandService:
             raise ScopeDuplicateException
         data_create = Scope.create(scope=scope, desc=desc)
         data_saved = await self.scope_repo.save(privilege=data_create)
-        return ScopeSchema.model_validate(data_saved)
+        return data_saved
 
     async def update(self, scope_id: int, scope: Union[str, None], desc: Union[str, None]) -> ScopeSchema:
         data_get = await self.scope_repo.get_by_id(scope_id)
@@ -33,7 +33,7 @@ class ScopeCommandService:
             updates["desc"] = desc
 
         data_updated = await self.scope_repo.update(data_get, updates)
-        return ScopeSchema.model_validate(data_updated)
+        return data_updated
 
     
     async def delete(self, scope_id: int,username:str) -> None:

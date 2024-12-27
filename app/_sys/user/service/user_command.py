@@ -42,14 +42,14 @@ class UserCommandService:
 
         await self.user_privilege_repo.commit()
 
-        return UserSchema.model_validate(data_saved)
+        return data_saved
 
     async def update_password(self, user_id: int, password1: str, password2: str) -> UserSchema:
         data_get = await self.user_repo.get(user_id)
         if not data_get:
             raise UserNotFoundException
         data_updated = data_get.change_password(password1, password2)
-        return UserSchema.model_validate(data_updated)
+        return data_updated
 
     async def update(
         self,
@@ -79,7 +79,7 @@ class UserCommandService:
             await self.user_privilege_repo.save(user_privilege=user_privilege)
         await self.user_privilege_repo.commit()
 
-        return UserSchema.model_validate(data_updated)
+        return data_updated
 
     
     async def delete(self, user_id: int,username:str) -> None:

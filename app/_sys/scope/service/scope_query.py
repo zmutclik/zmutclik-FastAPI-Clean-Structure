@@ -20,13 +20,13 @@ class PrivilegeQueryService:
         data_get = self.scope_repo.get_by_id(scope_id)
         if not data_get:
             raise ScopeNotFoundException
-        return ScopeSchema.model_validate(data_get)
+        return data_get
 
     async def privilege_get(self, scope: str) -> Optional[ScopeSchema]:
         data_get = self.privilege_repo.get(scope)
         if not data_get:
             raise ScopeNotFoundException
-        return ScopeSchema.model_validate(data_get)
+        return data_get
 
     async def datatable(self, params: dict[str, Any]):
         query = select(Scope, Scope.id.label("DT_RowId")).where(Scope.deleted_at == None)

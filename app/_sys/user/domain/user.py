@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
 
-from core.db import BaseUser as Base
+from core.db import Base
 from core.db.mixins import TimestampLogMixin
 from app._sys.user.exceptions.user import PasswordDoesNotMatchException
 
@@ -17,7 +17,7 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-class User(TimestampLogMixin):
+class User(Base, TimestampLogMixin):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -28,7 +28,7 @@ class User(TimestampLogMixin):
     hashed_password = Column(Unicode(255))
     disabled = Column(Boolean, default=False)
 
-    PRIVILEGE = relationship("Privilege", back_populates="USER")
+    PRIVILEGE = relationship("UserPrivilege", back_populates="USER")
 
     @hybrid_property
     def list_privilege(self) -> list[int]:

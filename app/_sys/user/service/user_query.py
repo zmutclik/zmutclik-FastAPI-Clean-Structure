@@ -3,6 +3,7 @@ from pythondi import inject
 
 from sqlalchemy import or_, select
 from datatables import DataTable
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db.session import async_engine
 from app._sys.user.domain import User
@@ -16,18 +17,18 @@ class UserQueryService:
     def __init__(self, user_repo: UserRepo):
         self.user_repo = user_repo
 
-    async def user_get(self, user_id: str) -> Optional[UserSchema]:
-        data_get = self.user_repo.get(user_id)
+    async def get_user(self, user_id: str) -> Optional[UserSchema]:
+        data_get = await self.user_repo.get(user_id)
         if not data_get:
             raise UserNotFoundException
-        return UserSchema.model_validate(data_get)
+        return data_get
 
-    async def user_get_by(self, username: Union[str, None], email: Union[str, None], nohp: Union[str, None]) -> Optional[UserSchema]:
+    async def get_user_by(self, username: Union[str, None], email: Union[str, None], nohp: Union[str, None]) -> Optional[UserSchema]:
         data_get = self.user_repo.get_by(username, email, nohp)
         if not data_get:
             raise UserNotFoundException
 
-        return UserSchema.model_validate(data_get)
+        return data_get
 
     async def datatable(self, params: dict[str, Any]):
         query = select(User, User.id.label("DT_RowId")).where(User.deleted_at == None)
