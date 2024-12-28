@@ -38,13 +38,13 @@ class AuthBackend(AuthenticationBackend):
                 options={"verify_exp": True},
             )
             user_id = payload.get("sub")
-            user_role = payload.get("role")
+            user_roles = payload.get("roles", [])
             user_scopes = payload.get("scopes", [])
         except jwt.exceptions.PyJWTError:
             return False, current_user
 
         current_user.id = user_id
-        current_user.role = user_role
+        current_user.roles = user_roles
         current_user.scopes = user_scopes
         return True, current_user
 

@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class CurrentUser(BaseModel):
     id: int = None
-    role: str = None
+    roles: list[str] = []
     scopes: list[str] = []
 
     class Config:

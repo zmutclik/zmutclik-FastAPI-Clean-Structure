@@ -43,11 +43,11 @@ class HasRole(BasePermission):
         self.required_roles = required_roles
 
     async def has_permission(self, request: Request) -> bool:
-        user_role = request.user.role
-        if not user_role:
+        user_roles = request.user.roles
+        if not user_roles:
             return False
 
-        return user_role in self.required_roles
+        return all(roles in user_roles for roles in self.required_roles)
 
 
 class HasScope(BasePermission):
