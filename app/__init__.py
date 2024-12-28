@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 from core import config
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware,SQLAlchemyMiddleware
+from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware
 from core.exceptions import CustomException
 from core.di import init_di
 from core.db.session import init_db
