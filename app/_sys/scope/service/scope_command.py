@@ -16,7 +16,7 @@ class ScopeCommandService:
         if await self.scope_repo.get(scope):
             raise ScopeDuplicateException
         data_create = Scope.create(scope=scope, desc=desc)
-        data_saved = await self.scope_repo.save(privilege=data_create)
+        data_saved = await self.scope_repo.save(scope=data_create)
         return data_saved
 
     async def update_scope(self, scope_id: int, scope: Union[str, None], desc: Union[str, None]) -> ScopeSchema:
