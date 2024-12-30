@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Config(BaseSettings):
+    APP_NAME: str = "FastAPI cleanStructure"
     ENV: str = "development"
     DEBUG: bool = True
     APP_HOST: str = "localhost"
@@ -12,6 +13,8 @@ class Config(BaseSettings):
     JWT_SECRET_KEY: str = "fastapi"
     JWT_ALGORITHM: str = "HS256"
     CELERY_BROKER_URL: str = "amqp://user:bitnami@localhost:5672/"
+    COOKIES_KEY: str = "fastapi-clean-structure_token"
+    COOKIES_EXPIRED: int = 30
 
 
 class DevelopmentConfig(Config):
@@ -29,9 +32,6 @@ class ProductionConfig(Config):
 
 def get_config() -> Config:
     env = os.getenv("ENV", "local")
-    print("")
-    print("ENV = ", env)
-    print("")
     config_type = {
         "development": DevelopmentConfig(),
         "local": LocalConfig(),

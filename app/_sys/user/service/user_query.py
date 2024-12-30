@@ -30,7 +30,7 @@ class UserQueryService:
 
         return data_get
 
-    async def datatable(self, params: dict[str, Any]):
+    async def datatable_scope(self, params: dict[str, Any]):
         query = select(User, User.id.label("DT_RowId")).where(User.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,

@@ -12,14 +12,14 @@ class PrivilegeCommandService:
     def __init__(self, privilege_repo: PrivilegeRepo):
         self.privilege_repo = privilege_repo
 
-    async def create(self, privilege: str, desc: str) -> PrivilegeSchema:
+    async def create_privilege(self, privilege: str, desc: str) -> PrivilegeSchema:
         if await self.privilege_repo.get(privilege):
             raise PrivilegeDuplicateException
         date_create = Privilege.create(privilege=privilege, desc=desc)
         data_saved = await self.privilege_repo.save(privilege=date_create)
-        return PrivilegeSchema.model_validate(data_saved)
+        return data_saved
 
-    async def update(self, privilege_id: int, privilege: Union[str, None], desc: Union[str, None]) -> PrivilegeSchema:
+    async def update_privilege(self, privilege_id: int, privilege: Union[str, None], desc: Union[str, None]) -> PrivilegeSchema:
         data_get = await self.privilege_repo.get_by_id(privilege_id)
         if not data_get:
             raise PrivilegeNotFoundException
@@ -35,7 +35,7 @@ class PrivilegeCommandService:
         data_updated = await self.privilege_repo.update(data_get, updates)
         return data_updated
     
-    async def delete(self, privilege_id: int,username:str) -> None:
+    async def delete_privilege(self, privilege_id: int,username:str) -> None:
         data_get = await self.privilege_repo.get_by_id(privilege_id)
         if not data_get:
             raise PrivilegeNotFoundException

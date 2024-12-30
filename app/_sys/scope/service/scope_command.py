@@ -12,14 +12,14 @@ class ScopeCommandService:
     def __init__(self, scope_repo: ScopeRepo):
         self.scope_repo = scope_repo
 
-    async def create(self, scope: str, desc: str) -> ScopeSchema:
+    async def create_scope(self, scope: str, desc: str) -> ScopeSchema:
         if await self.scope_repo.get(scope):
             raise ScopeDuplicateException
         data_create = Scope.create(scope=scope, desc=desc)
         data_saved = await self.scope_repo.save(privilege=data_create)
         return data_saved
 
-    async def update(self, scope_id: int, scope: Union[str, None], desc: Union[str, None]) -> ScopeSchema:
+    async def update_scope(self, scope_id: int, scope: Union[str, None], desc: Union[str, None]) -> ScopeSchema:
         data_get = await self.scope_repo.get_by_id(scope_id)
         if not data_get:
             raise ScopeNotFoundException
@@ -36,7 +36,7 @@ class ScopeCommandService:
         return data_updated
 
     
-    async def delete(self, scope_id: int,username:str) -> None:
+    async def delete_scope(self, scope_id: int,username:str) -> None:
         data_get = await self.scope_repo.get_by_id(scope_id)
         if not data_get:
             raise ScopeNotFoundException

@@ -16,19 +16,19 @@ class PrivilegeQueryService:
     def __init__(self, scope_repo: ScopeRepo):
         self.scope_repo = scope_repo
 
-    async def privilege_get_by_id(self, scope_id: str) -> Optional[ScopeSchema]:
+    async def get_scope_by_id(self, scope_id: str) -> Optional[ScopeSchema]:
         data_get = self.scope_repo.get_by_id(scope_id)
         if not data_get:
             raise ScopeNotFoundException
         return data_get
 
-    async def privilege_get(self, scope: str) -> Optional[ScopeSchema]:
-        data_get = self.privilege_repo.get(scope)
+    async def get_scope(self, scope: str) -> Optional[ScopeSchema]:
+        data_get = self.scope_repo.get(scope)
         if not data_get:
             raise ScopeNotFoundException
         return data_get
 
-    async def datatable(self, params: dict[str, Any]):
+    async def datatable_scope(self, params: dict[str, Any]):
         query = select(Scope, Scope.id.label("DT_RowId")).where(Scope.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,
