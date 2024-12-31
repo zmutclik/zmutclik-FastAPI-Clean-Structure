@@ -12,7 +12,7 @@ from core.db.mixins import TimestampLogMixin
 class CLASSNAME(Base, TimestampLogMixin):
     __tablename__ = "VARNAME"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     VARNAME = Column(String(64), unique=True)
 
     @classmethod

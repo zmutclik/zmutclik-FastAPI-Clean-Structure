@@ -12,10 +12,10 @@ class MenuTypeCommandService:
     def __init__(self, menutype_repo: MenuTypeRepo):
         self.menutype_repo = menutype_repo
 
-    async def create_menutype(self, menutype: str) -> MenuTypeSchema:
+    async def create_menutype(self, menutype: str, desc: str) -> MenuTypeSchema:
         if await self.menutype_repo.get(menutype):
             raise MenuTypeDuplicateException
-        data_create = MenuType.create(menutype=menutype)
+        data_create = MenuType.create(menutype=menutype, desc=desc)
         data_saved = await self.menutype_repo.save(menutype=data_create)
         return data_saved
 

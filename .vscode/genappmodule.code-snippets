@@ -244,7 +244,7 @@
             "  file.write(\"class ${CLASSNAME}(Base, TimestampLogMixin): \\n\")",
             "  file.write(\"    __tablename__ = \\\"${VARNAME}\\\" \\n\")",
             "  file.write(\" \\n\")",
-            "  file.write(\"    id = Column(Integer, primary_key=True, index=True, autoincrement=True) \\n\")",
+            "  file.write(\"    id = Column(Integer, primary_key=True, autoincrement=True) \\n\")",
             "  file.write(\"    ${VARNAME} = Column(String(64), unique=True) \\n\")",
             "  file.write(\" \\n\")",
             "  file.write(\"    @classmethod \\n\")",
