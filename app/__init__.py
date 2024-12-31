@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 from core import config
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware
+from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware, LogsMiddleware
 from core.exceptions import CustomException
 from core.di import init_di
 from core.db.session import init_db
@@ -56,17 +56,19 @@ def init_middleware(app: FastAPI) -> None:
         backend=AuthBackend(),
         on_error=on_auth_error,
     )
-    
+    app.add_middleware(LogsMiddleware)
+
 
 def init_startup(app: FastAPI) -> None:
     @app.on_event("startup")
     async def startup_event():
         await init_db()
 
+
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Hide",
-        description="Hide API",
+        title=config.APP_NAME,
+        description=config.APP_DESCRIPTION,
         version="1.0.0",
         docs_url=None if config.ENV == "production" else "/docs",
         redoc_url=None if config.ENV == "production" else "/redoc",
