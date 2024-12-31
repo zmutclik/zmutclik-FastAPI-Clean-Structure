@@ -40,7 +40,11 @@ class LogsService:
         return ipaddress, ipproxy
 
     async def create_logs(self, request: Request):
-        routername = request.scope["route"].name
+        try:
+            routername = request.scope["route"].name
+        except:
+            routername = ""
+
         channel = ""
         clientId = ""
         if "api" in routername:
@@ -52,13 +56,14 @@ class LogsService:
         request.state.islogsave = True
         request.state.clientId = clientId
         request.state.appchannel = channel
+        request.state.routername = routername
 
         self.data_created = Logs.create(request=request)
 
         return request
 
     async def finish(self, request: Request, response: Response):
-        self.data_created.user = request.user.username
+        self.data_created.user = request.user.id
         self.data_created.status_code = response.status_code
         self.data_created.process_time = time.time() - self.data_created.startTime
         if self.data_created.channel == "page":

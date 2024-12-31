@@ -8,5 +8,5 @@ class LogsMiddleware(BaseHTTPMiddleware):
         logs = LogsService()
         request = await logs.create_logs(request)
         response = await call_next(request)
-        logs.finish(request=request, response=response)
+        await logs.finish(request=request, response=response)
         return response

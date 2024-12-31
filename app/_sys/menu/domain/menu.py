@@ -22,7 +22,7 @@ class Menu(Base, TimestampLogMixin):
     icon_color = Column(String(32))
 
     sort = Column(Integer, default=0)
-    menutype_id = Column(Integer, ForeignKey("menuType.id"))
+    menutype_id = Column(Integer, ForeignKey("menutype.id"))
     parent_id = Column(Integer, ForeignKey("menu.id"), default=0)
     disabled = Column(Boolean, default=False)
 

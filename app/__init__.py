@@ -78,7 +78,7 @@ def create_app() -> FastAPI:
     init_cors(app=app)
     init_listeners(app=app)
     init_middleware(app=app)
-    # init_startup(app=app)
+    init_startup(app=app)
     init_di()
     return app
 

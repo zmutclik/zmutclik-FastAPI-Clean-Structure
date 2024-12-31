@@ -55,8 +55,6 @@ class Logs(Base):
         except:
             pass
 
-        routername = request.scope["route"].name
-        
         return cls(
             startTime=time.time(),
             app=config.APP_NAME,
@@ -66,7 +64,7 @@ class Logs(Base):
             browser=browser,
             referer=request.headers.get("referer"),
             path=request.scope["path"],
-            router=routername,
+            router=request.state.routername,
             method=request.method,
             ipaddress=ipaddress,
             ipproxy=ipproxy,

@@ -8,7 +8,7 @@ from core.db.session import async_engine
 from app._sys.logs.domain import Logs
 from app._sys.logs.repository import LogsRepo
 from app._sys.logs.schema import LogsSchema
-from app._sys.logs.exceptions import LogsNotFoundException
+# from app._sys.logs.exceptions import LogsNotFoundException
 
 
 class LogsQueryService:
