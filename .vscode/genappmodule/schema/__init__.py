@@ -1,3 +1,3 @@
-from .crossorigin import CrossOriginSchema
+from .VARNAME import CLASSNAMESchema
 
-__all__ = ["CrossOriginSchema"]
+__all__ = ["CLASSNAMESchema"]

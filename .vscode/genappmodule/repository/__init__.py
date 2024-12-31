@@ -1,3 +1,3 @@
-from .crossorigin import CrossOriginRepo, CrossOriginSQLRepo
+from .VARNAME import CLASSNAMERepo, CLASSNAMESQLRepo
 
-__all__ = ["CrossOriginRepo", "CrossOriginSQLRepo"]
+__all__ = ["CLASSNAMERepo", "CLASSNAMESQLRepo"]

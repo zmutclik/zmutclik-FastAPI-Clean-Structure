@@ -1,4 +1,4 @@
-from .crossorigin_command import CrossOriginCommandService
-from .crossorigin_query import CrossOriginQueryService
+from .VARNAME_command import CLASSNAMECommandService
+from .VARNAME_query import CLASSNAMEQueryService
 
-__all__ = ["CrossOriginCommandService", "CrossOriginQueryService"]
+__all__ = ["CLASSNAMECommandService", "CLASSNAMEQueryService"]

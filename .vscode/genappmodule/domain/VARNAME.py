@@ -9,12 +9,12 @@ from core.db import Base
 from core.db.mixins import TimestampLogMixin
 
 
-class CrossOrigin(Base, TimestampLogMixin):
-    __tablename__ = "sys_cross_origin"
+class CLASSNAME(Base, TimestampLogMixin):
+    __tablename__ = "VARNAME"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    link = Column(String(64), unique=True, index=True)
+    VARNAME = Column(String(64), unique=True)
 
     @classmethod
-    def create(cls, link: str) -> "CrossOrigin":
-        return cls(link=link)
+    def create(cls, VARNAME: str) -> "CLASSNAME":
+        return cls(VARNAME=VARNAME)

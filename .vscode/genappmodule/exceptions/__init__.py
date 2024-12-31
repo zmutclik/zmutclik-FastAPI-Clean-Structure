@@ -1,3 +1,3 @@
-from .crossorigin import CrossOriginDuplicateException, CrossOriginNotFoundException
+from .VARNAME import CLASSNAMEDuplicateException, CLASSNAMENotFoundException
 
-__all__ = ["CrossOriginDuplicateException", "CrossOriginNotFoundException"]
+__all__ = ["CLASSNAMEDuplicateException", "CLASSNAMENotFoundException"]

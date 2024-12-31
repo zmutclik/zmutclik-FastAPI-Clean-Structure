@@ -1,3 +1,3 @@
-from .crossorigin import CrossOrigin
+from .VARNAME import CLASSNAME
 
-__all__ = ["CrossOrigin"]
+__all__ = ["CLASSNAME"]
