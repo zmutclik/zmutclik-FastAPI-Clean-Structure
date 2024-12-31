@@ -9,13 +9,13 @@ from core.db import Base
 from core.db.mixins import TimestampLogMixin
 
 
-class Scope(Base, TimestampLogMixin):
-    __tablename__ = "scope"
+class MenuType(Base, TimestampLogMixin):
+    __tablename__ = "menutype"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    scope = Column(String(64), unique=True)
-    desc = Column(String(255))
+    menutype = Column(String(64), unique=True)
+    desc = Column(String(256))
 
     @classmethod
-    def create(cls, scope: str, desc: str) -> "Scope":
-        return cls(scope=scope, desc=desc)
+    def create(cls, menutype: str, desc: str) -> "MenuType":
+        return cls(menutype=menutype, desc=desc)

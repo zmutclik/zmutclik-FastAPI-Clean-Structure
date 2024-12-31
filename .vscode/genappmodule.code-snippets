@@ -100,7 +100,7 @@
             "  file.write(\"class ${CLASSNAME}DuplicateException(CustomException): \\n\")",
             "  file.write(\"    code = 400 \\n\")",
             "  file.write(\"    error_code = 10000 \\n\")",
-            "  file.write(\"    message = \\\"${VARNAME} already created\\\" \\n\")",
+            "  file.write(\"    message = \\\"duplicate ${VARNAME} name\\\" \\n\")",
             "  file.write(\" \\n\")",
             "  file.write(\" \\n\")",
             "  file.write(\"class ${CLASSNAME}NotFoundException(CustomException): \\n\")",

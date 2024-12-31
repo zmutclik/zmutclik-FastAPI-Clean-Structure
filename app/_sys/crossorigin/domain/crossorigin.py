@@ -12,8 +12,8 @@ from core.db.mixins import TimestampLogMixin
 class CrossOrigin(Base, TimestampLogMixin):
     __tablename__ = "sys_cross_origin"
 
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    link = Column(String(64), unique=True, index=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    link = Column(String(64), unique=True)
 
     @classmethod
     def create(cls, link: str) -> "CrossOrigin":
