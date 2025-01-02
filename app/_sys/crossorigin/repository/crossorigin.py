@@ -3,11 +3,11 @@ from datetime import datetime
 
 from abc import ABCMeta, abstractmethod
 from sqlalchemy import or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from app._sys.crossorigin.domain import CrossOrigin
-from core.db import session
+from core.db import engine_dbsys
 from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
 
 
@@ -16,62 +16,85 @@ class CrossOriginRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get(self, link: str) -> Optional[CrossOrigin]:
+    def get_sys(self) -> list:
         pass
 
     @abstractmethod
-    async def get_by_id(self, crossorigin_id: int) -> Optional[CrossOrigin]:
+    def get(self, link: str) -> Optional[CrossOrigin]:
         pass
 
     @abstractmethod
-    async def save(self, crossorigin: CrossOrigin) -> CrossOrigin:
+    def get_by_id(self, crossorigin_id: int) -> Optional[CrossOrigin]:
         pass
 
     @abstractmethod
-    async def update(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
+    def save(self, crossorigin: CrossOrigin) -> CrossOrigin:
         pass
 
     @abstractmethod
-    async def delete(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
+    def update(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
+        pass
+
+    @abstractmethod
+    def delete(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
         pass
 
 
 class CrossOriginSQLRepo(CrossOriginRepo):
-    async def get(self, link: str) -> Optional[CrossOrigin]:
-        result = await session.execute(select(CrossOrigin).where(CrossOrigin.link == link))
-        return result.scalars().first()
+    def get_sys(self):
+        with engine_dbsys.begin() as connection:
+            with Session(bind=connection) as db:
+                result = db.execute(select(CrossOrigin))
+                res = []
+                for item in result.scalars().all():
+                    res.append(item)
+                return res
 
-    async def get_by_id(self, crossorigin_id: int) -> Optional[CrossOrigin]:
-        return await session.get(CrossOrigin, crossorigin_id)
+    def get(self, link: str) -> Optional[CrossOrigin]:
+        with engine_dbsys.begin() as connection:
+            with Session(bind=connection) as db:
+                result = db.execute(select(CrossOrigin).where(CrossOrigin.link == link))
+                return result.scalars().first()
 
-    async def save(self, crossorigin: CrossOrigin) -> CrossOrigin:
-        try:
-            await session.add(crossorigin)
-            await session.commit()
-            await session.refresh(crossorigin)
-            return crossorigin
-        except SQLAlchemyError as e:
-            await session.rollback()
-            raise DatabaseSavingException(f"Error saving crossorigin: {str(e)}")
+    def get_by_id(self, crossorigin_id: int) -> Optional[CrossOrigin]:
+        with engine_dbsys.begin() as connection:
+            with Session(bind=connection) as db:
+                return db.get(CrossOrigin, crossorigin_id)
 
-    async def update(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
-        try:
-            for key, value in kwargs.items():
-                if hasattr(crossorigin, key) and value is not None:
-                    setattr(crossorigin, key, value)
-            await session.commit()
-            await session.refresh(crossorigin)
-            return crossorigin
-        except SQLAlchemyError as e:
-            await session.rollback()
-            raise DatabaseUpdatingException(f"Error updating crossorigin: {str(e)}")
+    def save(self, crossorigin: CrossOrigin) -> CrossOrigin:
+        with engine_dbsys.begin() as connection:
+            with Session(bind=connection) as db:
+                try:
+                    db.add(crossorigin)
+                    db.commit()
+                    db.refresh(crossorigin)
+                    return crossorigin
+                except SQLAlchemyError as e:
+                    db.rollback()
+                    raise DatabaseSavingException(f"Error saving crossorigin: {str(e)}")
 
-    async def delete(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
-        try:
-            if not crossorigin.deleted_at:
-                crossorigin.deleted_at = datetime.now()
-                crossorigin.deleted_user = deleted_user
-                await session.commit()
-        except SQLAlchemyError as e:
-            await session.rollback()
-            raise DatabaseDeletingException(f"Error deleting crossorigin: {str(e)}")
+    def update(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
+        with engine_dbsys.begin() as connection:
+            with Session(bind=connection) as db:
+                try:
+                    for key, value in kwargs.items():
+                        if hasattr(crossorigin, key) and value is not None:
+                            setattr(crossorigin, key, value)
+                    db.commit()
+                    db.refresh(crossorigin)
+                    return crossorigin
+                except SQLAlchemyError as e:
+                    db.rollback()
+                    raise DatabaseUpdatingException(f"Error updating crossorigin: {str(e)}")
+
+    def delete(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
+        with engine_dbsys.begin() as connection:
+            with Session(bind=connection) as db:
+                try:
+                    if not crossorigin.deleted_at:
+                        crossorigin.deleted_at = datetime.now()
+                        crossorigin.deleted_user = deleted_user
+                        db.commit()
+                except SQLAlchemyError as e:
+                    db.rollback()
+                    raise DatabaseDeletingException(f"Error deleting crossorigin: {str(e)}")

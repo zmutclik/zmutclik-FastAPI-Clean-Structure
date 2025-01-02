@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from . import BaseLogs as Base
+from app._sys.logs.domain import Logs, IpAddress, RouterName
 
 
 # Dependency

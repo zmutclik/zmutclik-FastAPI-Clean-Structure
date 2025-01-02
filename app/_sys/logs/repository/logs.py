@@ -21,7 +21,7 @@ class LogsRepo:
         pass
 
     async def get_by_id(self, logs_id: int) -> Optional[Logs]:
-        return await session.get(Logs, logs_id)
+        return await self.db.get(Logs, logs_id)
 
     def save(self, logs: Logs) -> Logs:
         try:

@@ -7,16 +7,26 @@ from core.fastapi.dependencies import Logging
 from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware, LogsMiddleware
 from core.exceptions import CustomException
 from core.di import init_di
-from core.db.session import init_db
+from core.db import init_db
+
+from app._sys.crossorigin.repository import CrossOriginRepo
 
 from api import router
-
 
 def init_routers(app: FastAPI) -> None:
     app.include_router(router)
 
 
 def init_cors(app: FastAPI) -> None:
+    # with engine_dbsys.begin() as connection:
+    #     with SessionLocalSys(bind=connection) as db:
+    # app.add_middleware(
+    #             CORSMiddleware,
+    #             allow_origins= CrossOriginRepo().get_sys(),
+    #             allow_credentials=True,
+    #             allow_methods=["*"],
+    #             allow_headers=["*"],
+    #         )
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
