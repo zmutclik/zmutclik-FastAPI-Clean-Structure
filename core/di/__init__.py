@@ -9,7 +9,6 @@ from app._sys.scope.repository import ScopeRepo, ScopeSQLRepo
 from app._sys.sysrepo.repository import SysRepoRepo, SysRepoSQLRepo
 from app._sys.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo
 
-
 def init_di():
     provider = Provider()
     provider.bind(ChangeLogRepo, ChangeLogRepoSQLRepo)

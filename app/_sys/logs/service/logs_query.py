@@ -14,7 +14,8 @@ from app._sys.logs.schema import LogsSchema
 class LogsQueryService:
     @inject()
     def __init__(self, logs_repo: LogsRepo):
-        self.logs_repo = logs_repo
+        # self.logs_repo = logs_repo
+        pass
 
     async def datatable_logs(self, params: dict[str, Any]):
         query = select(Logs, Logs.id.label("DT_RowId"))

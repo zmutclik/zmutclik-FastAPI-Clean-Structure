@@ -6,7 +6,7 @@ from app._sys.logs.service import LogsService
 class LogsMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         logs = LogsService()
-        request = await logs.create_logs(request)
+        request = await logs.start(request)
         response = await call_next(request)
-        await logs.finish(request=request, response=response)
+        logs.finish(request=request, response=response)
         return response

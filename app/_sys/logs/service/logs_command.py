@@ -19,7 +19,8 @@ from core import config
 
 class LogsService:
     def __init__(self):
-        self.logs_repo = LogsRepo()
+        # self.logs_repo = LogsRepo()
+        pass
 
     def generateId(self, request: Request, key: str):
         id_ = request.cookies.get(key)
@@ -38,7 +39,7 @@ class LogsService:
             pass
         return ipaddress, ipproxy
 
-    async def create_logs(self, request: Request):
+    async def start(self, request: Request):
         try:
             routername = request.scope["route"].name
         except:
@@ -61,7 +62,7 @@ class LogsService:
 
         return request
 
-    async def finish(self, request: Request, response: Response):
+    def finish(self, request: Request, response: Response):
         self.data_created.user = request.user.id
         self.data_created.status_code = response.status_code
         self.data_created.process_time = time.time() - self.data_created.startTime
@@ -69,4 +70,4 @@ class LogsService:
             response.set_cookie(key=config.CLIENT_KEY, value=self.data_created.client_id)
 
         if request.state.islogsave and "/static/" not in self.data_created.path:
-            threading.Thread(target=lambda: self.logs_repo.save(self.data_created)).start()
+            threading.Thread(target=LogsRepo().save(self.data_created)).start()

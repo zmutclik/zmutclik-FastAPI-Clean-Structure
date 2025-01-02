@@ -18,7 +18,7 @@ SessionLocalSys = sessionmaker(autocommit=False, autoflush=False, bind=engine_db
 
 
 # Dependency
-def get_dbsys():
+def get_dbsys() -> Generator[Session, None, None]:
     db = SessionLocalSys()
     try:
         yield db
