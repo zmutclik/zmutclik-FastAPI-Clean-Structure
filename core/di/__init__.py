@@ -2,7 +2,6 @@ from pythondi import Provider, configure
 
 from app._sys.changelog.repository import ChangeLogRepo, ChangeLogRepoSQLRepo
 from app._sys.crossorigin.repository import CrossOriginRepo, CrossOriginSQLRepo
-from app._sys.logs.repository import LogsRepo, LogsSQLRepo
 from app._sys.menu.repository import MenuRepo, MenuSQLRepo
 from app._sys.menutype.repository import MenuTypeRepo, MenuTypeSQLRepo
 from app._sys.privilege.repository import PrivilegeRepo, PrivilegeSQLRepo
@@ -15,7 +14,6 @@ def init_di():
     provider = Provider()
     provider.bind(ChangeLogRepo, ChangeLogRepoSQLRepo)
     provider.bind(CrossOriginRepo, CrossOriginSQLRepo)
-    provider.bind(LogsRepo, LogsSQLRepo)
     provider.bind(MenuRepo, MenuSQLRepo)
     provider.bind(MenuRepo, MenuSQLRepo)
     provider.bind(MenuTypeRepo, MenuTypeSQLRepo)

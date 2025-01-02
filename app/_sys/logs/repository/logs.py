@@ -1,39 +1,34 @@
 from typing import Optional, List, Union
 from datetime import datetime
-
+import time
 from abc import ABCMeta, abstractmethod
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from app._sys.logs.domain import Logs
-from core.db import session
+from app._sys.logs.domain import Logs, IpAddress, RouterName
+from core.db import session, async_engine, get_dblogs
 from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
+
+from sqlalchemy.orm import Session
 
 
 class LogsRepo:
-
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    async def get_by_id(self, logs_id: int) -> Optional[Logs]:
+    def __init__(self, tahunbulan: datetime = None) -> None:
+        if tahunbulan is None:
+            tahunbulan = datetime.now()
+        self.db: Session = get_dblogs(tahunbulan).__next__()
         pass
 
-    @abstractmethod
-    async def save(self, logs: Logs) -> Logs:
-        pass
-
-
-class LogsSQLRepo(LogsRepo):
     async def get_by_id(self, logs_id: int) -> Optional[Logs]:
         return await session.get(Logs, logs_id)
 
-    async def save(self, logs: Logs) -> Logs:
+    def save(self, logs: Logs) -> Logs:
         try:
-            await session.add(logs)
-            await session.commit()
-            await session.refresh(logs)
-            return logs
+            self.db.add(logs)
+            self.db.add(IpAddress(ipaddress=logs.ipaddress))
+            self.db.add(RouterName(routername=logs.router))
+            self.db.commit()
+
         except SQLAlchemyError as e:
-            await session.rollback()
             raise DatabaseSavingException(f"Error saving logs: {str(e)}")

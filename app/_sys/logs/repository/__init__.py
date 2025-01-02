@@ -1,3 +1,3 @@
-from .logs import LogsRepo, LogsSQLRepo 
- 
-__all__ = ["LogsRepo", "LogsSQLRepo"] 
+from .logs import LogsRepo
+
+__all__ = ["LogsRepo"]

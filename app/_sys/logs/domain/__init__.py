@@ -1,3 +1,3 @@
-from .logs import Logs 
- 
-__all__ = ["Logs"] 
+from .logs import Logs, IpAddress, RouterName
+
+__all__ = ["Logs", "IpAddress", "RouterName"]

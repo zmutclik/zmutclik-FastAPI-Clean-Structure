@@ -18,9 +18,8 @@ from core import config
 
 
 class LogsService:
-    @inject()
-    def __init__(self, logs_repo: LogsRepo):
-        self.logs_repo = logs_repo
+    def __init__(self):
+        self.logs_repo = LogsRepo()
 
     def generateId(self, request: Request, key: str):
         id_ = request.cookies.get(key)
@@ -70,4 +69,4 @@ class LogsService:
             response.set_cookie(key=config.CLIENT_KEY, value=self.data_created.client_id)
 
         if request.state.islogsave and "/static/" not in self.data_created.path:
-            asyncio.create_task(self.logs_repo.save(logs=self.data_created))
+            threading.Thread(target=lambda: self.logs_repo.save(self.data_created)).start()

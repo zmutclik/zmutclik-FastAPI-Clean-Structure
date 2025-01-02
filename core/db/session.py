@@ -27,7 +27,7 @@ def set_session_context(session_id: str) -> Token:
 def reset_session_context(context: Token) -> None:
     session_context.reset(context)
 
-async_engine = create_async_engine(config.DB_URL, echo=True)
+async_engine = create_async_engine(config.DB_URL)#, echo=True)
 async_session = sessionmaker(
     bind=async_engine,
     class_=AsyncSession,

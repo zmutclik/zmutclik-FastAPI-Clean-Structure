@@ -7,7 +7,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from fastapi import Request
 from user_agents import parse
 
-from core.db import Base
+from core.db import BaseLogs as Base
 from core.db.mixins import TimestampLogMixin
 from core import config
 
@@ -18,7 +18,7 @@ class Logs(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     client_id = Column(String(32), index=True)
     # session_id = Column(String(32), index=True)
-    startTime = Column(Time)
+    startTime = Column(Float)
     app = Column(String(100), index=True)
     channel = Column(String(32), index=True)
     platform = Column(String(100), index=True)
