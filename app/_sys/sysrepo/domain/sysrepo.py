@@ -11,7 +11,7 @@ from core.db.mixins import TimestampLogMixin
 
 
 class SysRepo(Base, TimestampLogMixin):
-    __tablename__ = "repository"
+    __tablename__ = "sys_repository"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)

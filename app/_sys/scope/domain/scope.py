@@ -10,7 +10,7 @@ from core.db.mixins import TimestampLogMixin
 
 
 class Scope(Base, TimestampLogMixin):
-    __tablename__ = "scope"
+    __tablename__ = "_scope"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     scope = Column(String(64), unique=True)

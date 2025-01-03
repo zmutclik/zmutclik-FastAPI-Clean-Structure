@@ -8,11 +8,11 @@ from core.db.base import BaseCore as Base
 
 
 class UserPrivilege(Base):
-    __tablename__ = "user_privilege"
+    __tablename__ = "_user_privilege"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    privilege_id = Column(Integer, ForeignKey("privilege.id"))
+    user_id = Column(Integer, ForeignKey("_user.id"))
+    privilege_id = Column(Integer, ForeignKey("_privilege.id"))
 
     USER = relationship("User", back_populates="PRIVILEGE")
     PRIVILEGE = relationship("Privilege", back_populates="USERPRIVILEGE")

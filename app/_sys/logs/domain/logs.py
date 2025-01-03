@@ -72,12 +72,12 @@ class Logs(Base):
 
 
 class IpAddress(Base):
-    __tablename__ = "ipaddress"
+    __tablename__ = "logs_ipaddress"
     id = Column(Integer, primary_key=True, autoincrement=True)
     ipaddress = Column(String(50), index=True)
 
 
 class RouterName(Base):
-    __tablename__ = "router"
+    __tablename__ = "logs_router"
     id = Column(Integer, primary_key=True, autoincrement=True)
     routername = Column(String(255), index=True)

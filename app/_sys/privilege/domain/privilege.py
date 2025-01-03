@@ -10,7 +10,7 @@ from core.db.mixins import TimestampLogMixin
 
 
 class Privilege(Base, TimestampLogMixin):
-    __tablename__ = "privilege"
+    __tablename__ = "_privilege"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     privilege = Column(String(64), unique=True)

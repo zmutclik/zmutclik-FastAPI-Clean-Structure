@@ -39,7 +39,7 @@ def reset_session_context(context: Token) -> None:
 try:
     dbcore_engine = create_engine(config.DBCORE_URL.replace("aiomysql", "pymysql"))
     with dbcore_engine.begin() as connection:
-        if not dbcore_engine.dialect.has_table(table_name="cross_origin", connection=connection):
+        if not dbcore_engine.dialect.has_table(table_name="sys_cross_origin", connection=connection):
             Base.metadata.create_all(bind=dbcore_engine)
 except OperationalError as err:
     if "1045" in err.args[0]:

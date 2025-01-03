@@ -18,7 +18,7 @@ def get_password_hash(password):
 
 
 class User(Base, TimestampLogMixin):
-    __tablename__ = "user"
+    __tablename__ = "_user"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(Unicode(32), unique=True)
