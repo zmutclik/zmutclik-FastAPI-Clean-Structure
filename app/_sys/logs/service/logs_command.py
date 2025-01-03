@@ -69,5 +69,5 @@ class LogsService:
         if self.data_created.channel == "page":
             response.set_cookie(key=config.CLIENT_KEY, value=self.data_created.client_id)
 
-        # if request.state.islogsave and "/static/" not in self.data_created.path:
-        #     threading.Thread(target=LogsRepo().save(self.data_created)).start()
+        if request.state.islogsave and "/static/" not in self.data_created.path:
+            threading.Thread(target=LogsRepo().save(self.data_created)).start()
