@@ -2,10 +2,10 @@ from uuid import uuid4
 
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from core.db.session import set_session_context, reset_session_context, session
+from core.db.session_logs import set_session_context, reset_session_context, session_logs
 
 
-class SQLAlchemyMiddleware:
+class SQLAlchemyMiddlewareLogs:
     def __init__(self, app: ASGIApp) -> None:
         self.app = app
 
@@ -18,5 +18,5 @@ class SQLAlchemyMiddleware:
         except Exception as e:
             raise e
         finally:
-            await session.remove()
+            await session_logs.remove()
             reset_session_context(context=context)

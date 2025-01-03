@@ -4,7 +4,7 @@ from pythondi import inject
 from sqlalchemy import or_, select
 from datatables import DataTable
 
-from core.db.session import async_engine
+from core.db.session_ import async_engine
 from app._sys.sysrepo.domain import SysRepo
 from app._sys.sysrepo.repository import SysRepoRepo
 from app._sys.sysrepo.schema import SysRepoSchema

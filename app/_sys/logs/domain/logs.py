@@ -7,7 +7,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from fastapi import Request
 from user_agents import parse
 
-from core.db import BaseLogs as Base
+from core.db.base import BaseLogs as Base
 from core.db.mixins import TimestampLogMixin
 from core import config
 

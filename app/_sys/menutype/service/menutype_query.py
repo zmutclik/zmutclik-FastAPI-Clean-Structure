@@ -4,7 +4,7 @@ from pythondi import inject
 from sqlalchemy import or_, select
 from datatables import DataTable
 
-from core.db.session import async_engine
+from core.db.session_ import async_engine
 from app._sys.menutype.domain import MenuType
 from app._sys.menutype.repository import MenuTypeRepo
 from app._sys.menutype.schema import MenuTypeSchema

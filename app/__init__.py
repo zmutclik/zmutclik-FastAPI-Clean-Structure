@@ -1,16 +1,16 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-
 from core import config
 from core.fastapi.dependencies import Logging
 from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware, LogsMiddleware
 from core.exceptions import CustomException
 from core.di import init_di
-from core.db import init_db
 
-from app._sys.crossorigin.repository import CrossOriginSQLRepo
-from app._sys.crossorigin.service import CrossOriginQueryService
+from core.db import dbcore_engine
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+from app._sys.crossorigin.domain import CrossOrigin
 
 from api import router
 
@@ -20,20 +20,24 @@ def init_routers(app: FastAPI) -> None:
 
 
 def init_cors(app: FastAPI) -> None:
-    # with CrossOriginQueryService as service:
-    from core.db import engine_dbsys
-    from sqlalchemy.orm import Session
-
-    with engine_dbsys.begin() as connection:
-        with Session(bind=connection) as db:
-            allow_origins = CrossOriginSQLRepo().get_sys()
-            app.add_middleware(
-                CORSMiddleware,
-                allow_origins=allow_origins,
-                allow_credentials=True,
-                allow_methods=["*"],
-                allow_headers=["*"],
-            )
+    try:
+        with dbcore_engine.begin() as connection:
+            with Session(bind=connection) as db:
+                result = db.execute(select(CrossOrigin)).all()
+                allow_origins = []
+                for item in result:
+                    allow_origins.append(item)
+                if allow_origins == []:
+                    allow_origins.append("*")
+                app.add_middleware(
+                    CORSMiddleware,
+                    allow_origins=allow_origins,
+                    allow_credentials=True,
+                    allow_methods=["*"],
+                    allow_headers=["*"],
+                )
+    except:
+        print("Koneksi Database Core Error : app->init_cors")
 
 
 def init_listeners(app: FastAPI) -> None:
@@ -69,10 +73,10 @@ def init_middleware(app: FastAPI) -> None:
     app.add_middleware(LogsMiddleware)
 
 
-def init_startup(app: FastAPI) -> None:
-    @app.on_event("startup")
-    async def startup_event():
-        await init_db()
+# def init_startup(app: FastAPI) -> None:
+#     @app.on_event("startup")
+#     async def startup_event():
+#         await init_db()
 
 
 def create_app() -> FastAPI:
@@ -88,7 +92,7 @@ def create_app() -> FastAPI:
     init_cors(app=app)
     init_listeners(app=app)
     init_middleware(app=app)
-    init_startup(app=app)
+    # await init_startup(app=app)
     init_di()
     return app
 

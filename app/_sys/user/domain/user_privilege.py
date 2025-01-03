@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
 
-from core.db import Base
+from core.db.base import BaseCore as Base
 
 
 class UserPrivilege(Base):

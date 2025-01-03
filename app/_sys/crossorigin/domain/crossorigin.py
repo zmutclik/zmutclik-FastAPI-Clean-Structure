@@ -5,7 +5,7 @@ from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from core.db import BaseSysT as Base
+from core.db.base import BaseCore as Base
 from core.db.mixins import TimestampLogMixin
 
 

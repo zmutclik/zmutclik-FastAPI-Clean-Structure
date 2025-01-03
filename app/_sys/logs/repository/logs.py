@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from app._sys.logs.domain import Logs, IpAddress, RouterName
-from core.db import session, async_engine, get_dblogs
 from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
 
 from sqlalchemy.orm import Session

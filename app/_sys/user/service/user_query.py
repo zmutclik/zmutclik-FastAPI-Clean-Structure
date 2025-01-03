@@ -5,7 +5,7 @@ from sqlalchemy import or_, select
 from datatables import DataTable
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.db.session import async_engine
+from core.db.session_ import async_engine
 from app._sys.user.domain import User
 from app._sys.user.repository import UserRepo
 from app._sys.user.schema import UserSchema

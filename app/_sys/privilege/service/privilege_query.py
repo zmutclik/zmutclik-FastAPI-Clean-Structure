@@ -4,7 +4,7 @@ from pythondi import inject
 from sqlalchemy import or_, select
 from datatables import DataTable
 
-from core.db.session import async_engine
+from core.db.session_ import async_engine
 from app._sys.privilege.domain import Privilege
 from app._sys.privilege.repository import PrivilegeRepo
 from app._sys.privilege.schema import PrivilegeSchema
