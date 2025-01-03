@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Request
+from core import config
 from .routers.auth import auth_router
 
 ###################################################################################################################
 pages_app = FastAPI(
-    title="Pages",
-    description="This is a very fancy project, with auto docs for the API and everything",
-    version="1.0.0",
+    title=config.APP_NAME + " [ Pages ]",
+    description=config.APP_DESCRIPTION,
+    version=config.APP_VERSION,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     redoc_url=None,
 )

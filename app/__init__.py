@@ -27,6 +27,8 @@ from pages import pages_app
 
 def init_routers(app: FastAPI) -> None:
     app.include_router(router)
+    app.mount("/static", StaticFiles(directory="static", html=False), name="static")
+    app.mount("/page", pages_app)
 
 
 def init_cors(app: FastAPI) -> None:
@@ -89,7 +91,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=config.APP_NAME,
         description=config.APP_DESCRIPTION,
-        version="3.0.0",
+        version=config.APP_VERSION,
         docs_url=None if config.ENV == "production" else "/docs",
         redoc_url=None if config.ENV == "production" else "/redoc",
         dependencies=[Depends(Logging)],
@@ -98,8 +100,6 @@ def create_app() -> FastAPI:
     init_cors(app=app)
     init_listeners(app=app)
     init_middleware(app=app)
-    app.mount("/static", StaticFiles(directory="static", html=False), name="static")
-    app.mount("/page", pages_app)
     init_di()
     return app
 

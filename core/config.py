@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings
 class Config(BaseSettings):
     APP_NAME: str = "FastAPI cleanStructure"
     APP_DESCRIPTION: str = "This is a very fancy project, with auto docs for the API and everything."
+    APP_VERSION: str = "3.0.0"
     ENV: str = "development"
     DEBUG: bool = True
     APP_HOST: str = "localhost"
@@ -16,7 +17,7 @@ class Config(BaseSettings):
     JWT_SECRET_KEY: str = "fastapi"
     JWT_ALGORITHM: str = "HS256"
     CELERY_BROKER_URL: str = "amqp://user:bitnami@localhost:5672/"
-    CLIENT_KEY: str  = "fastapi-clean-structure_client"
+    CLIENT_KEY: str = "fastapi-clean-structure_client"
     COOKIES_KEY: str = "fastapi-clean-structure_token"
     COOKIES_EXPIRED: int = 30
 
