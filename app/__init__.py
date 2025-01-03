@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.staticfiles import StaticFiles
+
 from core import config
 from core.fastapi.dependencies import Logging
 from core.fastapi.middlewares import (
@@ -20,6 +22,7 @@ from sqlalchemy import select
 from app._sys.crossorigin.domain import CrossOrigin
 
 from api import router
+from pages import pages_app
 
 
 def init_routers(app: FastAPI) -> None:
@@ -86,7 +89,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=config.APP_NAME,
         description=config.APP_DESCRIPTION,
-        version="1.0.0",
+        version="3.0.0",
         docs_url=None if config.ENV == "production" else "/docs",
         redoc_url=None if config.ENV == "production" else "/redoc",
         dependencies=[Depends(Logging)],
@@ -95,6 +98,8 @@ def create_app() -> FastAPI:
     init_cors(app=app)
     init_listeners(app=app)
     init_middleware(app=app)
+    app.mount("/static", StaticFiles(directory="static", html=False), name="static")
+    app.mount("/page", pages_app)
     init_di()
     return app
 

@@ -1,0 +1,85 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Form Menu {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% include 'includes/_form_stylesheets.html' %}
+{% include 'includes/_all_stylesheets.html' %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">FORM MENU</h1>
+                    <h3 class="card-title mt-2">MENU Manajemen</h3>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-end"><button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button></div>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <form id="form_">
+                                <input type="hidden" id="id" {% if menutype %} value="{{menutype.id}}" {% endif %}>
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Menu Tipe</label>
+                                    <input type="text" class="form-control" name="menutype" placeholder="Nama Tipe Menu" {% if menutype %} value="{{menutype.menutype}}" readonly {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Deskripsi</label>
+                                    <input type="text" class="form-control" name="desc" placeholder="Deskripsi" {% if menutype %} value="{{menutype.desc}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3 mt-5 float-end">
+                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                </div>
+
+                            </form>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% include 'includes/_all_javascripts.html' %}
+{% include 'includes/_form_javascripts.html' %}
+<!-- ------------------- -->
+<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if menutype %}/{{menutype.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+
+{% endblock javascripts %}

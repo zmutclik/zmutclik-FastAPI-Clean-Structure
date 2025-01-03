@@ -1,0 +1,121 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Form Scope System {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% include 'includes/_form_stylesheets.html' %}
+{% include 'includes/_all_stylesheets.html' %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">FORM GROUP</h1>
+                    <h3 class="card-title mt-2">GROUP Manajemen</h3>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-end"><button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button></div>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div class="card-body">
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            PRIVILEGE MENU
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <select id="menutype_id" class="form-select" aria-label="select">
+                                                    {% for item in menutype %}
+                                                    <option value="{{ item.id }}">{{ item.menutype }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="row">
+                                                <div id="jstree_">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <form id="form_">
+                                        <input type="hidden" id="id" {% if scope %} value="{{group.id}}" {% endif %}>
+                                        <div class="mb-3">
+                                            <label for="full_name" class="form-label">Grup</label>
+                                            <input type="text" class="form-control" name="group" placeholder="Nama Grup" {% if group %} value="{{group.group}}" readonly {% endif %} required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="username" class="form-label">Deskripsi</label>
+                                            <input type="text" class="form-control" name="desc" placeholder="Deskripsi Grup" {% if group %} value="{{group.desc}}" {% endif %} required>
+                                        </div>
+                                        <div class="mb-3 mt-5 float-end">
+                                            <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% include 'includes/_all_javascripts.html' %}
+{% include 'includes/_form_javascripts.html' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<!-- ------------------- -->
+<script>
+    const api = axios.create({
+        baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if group %}/{{group.id}}{% endif %}',
+        timeout: 2000,
+        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
+    });
+</script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js{% if group %}/?group={{group.id}}{% endif %}"></script>
+
+{% endblock javascripts %}

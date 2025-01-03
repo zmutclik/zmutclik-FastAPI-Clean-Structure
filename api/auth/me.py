@@ -6,6 +6,7 @@ from core.fastapi.schemas.response import ExceptionResponseSchema
 from core.fastapi.dependencies import PermissionDependency, IsAuthenticated
 
 from api.auth.response import GetUserResponse
+
 auth_me_router = APIRouter()
 
 

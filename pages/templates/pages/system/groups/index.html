@@ -1,0 +1,72 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Scope System {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% include 'includes/_page_stylesheets.html' %}
+{% include 'includes/_all_stylesheets.html' %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">GROUPS</h1>
+                    <h3 class="card-title mt-2">Manajemen</h3>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-end"><button type="button" id="btnTambah" class="btn btn-block btn-info btn-sm">TAMBAH</button></div>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="table_" class="table table-bordered table-striped">
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% include 'includes/_all_javascripts.html' %}
+{% include 'includes/_page_javascripts.html' %}
+<!-- ------------------- -->
+<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+
+{% endblock javascripts %}

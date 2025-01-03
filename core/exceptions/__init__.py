@@ -9,6 +9,7 @@ from .base import (
 )
 from .token import DecodeTokenException, ExpiredTokenException, InactiveUserScopeException
 from .database import DatabaseDeletingException, DatabaseSavingException, DatabaseUpdatingException
+from .requires_login import RequiresLoginException
 
 
 __all__ = [
@@ -25,4 +26,5 @@ __all__ = [
     "DatabaseDeletingException",
     "DatabaseSavingException",
     "DatabaseUpdatingException",
+    "RequiresLoginException",
 ]
