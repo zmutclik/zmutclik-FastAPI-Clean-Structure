@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from core import config
-from .routers.auth import auth_router
+from .auth import auth_router
 
 ###################################################################################################################
 pages_app = FastAPI(

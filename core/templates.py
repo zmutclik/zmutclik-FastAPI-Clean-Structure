@@ -6,5 +6,5 @@ def global_context():
     return {"app_name": config.APP_NAME}
 
 
-templates = Jinja2Templates(directory="pages/templates")
-templates.env.globals.update(global_context=global_context)
+templates_html = Jinja2Templates(directory="./")
+templates_html.env.globals.update(global_context=global_context)

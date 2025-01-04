@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Response, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from starlette.responses import FileResponse, PlainTextResponse
 from sqlalchemy.orm import Session
-from pages.base import templates
+from core import templates_html
 
 login_router = APIRouter()
 
@@ -15,8 +15,8 @@ def form_login(
     request: Request,
     next: str = None,
 ):
-    return templates.TemplateResponse(
+    return templates_html.TemplateResponse(
         request=request,
-        name="pages/auth/login/login.html",
+        name="pages/auth/login/html/login.html",
         context={"nextpage": next},
     )
