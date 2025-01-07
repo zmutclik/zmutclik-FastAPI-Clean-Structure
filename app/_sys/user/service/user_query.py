@@ -9,7 +9,7 @@ from core.db.session_ import async_engine
 from app._sys.user.domain import User
 from app._sys.user.repository import UserRepo
 from app._sys.user.schema import UserSchema
-from app._sys.user.exceptions import UserNotFoundException
+from app._sys.user.exceptions import UserNotFoundException, UserNotActiveException
 
 
 class UserQueryService:
@@ -23,10 +23,17 @@ class UserQueryService:
             raise UserNotFoundException
         return data_get
 
-    async def get_user_by(self, username: Union[str, None], email: Union[str, None], nohp: Union[str, None]) -> Optional[UserSchema]:
-        data_get = self.user_repo.get_by(username, email, nohp)
+    async def get_user_by(
+        self,
+        username: Union[str, None] = None,
+        email: Union[str, None] = None,
+        nohp: Union[str, None] = None,
+    ) -> Optional[UserSchema]:
+        data_get = await self.user_repo.get_by(username, email, nohp)
         if not data_get:
             raise UserNotFoundException
+        if data_get.disabled:
+            raise UserNotActiveException
 
         return data_get
 

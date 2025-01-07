@@ -6,25 +6,47 @@ from starlette.middleware.authentication import (
     AuthenticationMiddleware as BaseAuthenticationMiddleware,
 )
 from starlette.requests import HTTPConnection
+from http.cookies import SimpleCookie
 
 from core import config
 from ..schemas import CurrentUser
 
 
+def get_specific_cookie(connection: HTTPConnection, cookie_name: str) -> str:
+    cookie_header = connection.headers.get("cookie", "")
+    cookies = dict(item.split("=", 1) for item in cookie_header.split("; ") if "=" in item)
+    return cookies.get(cookie_name)
+
+
 class AuthBackend(AuthenticationBackend):
-    async def authenticate(
-        self, conn: HTTPConnection
-    ) -> Tuple[bool, Optional[CurrentUser]]:
+    async def authenticate(self, conn: HTTPConnection) -> Tuple[bool, Optional[CurrentUser]]:
         current_user = CurrentUser()
         authorization: str = conn.headers.get("Authorization")
-        if not authorization:
-            return False, current_user
+        authorization_cookie: str = get_specific_cookie(conn, config.COOKIES_KEY)
+        current_user.client_id = get_specific_cookie(conn, config.CLIENT_KEY)
 
-        try:
-            scheme, credentials = authorization.split(" ")
-            if scheme.lower() != "bearer":
+        if "page" in conn.scope["path"]:
+            current_user.channel = "page"
+        if "static" in conn.scope["path"] or "favicon" in conn.scope["path"]:
+            current_user.channel = "static"
+
+        if "page" in conn.scope["path"] and ".js" in conn.scope["path"]:
+            current_user.channel = "page_js"
+
+        if authorization is not None:
+            current_user.channel = "api"
+            try:
+                scheme, credentials = authorization.split(" ")
+                if scheme.lower() != "bearer":
+                    return False, current_user
+            except ValueError:
                 return False, current_user
-        except ValueError:
+
+        elif authorization_cookie is not None:
+            current_user.channel = "page"
+            credentials = authorization_cookie
+
+        else:
             return False, current_user
 
         if not credentials:
@@ -40,12 +62,16 @@ class AuthBackend(AuthenticationBackend):
             user_id = payload.get("sub")
             user_roles = payload.get("roles", [])
             user_scopes = payload.get("scopes", [])
+            user_username = payload.get("username")
+            user_session_id = payload.get("session_id")
         except jwt.exceptions.PyJWTError:
             return False, current_user
 
         current_user.id = user_id
         current_user.roles = user_roles
         current_user.scopes = user_scopes
+        current_user.username = user_username
+        current_user.session_id = user_session_id
         return True, current_user
 
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from core import config
-from .auth import auth_router
+from ._auth import auth_router
 
 ###################################################################################################################
 pages_app = FastAPI(
@@ -23,6 +23,18 @@ from core.exceptions import RequiresLoginException
 @pages_app.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
     return RedirectResponse(_.nextRouter)
+
+
+from core.exceptions import CustomException
+from fastapi.responses import JSONResponse
+
+
+@pages_app.exception_handler(CustomException)
+async def custom_exception_handler(request: Request, exc: CustomException):
+    return JSONResponse(
+        status_code=exc.code,
+        content={"error_code": exc.error_code, "message": exc.message},
+    )
 
 
 __all__ = ["pages_app"]

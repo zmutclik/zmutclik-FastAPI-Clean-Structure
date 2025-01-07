@@ -7,7 +7,6 @@ router = APIRouter()
 
 @router.get("/favicon.ico", include_in_schema=False)
 def favicon(request: Request):
-    request.state.islogsave = False
     return FileResponse("static/favicon.ico")
 
 

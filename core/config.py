@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 class Config(BaseSettings):
     APP_NAME: str = "FastAPI cleanStructure"
     APP_DESCRIPTION: str = "This is a very fancy project, with auto docs for the API and everything."
-    APP_VERSION: str = "3.0.0"
+    APP_VERSION: str = "init"
     ENV: str = "development"
     DEBUG: bool = True
     APP_HOST: str = "localhost"

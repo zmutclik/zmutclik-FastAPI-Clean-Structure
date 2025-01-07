@@ -24,7 +24,7 @@ class Logs(Base):
     platform = Column(String(100), index=True)
     browser = Column(String(100), index=True)
     referer = Column(String(500), index=True)
-    router = Column(String(256), index=True)
+    router = Column(String(256), nullable=True, index=True)
     path = Column(String(256), index=True)
     method = Column(String(10), index=True)
     ipaddress = Column(String(50), index=True)
@@ -58,13 +58,12 @@ class Logs(Base):
         return cls(
             startTime=time.time(),
             app=config.APP_NAME,
-            channel=request.state.appchannel,
-            client_id=request.state.clientId,
+            channel=request.user.channel,
+            client_id=request.user.client_id,
             platform=platform,
             browser=browser,
             referer=request.headers.get("referer"),
             path=request.scope["path"],
-            router=request.state.routername,
             method=request.method,
             ipaddress=ipaddress,
             ipproxy=ipproxy,

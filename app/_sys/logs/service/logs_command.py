@@ -22,52 +22,32 @@ class LogsService:
         # self.logs_repo = LogsRepo()
         pass
 
-    def generateId(self, request: Request, key: str):
-        id_ = request.cookies.get(key)
-        if id_ is None:
-            id_ = "".join(random.choices(string.ascii_letters + string.digits, k=8))
-        return id_
-
-    def getIp(self, request: Request):
-        ipaddress = request.client.host
-        ipproxy = ""
-        try:
-            if request.headers.get("X-Real-IP") is not None:
-                ipaddress = request.headers.get("X-Real-IP")
-                ipproxy = request.client.host
-        except:
-            pass
-        return ipaddress, ipproxy
-
     async def start(self, request: Request):
-        try:
-            routername = request.scope["route"].name
-        except:
-            routername = ""
-
-        channel = ""
-        clientId = ""
-        if "api" in routername:
-            channel = "api"
-        if "page" in routername:
-            channel = "page"
-            clientId = self.generateId(request, config.CLIENT_KEY)
-
-        request.state.islogsave = True
-        request.state.clientId = clientId
-        request.state.appchannel = channel
-        request.state.routername = routername
+        if request.user.channel == "page":
+            if request.user.client_id == None:
+                request.user.client_id = "".join(random.choices(string.ascii_letters + string.digits, k=random.randint(3, 6)))
+            if request.user.session_id == None:
+                request.user.session_id = "".join(random.choices(string.ascii_letters + string.digits, k=random.randint(3, 6)))
 
         self.data_created = Logs.create(request=request)
 
         return request
 
     def finish(self, request: Request, response: Response):
-        self.data_created.user = request.user.id
+        try:
+            routername = request.scope["route"].name
+        except:
+            if "static" in request.scope["path"]:
+                routername = "static"
+            else:
+                routername = ""
+        self.data_created.router = routername
+        self.data_created.user = request.user.username
         self.data_created.status_code = response.status_code
         self.data_created.process_time = time.time() - self.data_created.startTime
-        if self.data_created.channel == "page":
-            response.set_cookie(key=config.CLIENT_KEY, value=self.data_created.client_id)
 
-        if request.state.islogsave and "/static/" not in self.data_created.path:
+        if self.data_created.channel == "page":
+            response.set_cookie(key=config.CLIENT_KEY, value=request.user.client_id)
+
+        if request.user.channel != "page_js" or request.user.channel != "static":
             threading.Thread(target=LogsRepo().save(self.data_created)).start()
