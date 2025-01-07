@@ -4,12 +4,12 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
         },
-        "paging": false,
+        "paging": true,
         "lengthChange": false,
         "searching": false,
         "ordering": true,
@@ -44,11 +44,11 @@ $(document).ready(function () {
     });
 
     $("#btnTambah").on("click", function () {
-        window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/add';
+        window.location.href = '{{prefix_url_post}}/add';
     });
 
     $("#table_").on("click", '.btnEdit', function () {
-        window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
+        window.location.href = '{{prefix_url_post}}/' + $(this).parents('tr').attr('id');
     });
 
     $("#table_").on("click", '.btnDelete', function () {

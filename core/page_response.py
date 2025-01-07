@@ -25,29 +25,26 @@ class PageResponse:
 
     def request(self, req: Request, res: Response, PathCheck: str = None):
         self.req = req
-        # print(req.scope["route"])
-        # print("log channel ", self.req.user.channel)
-        # print(req.scope["route"].__dict__)
-        # self.user = user
         # self.sidemenu = get_menus(1, user.id, req.scope["route"].name)
 
-        print("req_response = ", req.user)
+        self.initContext(req.user.client_id, "-")
+        return req
 
-        if PathCheck is not None:
-            path_check = PathCheck.split(".")
-            if len(path_check) == 3:
-                if path_check[2] != config.APP_VERSION:
-                    raise HTTPException(status_code=404)
-                if path_check[0] != req.user.client_id:
-                    raise HTTPException(status_code=404)
+        # if PathCheck is not None:
+        #     path_check = PathCheck.split(".")
+        #     if len(path_check) == 3:
+        #         if path_check[2] != config.APP_VERSION:
+        #             raise HTTPException(status_code=404)
+        #         if path_check[0] != req.user.client_id:
+        #             raise HTTPException(status_code=404)
 
-            self.initContext(path_check[0], path_check[1])
-        else:
+        #     self.initContext(path_check[0], path_check[1])
+        # else:
 
-            # if not config.SESSION_DISABLE:
-            #     thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
-            #     thread.start()
-            self.initContext(req.user.client_id, req.user.session_id)
+        #     # if not config.SESSION_DISABLE:
+        #     #     thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
+        #     #     thread.start()
+        #     self.initContext(req.user.client_id, req.user.session_id)
 
         return req
 
@@ -55,7 +52,6 @@ class PageResponse:
         self.context[key] = value
 
     def initContext(self, client_id, session_id):
-        pass
         self.context = {}
         self.addContext("prefix_url", self.prefix_url)
         self.addContext("prefix_url_js", self.prefix_url + "/" + client_id + "." + session_id + "." + config.APP_VERSION)

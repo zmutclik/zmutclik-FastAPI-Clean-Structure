@@ -68,7 +68,7 @@ class UserSQLRepo(UserRepo):
 
     async def save(self, user: User) -> User:
         try:
-            await session.add(user)
+            session.add(user)
             await session.commit()
             await session.refresh(user)
             return user

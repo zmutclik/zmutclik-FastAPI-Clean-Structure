@@ -15,18 +15,20 @@ class UserCommandService:
 
     async def create_user(
         self,
+        created_user: str,
         username: str,
         email: str,
         nohp: str,
         full_name: str,
-        password1: str,
-        password2: str,
-        privileges: list[int],
+        password1: str = None,
+        password2: str = None,
+        privileges: list[int] = [],
     ) -> UserSchema:
         if await self.user_repo.get_by(username, email, nohp):
             raise DuplicateEmailOrNicknameOrNoHPException
 
         data_create = User.create(
+            created_user=created_user,
             username=username,
             email=email,
             nohp=nohp,
@@ -54,10 +56,12 @@ class UserCommandService:
     async def update_user(
         self,
         user_id: int,
+        username: Union[str, None],
         email: Union[str, None],
         nohp: Union[str, None],
         full_name: Union[str, None],
-        privileges: list[int],
+        disabled: Union[bool, None],
+        privileges: list[int] = [],
     ) -> UserSchema:
         data_get = await self.user_repo.get(user_id)
         if not data_get:
@@ -65,13 +69,17 @@ class UserCommandService:
 
         updates = {}
         if full_name:
+            updates["username"] = username
+        if full_name:
             updates["full_name"] = full_name
         if email:
             updates["email"] = email
         if nohp:
             updates["nohp"] = nohp
+        if disabled is not None:
+            updates["disabled"] = disabled
 
-        data_updated = await self.user_repo.update(data_get, updates)
+        data_updated = await self.user_repo.update(data_get, **updates)
 
         await self.user_privilege_repo.delete_in_user(user_id=user_id)
         for item in privileges:
@@ -81,10 +89,9 @@ class UserCommandService:
 
         return data_updated
 
-    
-    async def delete_user(self, user_id: int,username:str) -> None:
+    async def delete_user(self, user_id: int, username: str) -> None:
         data_get = await self.user_repo.get(user_id)
         if not data_get:
             raise UserNotFoundException
-        
+
         await self.user_repo.delete(data_get, username)

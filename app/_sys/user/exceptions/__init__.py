@@ -1,4 +1,9 @@
-from .user import DuplicateEmailOrNicknameOrNoHPException, PasswordDoesNotMatchException, UserNotFoundException, UserNotActiveException
+from .user import (
+    DuplicateEmailOrNicknameOrNoHPException,
+    PasswordDoesNotMatchException,
+    UserNotFoundException,
+    UserNotActiveException,
+)
 
 __all__ = [
     "DuplicateEmailOrNicknameOrNoHPException",

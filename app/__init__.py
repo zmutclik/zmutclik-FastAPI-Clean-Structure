@@ -79,7 +79,7 @@ def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyMiddlewareCore)
     app.add_middleware(SQLAlchemyMiddleware)
     app.add_middleware(SQLAlchemyMiddlewareLogs)
-    app.add_middleware(LogsMiddleware)
+    # app.add_middleware(LogsMiddleware)
     app.add_middleware(
         AuthenticationMiddleware,
         backend=AuthBackend(),

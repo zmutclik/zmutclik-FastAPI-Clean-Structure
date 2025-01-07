@@ -3,6 +3,7 @@ var form_ = $("#form_").validate({
         full_name: { required: true },
         username: { required: true },
         disabled: { required: true },
+        nohp: { required: true },
         email: {
             required: true,
             email: true,
@@ -37,7 +38,7 @@ $(document).ready(function () {
                 "full_name": $("#form_ input[name='full_name']").val(),
                 "username": $("#form_ input[name='username']").val(),
                 "email": $("#form_ input[name='email']").val(),
-                "limit_expires": $("#form_ input[name='limit_expires']").val(),
+                "nohp": $("#form_ input[name='nohp']").val(),
                 "disabled": $("#form_ select[name='disabled']").val(),
                 "userScopes": $('input[name="userScopes"]:checked').map(function () {
                     return $(this).val();
@@ -50,25 +51,30 @@ $(document).ready(function () {
                     idU = response.data.id;
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '{{prefix_url_post}}/' + idU;
                         });
                 })
                 .catch(function (error) {
-                    if (error.status == 401 || error.status == 400) {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "error",
-                            title: error.response.data.detail,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                    if (error.status == 422) {
-                        de = {}
-                        $.each(error.response.data.detail, function (i, v) {
-                            de[v.loc[1]] = v["msg"];
-                        });
-                        form_.showErrors(de);
+                    switch (error.response.data.error_code) {
+                        case 422:
+                            de = {}
+                            $.each(error.response.data.detail, function (i, v) {
+                                console.log(v);
+                                de[v.loc[1]] = v["message"];
+                            });
+                            console.log(de);
+
+                            form_.showErrors(de);
+                            break;
+                        default:
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "error",
+                                title: error.response.data.error_code + " : " + error.response.data.message,
+                            }).then((result) => {
+                                if (error.response.data.error_code in [10000, 10001, 10002])
+                                    window.location.reload(true);
+                            });
                     }
                 })
                 .finally(() => {

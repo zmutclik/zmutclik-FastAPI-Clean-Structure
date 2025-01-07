@@ -21,11 +21,11 @@ class User(Base, TimestampLogMixin):
     __tablename__ = "_user"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    username = Column(Unicode(32), unique=True)
-    email = Column(Unicode(255), unique=True)
-    nohp = Column(Unicode(32), unique=True)
-    full_name = Column(Unicode(255))
-    hashed_password = Column(Unicode(255))
+    username = Column(String(32), unique=True)
+    email = Column(String(255), unique=True)
+    nohp = Column(String(32), unique=True)
+    full_name = Column(String(255))
+    hashed_password = Column(String(255), nullable=True)
     disabled = Column(Boolean, default=False)
 
     PRIVILEGE = relationship("UserPrivilege", back_populates="USER")
@@ -44,6 +44,7 @@ class User(Base, TimestampLogMixin):
     @classmethod
     def create(
         cls,
+        created_user: str,
         username: str,
         password1: str,
         password2: str,
@@ -54,12 +55,15 @@ class User(Base, TimestampLogMixin):
         if not cls._is_password_match(password1=password1, password2=password2):
             raise PasswordDoesNotMatchException
 
+        password = None if password1 is None else get_password_hash(password1)
+
         return cls(
+            created_user=created_user,
             username=username,
             email=email,
             nohp=nohp,
             full_name=full_name,
-            hashed_password=get_password_hash(password1),
+            hashed_password=password,
         )
 
     def change_password(self, password1: str, password2: str) -> None:
