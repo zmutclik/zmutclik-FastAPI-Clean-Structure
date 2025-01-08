@@ -5,39 +5,44 @@ from fastapi import Request
 from fastapi.openapi.models import APIKey, APIKeyIn
 from fastapi.security.base import SecurityBase
 
-from core.exceptions import CustomException, UnauthorizedException
+from core.exceptions import CustomException, UnauthorizedException, RequiresLoginException
 
 
 class PermissionDependency(SecurityBase):
-    def __init__(self, permissions: List):
+    def __init__(self, permissions: List, exception=UnauthorizedException):
         self.permissions = permissions
         self.model: APIKey = APIKey(**{"in": APIKeyIn.header}, name="Authorization")
         self.scheme_name = self.__class__.__name__
+        self.exception = exception
 
     async def __call__(self, request: Request):
         for permission in self.permissions:
             cls = permission()
             if not await cls.has_permission(request=request):
-                raise cls.exception
+                raise self.exception
 
 
 class RoleDependency(SecurityBase):
-    exception = UnauthorizedException
-
-    def __init__(self, required_roles: list[str]):
+    def __init__(self, required_roles: str, exception=UnauthorizedException):
         self.required_roles = required_roles
+        self.model: APIKey = APIKey(**{"in": APIKeyIn.header}, name="Authorization")
+        self.scheme_name = self.__class__.__name__
+        self.exception = exception
 
     async def __call__(self, request: Request):
-        for permission in self.permissions:
-            cls = permission()
-            if not await cls.has_permission(request=request):
-                raise cls.exception
+        if not self.required_roles in request.user.roles:
+            raise self.exception
 
-    async def has_permission(self, request: Request) -> bool:
-        return self.required_roles in request.user.roles
+
+class ScopeDependency(SecurityBase):
+    def __init__(self, required_scopes: list[str], exception=UnauthorizedException):
+        self.required_scopes = required_scopes
+        self.model: APIKey = APIKey(**{"in": APIKeyIn.header}, name="Authorization")
+        self.scheme_name = self.__class__.__name__
+        self.exception = exception
 
     async def __call__(self, request: Request):
-        if not await self.has_permission(request):
+        if not all(roles in request.user.scopes for roles in self.required_scopes):
             raise self.exception
 
 
@@ -50,35 +55,5 @@ class BasePermission(ABC):
 
 
 class IsAuthenticated(BasePermission):
-    exception = UnauthorizedException
-
     async def has_permission(self, request: Request) -> bool:
         return request.user.username is not None
-
-
-class HasRole(BasePermission):
-    exception = UnauthorizedException
-
-    def __init__(self, required_roles: list[str]):
-        self.required_roles = required_roles
-
-    async def has_permission(self, request: Request) -> bool:
-        user_roles = request.user.roles
-        if not user_roles:
-            return False
-
-        return all(roles in user_roles for roles in self.required_roles)
-
-
-class HasScope(BasePermission):
-    exception = UnauthorizedException
-
-    def __init__(self, required_scopes: list[str]):
-        self.required_scopes = required_scopes
-
-    async def has_permission(self, request: Request) -> bool:
-        user_scopes = request.user.scopes
-        if not user_scopes:
-            return False
-
-        return all(scope in user_scopes for scope in self.required_scopes)
