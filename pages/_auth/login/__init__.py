@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from .login import login_router
+from .login import router
 
-login_routers = APIRouter()
-login_routers.include_router(login_router, tags=["AUTH"])
+login_router = APIRouter()
+login_router.include_router(router, tags=["AUTH"])
 
 
-__all__ = ["login_routers"]
+__all__ = ["login_router"]

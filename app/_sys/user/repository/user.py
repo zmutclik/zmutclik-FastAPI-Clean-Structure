@@ -14,7 +14,7 @@ from app._sys.user.domain import User
 
 class UserRepo:
     __metaclass__ = ABCMeta
-    
+
     @abstractmethod
     async def get(self, user_id: int) -> Optional[User]:
         pass
@@ -38,6 +38,10 @@ class UserRepo:
 
     @abstractmethod
     async def delete(self, user: User, deleted_user: str) -> None:
+        pass
+
+    @abstractmethod
+    async def verify_password(self, user: User, hashed_password: str) -> bool:
         pass
 
 
@@ -97,3 +101,6 @@ class UserSQLRepo(UserRepo):
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
+
+    async def verify_password(self, user: User, plain_password: str) -> bool:
+        return

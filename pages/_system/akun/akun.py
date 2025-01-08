@@ -52,7 +52,7 @@ async def get_datatables(params: dict[str, Any], req: page_req) -> dict[str, Any
     return await UserQueryService().datatable(params=params)
 
 
-@akun_router.post("/{PathCheck}", status_code=201, response_model=AkunResponse)
+@akun_router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, deprecated=True)
 async def create_user(dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user_by(username=dataIn.username, email=dataIn.email, nohp=dataIn.nohp)
     if data_get is not None:

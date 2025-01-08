@@ -46,3 +46,6 @@ class UserQueryService:
             # callbacks=callbacks,
         )
         return datatable.output_result()
+
+    async def verify_password(self, user: User, plain_password: str) -> bool:
+        return user.verify_password(plain_password)

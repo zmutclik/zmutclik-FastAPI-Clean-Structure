@@ -8,7 +8,7 @@ pages_app = FastAPI(
     title=config.APP_NAME + " [ Pages ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
-    swagger_ui_parameters={"defaultModelsExpandDepth": -1},
+    # swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     redoc_url=None,
 )
 

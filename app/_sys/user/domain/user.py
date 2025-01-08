@@ -71,3 +71,6 @@ class User(Base, TimestampLogMixin):
             raise PasswordDoesNotMatchException
 
         self.password = get_password_hash(password1)
+
+    def verify_password(self, plain_password: str) -> bool:
+        return pwd_context.verify(plain_password, self.hashed_password)
