@@ -16,6 +16,8 @@ class Scope(Base, TimestampLogMixin):
     scope = Column(String(64), unique=True)
     desc = Column(String(255))
 
+    USERSCOPE = relationship("UserScope", back_populates="SCOPE")
+
     @classmethod
     def create(cls, scope: str, desc: str) -> "Scope":
         return cls(scope=scope, desc=desc)

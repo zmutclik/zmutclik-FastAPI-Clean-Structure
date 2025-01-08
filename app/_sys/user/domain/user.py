@@ -29,6 +29,7 @@ class User(Base, TimestampLogMixin):
     disabled = Column(Boolean, default=False)
 
     PRIVILEGE = relationship("UserPrivilege", back_populates="USER")
+    SCOPE = relationship("UserScope", back_populates="USER")
 
     @hybrid_property
     def list_privilege(self) -> list[int]:
