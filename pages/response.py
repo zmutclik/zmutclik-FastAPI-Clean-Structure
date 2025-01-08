@@ -1,8 +1,12 @@
 import os
+from datetime import datetime
 from typing import Annotated
+from pydantic import BaseModel
 from fastapi import Request, HTTPException, Depends, Response
 from fastapi.templating import Jinja2Templates
 from core import config
+from app._sys.user.schema import UserSchema
+from app._sys.user.service import UserQueryService
 
 root_path = os.getcwd()
 
@@ -14,6 +18,12 @@ def global_context():
     }
 
 
+async def depend_user(request: Request):
+    print(request.user)
+    print(request.scope["route"].name)
+    return await UserQueryService().get_user_by(username=request.user.username)
+
+
 class PageResponse:
     def __init__(self, path_template: str, prefix_url: str):
         self.templates = Jinja2Templates(directory="./")
@@ -23,10 +33,9 @@ class PageResponse:
         self.user = None
         self.prefix_url = "/page" + prefix_url
 
-    def request(self, request: Request, response: Response, PathCheck: str = None):
+    async def request(self, request: Request, response: Response, PathCheck: str = None):
         # self.initContext(request, request.user.client_id, "-")
         # return request
-
         if PathCheck is not None:
             path_check = PathCheck.split(".")
             if len(path_check) == 3:
@@ -55,7 +64,7 @@ class PageResponse:
         self.addContext("prefix_url", self.prefix_url)
         self.addContext("prefix_url_js", self.prefix_url + "/" + client_id + "." + session_id + "." + config.APP_VERSION)
         self.addContext("prefix_url_post", self.prefix_url + "/" + client_id + "." + session_id)
-        # self.addData("TOKEN_KEY", config.TOKEN_KEY)
+        self.addContext("TOKEN_KEY", config.COOKIES_KEY)
         self.addContext("segment", request.scope["route"].name)
         self.addContext("userloggedin", request.user)
         # self.addData("sidemenu", self.sidemenu)

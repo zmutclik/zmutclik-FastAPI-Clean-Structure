@@ -5,6 +5,8 @@ import string
 
 from app._sys.user.domain import User, UserPrivilege, UserScope
 from app._sys.user.repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
+from app._sys.privilege.repository import PrivilegeRepo
+from app._sys.scope.repository import ScopeRepo
 from app._sys.user.schema import UserSchema
 from app._sys.user.exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 from core import config
@@ -13,14 +15,32 @@ from core.fastapi.service import token_create
 
 class UserAuthService:
     @inject()
-    def __init__(self, user_repo: UserRepo, user_privilege_repo: UserPrivilegeRepo, user_scope_repo: UserScopeRepo):
+    def __init__(
+        self,
+        user_repo: UserRepo,
+        user_privilege_repo: UserPrivilegeRepo,
+        user_scope_repo: UserScopeRepo,
+        privilege_repo: PrivilegeRepo,
+        scope_repo: ScopeRepo,
+    ):
         self.user_repo = user_repo
         self.user_privilege_repo = user_privilege_repo
         self.user_scope_repo = user_scope_repo
+        self.privilege_repo = privilege_repo
+        self.scope_repo = scope_repo
 
     async def token_create(self, user: User) -> str:
-        roles = await self.user_privilege_repo.get_list_by_user(user.id)
-        scopes = await self.user_scope_repo.get_list_by_user(user.id)
+        roles = []
+        scopes = []
+        roles_id = await self.user_privilege_repo.get_by_user(user.id)
+        scopes_id = await self.user_scope_repo.get_by_user(user.id)
+
+        for item in roles_id:
+            dataget = await self.privilege_repo.get_by_id(item.privilege_id)
+            roles.append(dataget.privilege)
+        for item in scopes_id:
+            dataget = await self.scope_repo.get_by_id(item.scope_id)
+            scopes.append(dataget.scope)
 
         access_token = token_create(
             data={

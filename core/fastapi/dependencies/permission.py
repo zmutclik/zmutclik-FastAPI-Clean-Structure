@@ -21,6 +21,26 @@ class PermissionDependency(SecurityBase):
                 raise cls.exception
 
 
+class RoleDependency(SecurityBase):
+    exception = UnauthorizedException
+
+    def __init__(self, required_roles: list[str]):
+        self.required_roles = required_roles
+
+    async def __call__(self, request: Request):
+        for permission in self.permissions:
+            cls = permission()
+            if not await cls.has_permission(request=request):
+                raise cls.exception
+
+    async def has_permission(self, request: Request) -> bool:
+        return self.required_roles in request.user.roles
+
+    async def __call__(self, request: Request):
+        if not await self.has_permission(request):
+            raise self.exception
+
+
 class BasePermission(ABC):
     exception = CustomException
 
@@ -39,7 +59,7 @@ class IsAuthenticated(BasePermission):
 class HasRole(BasePermission):
     exception = UnauthorizedException
 
-    def __init__(self, required_roles: List[str]):
+    def __init__(self, required_roles: list[str]):
         self.required_roles = required_roles
 
     async def has_permission(self, request: Request) -> bool:
@@ -53,7 +73,7 @@ class HasRole(BasePermission):
 class HasScope(BasePermission):
     exception = UnauthorizedException
 
-    def __init__(self, required_scopes: List[str]):
+    def __init__(self, required_scopes: list[str]):
         self.required_scopes = required_scopes
 
     async def has_permission(self, request: Request) -> bool:

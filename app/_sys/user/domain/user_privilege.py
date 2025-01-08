@@ -18,7 +18,7 @@ class UserPrivilege(Base):
     PRIVILEGE = relationship("Privilege", back_populates="USERPRIVILEGE")
 
     @hybrid_property
-    def group(self) -> str:
+    def privilege(self) -> str:
         return self.PRIVILEGE.privilege
 
     @hybrid_property

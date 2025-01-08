@@ -4,8 +4,8 @@ from pydantic import BaseModel
 
 class CurrentUser(BaseModel):
     username: str = None
-    roles: list[int] = []
-    scopes: list[int] = []
+    roles: list[str] = []
+    scopes: list[str] = []
     channel: str = None
     client_id: Optional[str] = None
     session_id: Optional[str] = None

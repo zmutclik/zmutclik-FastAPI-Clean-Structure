@@ -3,7 +3,8 @@ from time import sleep
 from typing import Annotated, Any
 from fastapi import APIRouter, Request, Response, HTTPException, Depends, status
 from fastapi.responses import HTMLResponse
-from core import PageResponse, config
+from core import config
+from pages.response import PageResponse
 from app._sys.user.service import UserQueryService, UserAuthService
 from app._sys.user.exceptions import UserNotFoundException, UserNotActiveException, PasswordDoesNotMatchException
 from pages._auth.login.request import LoginRequest

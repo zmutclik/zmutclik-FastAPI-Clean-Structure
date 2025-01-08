@@ -4,12 +4,13 @@ from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Request, Response, HTTPException, Depends, status
 from fastapi.responses import HTMLResponse
-from core import PageResponse
+from pages.response import PageResponse
 from app._sys.user.service import UserQueryService, UserCommandService
 from app._sys.user.exceptions import (
     UserNotFoundException,
     DuplicateEmailOrNicknameOrNoHPException,
 )
+from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated
 from pages._system.akun.request import AkunRequest
 from pages._system.akun.response import AkunResponse
 from fastapi.exceptions import RequestValidationError
@@ -24,7 +25,14 @@ class PathJS(str, Enum):
     formJs = "form.js"
 
 
-@akun_router.get("", response_class=HTMLResponse)
+@akun_router.get(
+    "",
+    response_class=HTMLResponse,
+    dependencies=[
+        Depends(PermissionDependency([IsAuthenticated])),
+        Depends(RoleDependency("user")),
+    ],
+)
 async def page_akun(req: page_req):
     return page.response(req, "/html/index.html")
 

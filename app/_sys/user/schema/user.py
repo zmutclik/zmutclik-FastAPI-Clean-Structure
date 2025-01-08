@@ -7,14 +7,15 @@ from .user_scope import UserScopeSchema
 
 
 class UserSchema(BaseModel):
-    id: int = Field(None, description="ID")
-    username: str = Field(None, description="Username")
-    email: str = Field(None, description="Email")
-    nohp: str = Field(None, description="No HP")
-    full_name: str = Field(None, description="Full Name")
-    disabled: bool = Field(None, description="Is Disabled")
-    created_at: datetime = Field(None, description="Create Time")
-    updated_at: datetime = Field(None, description="Update Time")
+    id: int
+    username: str
+    email: str
+    nohp: str
+    full_name: str
+    disabled: bool
+    created_at: datetime
+    updated_at: datetime
 
     # PRIVILEGE: Optional[list[UserPrivilegeSchema]]
     # SCOPE: Optional[list[UserScopeSchema]]
+

@@ -28,7 +28,7 @@ class UserPrivilegeRepo:
         pass
 
     @abstractmethod
-    async def get_list_by_user(self, user_id: int) -> list[str]:
+    async def get_list_by_user(self, user_id: int) -> list[int]:
         pass
 
     @abstractmethod
@@ -64,19 +64,13 @@ class UserPrivilegeSQLRepo(UserPrivilegeRepo):
         return result.scalars().first()
 
     async def get_by_user(self, user_id: int) -> list[UserPrivilege]:
-        result = await session.execute(
-            select(UserPrivilege).where(
-                or_(
-                    UserPrivilege.user_id == user_id,
-                )
-            )
-        )
+        result = await session.execute(select(UserPrivilege).where(UserPrivilege.user_id == user_id))
         return result.scalars().all()
 
     async def get_list_by_user(self, user_id: int) -> list[int]:
         privileges = []
         for item in await self.get_by_user(user_id):
-            privileges.append(item.privilege_id)
+            privileges.append(item.id)
         return privileges
 
     async def save(self, user_privilege: UserPrivilege) -> UserPrivilege:
