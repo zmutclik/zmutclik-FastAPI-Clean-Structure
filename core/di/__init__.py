@@ -7,7 +7,8 @@ from app._sys.menutype.repository import MenuTypeRepo, MenuTypeSQLRepo
 from app._sys.privilege.repository import PrivilegeRepo, PrivilegeSQLRepo
 from app._sys.scope.repository import ScopeRepo, ScopeSQLRepo
 from app._sys.sysrepo.repository import SysRepoRepo, SysRepoSQLRepo
-from app._sys.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo
+from app._sys.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo, UserScopeRepo, UserScopeSQLRepo
+
 
 def init_di():
     provider = Provider()
@@ -21,4 +22,5 @@ def init_di():
     provider.bind(SysRepoRepo, SysRepoSQLRepo)
     provider.bind(UserRepo, UserSQLRepo)
     provider.bind(UserPrivilegeRepo, UserPrivilegeSQLRepo)
+    provider.bind(UserScopeRepo, UserScopeSQLRepo)
     configure(provider=provider)

@@ -1,17 +1,18 @@
 from typing import Union
 from pythondi import inject
 
-from app._sys.user.domain import User, UserPrivilege
-from app._sys.user.repository import UserRepo, UserPrivilegeRepo
+from app._sys.user.domain import User, UserPrivilege, UserScope
+from app._sys.user.repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from app._sys.user.schema import UserSchema
 from app._sys.user.exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 
 
 class UserCommandService:
     @inject()
-    def __init__(self, user_repo: UserRepo, user_privilege_repo: UserPrivilegeRepo):
+    def __init__(self, user_repo: UserRepo, user_privilege_repo: UserPrivilegeRepo, user_scope_repo: UserScopeRepo):
         self.user_repo = user_repo
         self.user_privilege_repo = user_privilege_repo
+        self.user_scope_repo = user_scope_repo
 
     async def create_user(
         self,
@@ -22,7 +23,8 @@ class UserCommandService:
         full_name: str,
         password1: str = None,
         password2: str = None,
-        privileges: list[int] = [],
+        privileges: list[int] = [1],
+        scopes: list[int] = [1],
     ) -> UserSchema:
         if await self.user_repo.get_by(username, email, nohp):
             raise DuplicateEmailOrNicknameOrNoHPException
@@ -41,6 +43,10 @@ class UserCommandService:
         for item in privileges:
             user_privilege = UserPrivilege.create(data_saved.id, item)
             await self.user_privilege_repo.save(user_privilege=user_privilege)
+
+        for item in scopes:
+            user_scope = UserScope.create(data_saved.id, item)
+            await self.user_scope_repo.save(user_scope=user_scope)
 
         await self.user_privilege_repo.commit()
 
@@ -62,6 +68,7 @@ class UserCommandService:
         full_name: Union[str, None],
         disabled: Union[bool, None],
         privileges: list[int] = [],
+        scopes: list[int] = [],
     ) -> UserSchema:
         data_get = await self.user_repo.get(user_id)
         if not data_get:
@@ -85,6 +92,11 @@ class UserCommandService:
         for item in privileges:
             user_privilege = UserPrivilege.create(user_id, item)
             await self.user_privilege_repo.save(user_privilege=user_privilege)
+
+        for item in scopes:
+            user_scope = UserScope.create(user_id, item)
+            await self.user_scope_repo.save(user_scope=user_scope)
+
         await self.user_privilege_repo.commit()
 
         return data_updated

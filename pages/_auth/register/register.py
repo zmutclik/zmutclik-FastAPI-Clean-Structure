@@ -17,16 +17,14 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def page_register(
-    req: page_req,
-):
+async def page_register(req: page_req):
     print("page[login]requser ", req.user)
-    return page.response("/html/register.html")
+    return page.response(req, "/html/register.html")
 
 
 @router.get("/{PathCheck}/register.js")
 async def page_js_register(req: page_req):
-    return page.response("/html/register.js")
+    return page.response(req, "/html/register.js")
 
 
 @router.post("/{PathCheck}/register", status_code=201)

@@ -24,7 +24,11 @@ class UserScopeRepo:
         pass
 
     @abstractmethod
-    async def get_by_user(self, user_id: int) -> List[UserScope]:
+    async def get_by_user(self, user_id: int) -> list[UserScope]:
+        pass
+
+    @abstractmethod
+    async def get_list_by_user(self, user_id: int) -> list[str]:
         pass
 
     @abstractmethod
@@ -59,7 +63,7 @@ class UserScopeSQLRepo(UserScopeRepo):
         )
         return result.scalars().first()
 
-    async def get_by_user(self, user_id: int) -> List[UserScope]:
+    async def get_by_user(self, user_id: int) -> list[UserScope]:
         result = await session.execute(
             select(UserScope).where(
                 or_(
@@ -67,7 +71,13 @@ class UserScopeSQLRepo(UserScopeRepo):
                 )
             )
         )
-        return result.scalars().first()
+        return result.scalars().all()
+
+    async def get_list_by_user(self, user_id: int) -> list[int]:
+        scopes = []
+        for item in await self.get_by_user(user_id):
+            scopes.append(item.id)
+        return scopes
 
     async def save(self, user_scope: UserScope) -> UserScope:
         try:

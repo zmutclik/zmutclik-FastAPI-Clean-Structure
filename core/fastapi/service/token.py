@@ -19,15 +19,15 @@ def token_create(data: dict, expires_delta: Union[timedelta, None] = None):
     return encoded_jwt
 
 
-def user_access_token(db, userName, scopeAuth, scopeUser, timeout: int):
-    scopesPass = ["default"]
-    for item in scopeAuth:
-        if item not in scopeUser:
-            raise InactiveUserScopeException("Inactive user scope : " + item)
-        else:
-            scopesPass.append(item)
-    access_token = token_create(
-        data={"sub": userName, "scopes": scopesPass},
-        expires_delta=timedelta(minutes=timeout),
-    )
-    return access_token
+# def user_access_token(db, userName, scopeAuth, scopeUser, timeout: int):
+#     scopesPass = ["default"]
+#     for item in scopeAuth:
+#         if item not in scopeUser:
+#             raise InactiveUserScopeException("Inactive user scope : " + item)
+#         else:
+#             scopesPass.append(item)
+#     access_token = token_create(
+#         data={"sub": userName, "scopes": scopesPass},
+#         expires_delta=timedelta(minutes=timeout),
+#     )
+#     return access_token

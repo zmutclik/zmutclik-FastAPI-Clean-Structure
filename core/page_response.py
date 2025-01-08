@@ -23,44 +23,41 @@ class PageResponse:
         self.user = None
         self.prefix_url = "/page" + prefix_url
 
-    def request(self, req: Request, res: Response, PathCheck: str = None):
-        self.req = req
+    def request(self, request: Request, response: Response, PathCheck: str = None):
+        # self.initContext(request, request.user.client_id, "-")
+        # return request
+
+        if PathCheck is not None:
+            path_check = PathCheck.split(".")
+            if len(path_check) == 3:
+                if path_check[2] != config.APP_VERSION:
+                    raise HTTPException(status_code=404)
+                if path_check[0] != request.user.client_id:
+                    raise HTTPException(status_code=404)
+
+            self.initContext(request, path_check[0], path_check[1])
+        else:
+
+            # if not config.SESSION_DISABLE:
+            #     thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
+            #     thread.start()
+            self.initContext(request, request.user.client_id, request.user.session_id)
+
         # self.sidemenu = get_menus(1, user.id, req.scope["route"].name)
 
-        self.initContext(req.user.client_id, "-")
-        return req
-
-        # if PathCheck is not None:
-        #     path_check = PathCheck.split(".")
-        #     if len(path_check) == 3:
-        #         if path_check[2] != config.APP_VERSION:
-        #             raise HTTPException(status_code=404)
-        #         if path_check[0] != req.user.client_id:
-        #             raise HTTPException(status_code=404)
-
-        #     self.initContext(path_check[0], path_check[1])
-        # else:
-
-        #     # if not config.SESSION_DISABLE:
-        #     #     thread = threading.Thread(target=SessionRepository().updateEndTime, args=(req.state.sessionId, req.scope["path"]))
-        #     #     thread.start()
-        #     self.initContext(req.user.client_id, req.user.session_id)
-
-        return req
+        return request
 
     def addContext(self, key, value):
         self.context[key] = value
 
-    def initContext(self, client_id, session_id):
+    def initContext(self, request: Request, client_id, session_id):
         self.context = {}
         self.addContext("prefix_url", self.prefix_url)
         self.addContext("prefix_url_js", self.prefix_url + "/" + client_id + "." + session_id + "." + config.APP_VERSION)
         self.addContext("prefix_url_post", self.prefix_url + "/" + client_id + "." + session_id)
-        self.addContext("clientId", self.req.user.client_id)
-        self.addContext("sessionId", self.req.user.session_id)
         # self.addData("TOKEN_KEY", config.TOKEN_KEY)
-        self.addContext("segment", self.req.scope["route"].name)
-        self.addContext("userloggedin", self.req.user.username)
+        self.addContext("segment", request.scope["route"].name)
+        self.addContext("userloggedin", request.user)
         # self.addData("sidemenu", self.sidemenu)
         self.addContext("TOKEN_EXPIRED", (config.COOKIES_EXPIRED * 60 * 1000) - 2000)
 
@@ -70,9 +67,9 @@ class PageResponse:
         else:
             return "text/html"
 
-    def response(self, path: str):
+    def response(self, request: Request, path: str):
         return self.templates.TemplateResponse(
-            request=self.req,
+            request=request,
             name=self.path + path,
             media_type=self.media_type(path),
             context=self.context,

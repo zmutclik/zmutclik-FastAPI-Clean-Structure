@@ -33,7 +33,7 @@ class IsAuthenticated(BasePermission):
     exception = UnauthorizedException
 
     async def has_permission(self, request: Request) -> bool:
-        return request.user.id is not None
+        return request.user.username is not None
 
 
 class HasRole(BasePermission):

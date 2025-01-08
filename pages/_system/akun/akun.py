@@ -17,7 +17,6 @@ from fastapi.exceptions import RequestValidationError
 akun_router = APIRouter(prefix="/sys/akun")
 page = PageResponse(os.path.dirname(__file__), akun_router.prefix)
 page_req = Annotated[PageResponse, Depends(page.request)]
-# page_NoAuth = Annotated[PageResponse, Depends(page_response.pageDependsNonUser)]
 
 
 class PathJS(str, Enum):
@@ -27,23 +26,23 @@ class PathJS(str, Enum):
 
 @akun_router.get("", response_class=HTMLResponse)
 async def page_akun(req: page_req):
-    return page.response("/html/index.html")
+    return page.response(req, "/html/index.html")
 
 
 @akun_router.get("/{PathCheck}/add", response_class=HTMLResponse)
 async def page_akun(req: page_req):
-    return page.response("/html/form.html")
+    return page.response(req, "/html/form.html")
 
 
 @akun_router.get("/{PathCheck}/{id:int}", response_class=HTMLResponse)
 async def page_akun(id: int, req: page_req):
     page.addContext("data_user", await UserQueryService().get_user(id))
-    return page.response("/html/form.html")
+    return page.response(req, "/html/form.html")
 
 
 @akun_router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse)
 async def page_akunjs(req: page_req, pathFile: PathJS):
-    return page.response("/html/" + pathFile)
+    return page.response(req, "/html/" + pathFile)
 
 
 #######################################################################################################################

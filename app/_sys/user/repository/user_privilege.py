@@ -24,7 +24,11 @@ class UserPrivilegeRepo:
         pass
 
     @abstractmethod
-    async def get_by_user(self, user_id: int) -> List[UserPrivilege]:
+    async def get_by_user(self, user_id: int) -> list[UserPrivilege]:
+        pass
+
+    @abstractmethod
+    async def get_list_by_user(self, user_id: int) -> list[str]:
         pass
 
     @abstractmethod
@@ -59,7 +63,7 @@ class UserPrivilegeSQLRepo(UserPrivilegeRepo):
         )
         return result.scalars().first()
 
-    async def get_by_user(self, user_id: int) -> List[UserPrivilege]:
+    async def get_by_user(self, user_id: int) -> list[UserPrivilege]:
         result = await session.execute(
             select(UserPrivilege).where(
                 or_(
@@ -67,7 +71,13 @@ class UserPrivilegeSQLRepo(UserPrivilegeRepo):
                 )
             )
         )
-        return result.scalars().first()
+        return result.scalars().all()
+
+    async def get_list_by_user(self, user_id: int) -> list[int]:
+        privileges = []
+        for item in await self.get_by_user(user_id):
+            privileges.append(item.privilege_id)
+        return privileges
 
     async def save(self, user_privilege: UserPrivilege) -> UserPrivilege:
         try:

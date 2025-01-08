@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-class UserPrivilegeSchema(BaseModel):
+class UserScopeSchema(BaseModel):
     id: int
-    privilege: str
+    scope: str
     desc: str

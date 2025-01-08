@@ -59,15 +59,13 @@ class AuthBackend(AuthenticationBackend):
                 algorithms=[config.JWT_ALGORITHM],
                 options={"verify_exp": True},
             )
-            user_id = payload.get("sub")
             user_roles = payload.get("roles", [])
-            user_scopes = payload.get("scopes", [])
-            user_username = payload.get("username")
-            user_session_id = payload.get("session_id")
+            user_scopes = payload.get("permissions", [])
+            user_username = payload.get("sub")
+            user_session_id = payload.get("jti")
         except jwt.exceptions.PyJWTError:
             return False, current_user
 
-        current_user.id = user_id
         current_user.roles = user_roles
         current_user.scopes = user_scopes
         current_user.username = user_username
