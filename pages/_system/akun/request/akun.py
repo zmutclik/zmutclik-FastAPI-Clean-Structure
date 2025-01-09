@@ -8,3 +8,5 @@ class AkunRequest(BaseModel):
     nohp: str
     full_name: str
     disabled: bool
+    privileges: list[int]
+    scopes: list[int]

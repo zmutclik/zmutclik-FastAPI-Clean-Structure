@@ -11,22 +11,25 @@ from app._sys.scope.schema import ScopeSchema
 from app._sys.scope.exceptions import ScopeNotFoundException
 
 
-class PrivilegeQueryService:
+class ScopeQueryService:
     @inject()
     def __init__(self, scope_repo: ScopeRepo):
         self.scope_repo = scope_repo
 
     async def get_scope_by_id(self, scope_id: str) -> Optional[ScopeSchema]:
-        data_get = self.scope_repo.get_by_id(scope_id)
+        data_get = await self.scope_repo.get_by_id(scope_id)
         if not data_get:
             raise ScopeNotFoundException
         return data_get
 
     async def get_scope(self, scope: str) -> Optional[ScopeSchema]:
-        data_get = self.scope_repo.get(scope)
+        data_get = await self.scope_repo.get(scope)
         if not data_get:
             raise ScopeNotFoundException
         return data_get
+
+    async def get_scopes(self) -> list[ScopeSchema]:
+        return await self.scope_repo.get_scopes()
 
     async def datatable_scope(self, params: dict[str, Any]):
         query = select(Scope, Scope.id.label("DT_RowId")).where(Scope.deleted_at == None)

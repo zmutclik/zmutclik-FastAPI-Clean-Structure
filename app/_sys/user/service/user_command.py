@@ -93,11 +93,13 @@ class UserCommandService:
             user_privilege = UserPrivilege.create(user_id, item)
             await self.user_privilege_repo.save(user_privilege=user_privilege)
 
+        await self.user_scope_repo.delete_in_user(user_id=user_id)
         for item in scopes:
             user_scope = UserScope.create(user_id, item)
             await self.user_scope_repo.save(user_scope=user_scope)
 
         await self.user_privilege_repo.commit()
+        await self.user_scope_repo.commit()
 
         return data_updated
 

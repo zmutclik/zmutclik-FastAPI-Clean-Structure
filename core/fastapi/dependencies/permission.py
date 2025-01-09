@@ -23,14 +23,14 @@ class PermissionDependency(SecurityBase):
 
 
 class RoleDependency(SecurityBase):
-    def __init__(self, required_roles: str, exception=UnauthorizedException):
+    def __init__(self, required_roles: list[str], exception=UnauthorizedException):
         self.required_roles = required_roles
         self.model: APIKey = APIKey(**{"in": APIKeyIn.header}, name="Authorization")
         self.scheme_name = self.__class__.__name__
         self.exception = exception
 
     async def __call__(self, request: Request):
-        if not self.required_roles in request.user.roles:
+        if not all(roles in request.user.roles for roles in self.required_roles):
             raise self.exception
 
 
@@ -42,7 +42,7 @@ class ScopeDependency(SecurityBase):
         self.exception = exception
 
     async def __call__(self, request: Request):
-        if not all(roles in request.user.scopes for roles in self.required_scopes):
+        if not all(scopes in request.user.scopes for scopes in self.required_scopes):
             raise self.exception
 
 

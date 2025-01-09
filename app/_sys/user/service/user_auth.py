@@ -32,13 +32,13 @@ class UserAuthService:
     async def token_create(self, user: User) -> str:
         roles = []
         scopes = []
-        roles_id = await self.user_privilege_repo.get_by_user(user.id)
-        scopes_id = await self.user_scope_repo.get_by_user(user.id)
+        roles_by_id = await self.user_privilege_repo.get_by_user(user.id)
+        scope_by_id = await self.user_scope_repo.get_by_user(user.id)
 
-        for item in roles_id:
-            dataget = await self.privilege_repo.get_by_id(item.privilege_id)
+        for item in roles_by_id:
+            dataget = await self.privilege_repo.get_privilege_by_id(item.privilege_id)
             roles.append(dataget.privilege)
-        for item in scopes_id:
+        for item in scope_by_id:
             dataget = await self.scope_repo.get_by_id(item.scope_id)
             scopes.append(dataget.scope)
 

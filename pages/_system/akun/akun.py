@@ -1,41 +1,22 @@
 import os
-from time import sleep
 from enum import Enum
 from typing import Annotated, Any
-from fastapi import APIRouter, Request, Response, HTTPException, Depends, status
+from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from pages.response import PageResponse
 from app._sys.user.service import UserQueryService, UserCommandService
-from app._sys.user.exceptions import (
-    UserNotFoundException,
-    DuplicateEmailOrNicknameOrNoHPException,
-)
-from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
-from core.exceptions import RequiresLoginException
+from app._sys.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
+
 from pages._system.akun.request import AkunRequest
 from pages._system.akun.response import AkunResponse
 from fastapi.exceptions import RequestValidationError
 
-akun_router = APIRouter(prefix="/sys/akun")
-page = PageResponse(os.path.dirname(__file__), akun_router.prefix)
-page_req = Annotated[PageResponse, Depends(page.request)]
+from app._sys.privilege.service import PrivilegeQueryService
+from app._sys.scope.service import ScopeQueryService
 
-depend_redirect_url = "/page/sys/akun"
-depend_r = [
-    Depends(PermissionDependency(permissions=[IsAuthenticated], exception=RequiresLoginException)),
-    Depends(RoleDependency("user", exception=RequiresLoginException(depend_redirect_url))),
-    Depends(ScopeDependency(["read"], exception=RequiresLoginException(depend_redirect_url))),
-]
-depend_w = [
-    Depends(PermissionDependency(permissions=[IsAuthenticated])),
-    Depends(RoleDependency("user", exception=RequiresLoginException(depend_redirect_url))),
-    Depends(ScopeDependency(["read", "write"], exception=RequiresLoginException(depend_redirect_url))),
-]
-depend_d = [
-    Depends(PermissionDependency(permissions=[IsAuthenticated])),
-    Depends(RoleDependency("user", exception=RequiresLoginException(depend_redirect_url))),
-    Depends(ScopeDependency(["read", "write", "delete"], exception=RequiresLoginException(depend_redirect_url))),
-]
+router = APIRouter(prefix="/sys/akun")
+page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/page" + router.prefix, depend_roles=["user"])
+page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 class PathJS(str, Enum):
@@ -43,35 +24,47 @@ class PathJS(str, Enum):
     formJs = "form.js"
 
 
-@akun_router.get("", response_class=HTMLResponse, dependencies=depend_r)
+@router.get("", response_class=HTMLResponse, dependencies=page.depend_r())
 async def page_akun(req: page_req):
     return page.response(req, "/html/index.html")
 
 
-@akun_router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=depend_w)
-async def page_akun(req: page_req):
+@router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=page.depend_w())
+async def page_form_add_akun(req: page_req):
+    page.addContext("data_privileges", await PrivilegeQueryService().get_privileges())
     return page.response(req, "/html/form.html")
 
 
-@akun_router.get("/{PathCheck}/{id:int}", response_class=HTMLResponse, dependencies=depend_w)
-async def page_akun(id: int, req: page_req):
-    page.addContext("data_user", await UserQueryService().get_user(id))
+@router.get("/{PathCheck}/{user_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
+async def page_form_edit_akun(user_id: int, req: page_req):
+    data_user_privileges = []
+    for item in await UserQueryService().get_user_privileges(user_id):
+        data_user_privileges.append(item.privilege_id)
+    data_user_scopes = []
+    for item in await UserQueryService().get_user_scopes(user_id):
+        data_user_scopes.append(item.scope_id)
+
+    page.addContext("data_privileges", await PrivilegeQueryService().get_privileges())
+    page.addContext("data_user_privileges", data_user_privileges)
+    page.addContext("data_scopes", await ScopeQueryService().get_scopes())
+    page.addContext("data_user_scopes", data_user_scopes)
+    page.addContext("data_user", await UserQueryService().get_user(user_id))
     return page.response(req, "/html/form.html")
 
 
-@akun_router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=depend_r)
-async def page_akunjs(req: page_req, pathFile: PathJS):
+@router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_r())
+async def page_js_akun(req: page_req, pathFile: PathJS):
     return page.response(req, "/html/" + pathFile)
 
 
 #######################################################################################################################
-@akun_router.post("/{PathCheck}/datatables", status_code=202, dependencies=depend_r)
-async def get_datatables(params: dict[str, Any], req: page_req) -> dict[str, Any]:
+@router.post("/{PathCheck}/datatables", status_code=202, dependencies=page.depend_r())
+async def datatables_akun(params: dict[str, Any], req: page_req) -> dict[str, Any]:
     return await UserQueryService().datatable(params=params)
 
 
-@akun_router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, dependencies=depend_w, deprecated=True)
-async def create_user(dataIn: AkunRequest, req: page_req):
+@router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w(), deprecated=True)
+async def create_user_akun(dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user_by(username=dataIn.username, email=dataIn.email, nohp=dataIn.nohp)
     if data_get is not None:
         raise DuplicateEmailOrNicknameOrNoHPException
@@ -82,8 +75,8 @@ async def create_user(dataIn: AkunRequest, req: page_req):
     return data_created
 
 
-@akun_router.post("/{PathCheck}/{user_id:int}", status_code=201, response_model=AkunResponse, dependencies=depend_w)
-async def update_user(user_id: int, dataIn: AkunRequest, req: page_req):
+@router.post("/{PathCheck}/{user_id:int}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w())
+async def update_akun(user_id: int, dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user(user_id)
 
     if dataIn.username != data_get.username:
@@ -111,11 +104,13 @@ async def update_user(user_id: int, dataIn: AkunRequest, req: page_req):
         nohp=dataIn.nohp,
         full_name=dataIn.full_name,
         disabled=dataIn.disabled,
+        privileges=dataIn.privileges,
+        scopes=dataIn.scopes,
     )
     return data_updated
 
 
-@akun_router.delete("/{PathCheck}/{user_id:int}", status_code=202, dependencies=depend_d)
-async def delete_user(user_id: int, req: page_req):
-    data_get = await UserQueryService().get_user(user_id)
+@router.delete("/{PathCheck}/{user_id:int}", status_code=202, dependencies=page.depend_d())
+async def delete_akun(user_id: int, req: page_req):
+    await UserQueryService().get_user(user_id)
     await UserCommandService().delete_user(user_id, req.user.username)

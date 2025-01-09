@@ -72,12 +72,12 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row">
-                                                {% for sc in userscopes %}
+                                                {% for scope in data_scopes %}
                                                 <div class="col-4">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="{{ sc.id }}" name="userScopes" id="userScopes_{{sc.scope}}" {% if sc.checked %} checked {% endif %}>
-                                                        <label class="form-check-label" for="userScopes_{{sc.scope}}">
-                                                            {{ sc.scope }}
+                                                        <input class="form-check-input" type="checkbox" value="{{ scope.id }}" name="userScopes" id="userScopes_{{scope.scope}}" {% if scope.id in data_user_scopes %} checked {% endif %}>
+                                                        <label class="form-check-label" for="userScopes_{{scope.scope}}">
+                                                            {{ scope.scope }}
                                                         </label>
                                                     </div>
                                                 </div>
@@ -87,16 +87,16 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="limit_expires" class="form-label">Daftar Grup</label>
+                                    <label for="limit_expires" class="form-label">Daftar Privilege</label>
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row">
-                                                {% for group in usergroups %}
+                                                {% for privilege in data_privileges %}
                                                 <div class="col-4">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="{{ group.id }}" name="userGroups" id="userGroups_{{group.group}}" {% if group.checked %} checked {% endif %}>
-                                                        <label class="form-check-label" for="userGroups_{{group.group}}">
-                                                            {{ group.group }}
+                                                        <input class="form-check-input" type="checkbox" value="{{ privilege.id }}" name="userPrivileges" id="userPrivileges_{{privilege.privilege}}" {% if privilege.id in data_user_privileges %} checked {% endif %}>
+                                                        <label class="form-check-label" for="userPrivileges_{{privilege.privilege}}">
+                                                            {{ privilege.privilege }}
                                                         </label>
                                                     </div>
                                                 </div>

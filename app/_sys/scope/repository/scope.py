@@ -20,6 +20,10 @@ class ScopeRepo:
         pass
 
     @abstractmethod
+    async def get_scopes(self) -> list[Scope]:
+        pass
+
+    @abstractmethod
     async def get_by_id(self, scope_id: int) -> Optional[Scope]:
         pass
 
@@ -38,8 +42,12 @@ class ScopeRepo:
 
 class ScopeSQLRepo(ScopeRepo):
     async def get(self, scope: str) -> Optional[Scope]:
-        result = await session.execute(select(Scope).where(Scope.scope == Scope))
+        result = await session.execute(select(Scope).where(Scope.scope == Scope, Scope.deleted_at == None))
         return result.scalars().first()
+
+    async def get_scopes(self) -> list[Scope]:
+        result = await session.execute(select(Scope).where(Scope.deleted_at == None).order_by(Scope.id))
+        return result.scalars().all()
 
     async def get_by_id(self, scope_id: int) -> Optional[Scope]:
         return await session.get(Scope, scope_id)

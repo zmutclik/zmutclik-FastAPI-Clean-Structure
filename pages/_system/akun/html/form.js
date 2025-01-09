@@ -40,10 +40,10 @@ $(document).ready(function () {
                 "email": $("#form_ input[name='email']").val(),
                 "nohp": $("#form_ input[name='nohp']").val(),
                 "disabled": $("#form_ select[name='disabled']").val(),
-                "userScopes": $('input[name="userScopes"]:checked').map(function () {
+                "scopes": $('input[name="userScopes"]:checked').map(function () {
                     return $(this).val();
                 }).get(),
-                "userGroups": $('input[name="userGroups"]:checked').map(function () {
+                "privileges": $('input[name="userPrivileges"]:checked').map(function () {
                     return $(this).val();
                 }).get(),
             })

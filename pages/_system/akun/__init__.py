@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
-from .akun import akun_router
+from .akun import router
 
-akun_routers = APIRouter()
-akun_routers.include_router(akun_router, tags=["SYS / AKUN"])
+akun_router = APIRouter()
+akun_router.include_router(router, tags=["SYS / AKUN"])
 
 
-__all__ = ["akun_routers"]
+__all__ = ["akun_router"]

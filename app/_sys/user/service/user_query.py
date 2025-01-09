@@ -6,20 +6,35 @@ from datatables import DataTable
 
 from core.db.session_ import async_engine, dbapps_engine
 from app._sys.user.domain import User
-from app._sys.user.repository import UserRepo
+from app._sys.user.repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from app._sys.user.schema import UserSchema
 from app._sys.user.exceptions import UserNotFoundException, UserNotActiveException
 
 
 class UserQueryService:
     @inject()
-    def __init__(self, user_repo: UserRepo):
+    def __init__(
+        self,
+        user_repo: UserRepo,
+        user_privilege_repo: UserPrivilegeRepo,
+        user_scope_repo: UserScopeRepo,
+    ):
         self.user_repo = user_repo
+        self.user_privilege_repo = user_privilege_repo
+        self.user_scope_repo = user_scope_repo
 
     async def get_user(self, user_id: str) -> Optional[UserSchema]:
         data_get = await self.user_repo.get(user_id)
         if not data_get:
             raise UserNotFoundException
+        return data_get
+
+    async def get_user_privileges(self, user_id: str):
+        data_get = await self.user_privilege_repo.get_by_user(user_id)
+        return data_get
+
+    async def get_user_scopes(self, user_id: str):
+        data_get = await self.user_scope_repo.get_by_user(user_id)
         return data_get
 
     async def get_user_by(
@@ -29,11 +44,6 @@ class UserQueryService:
         nohp: Union[str, None] = None,
     ) -> Optional[UserSchema]:
         data_get = await self.user_repo.get_by(username, email, nohp)
-        # if not data_get:
-        #     raise UserNotFoundException
-        # if data_get.disabled:
-        #     raise UserNotActiveException
-
         return data_get
 
     async def datatable(self, params: dict[str, Any]):

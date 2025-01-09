@@ -8,6 +8,9 @@ from core import config
 from app._sys.user.schema import UserSchema
 from app._sys.user.service import UserQueryService
 
+from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
+from core.exceptions import RequiresLoginException
+
 root_path = os.getcwd()
 
 
@@ -25,13 +28,14 @@ async def depend_user(request: Request):
 
 
 class PageResponse:
-    def __init__(self, path_template: str, prefix_url: str):
+    def __init__(self, path_template: str, prefix_url: str, depend_roles: list[str] = []):
         self.templates = Jinja2Templates(directory="./")
         self.templates.env.globals.update(global_context=global_context)
         self.path = path_template.replace(root_path, "")
         self.context = {}
         self.user = None
-        self.prefix_url = "/page" + prefix_url
+        self.prefix_url = prefix_url
+        self.depend_roles = depend_roles
 
     async def request(self, request: Request, response: Response, PathCheck: str = None):
         # self.initContext(request, request.user.client_id, "-")
@@ -83,3 +87,19 @@ class PageResponse:
             media_type=self.media_type(path),
             context=self.context,
         )
+
+    def dependencies(self, scopes: list[str]):
+        return [
+            Depends(PermissionDependency(permissions=[IsAuthenticated], exception=RequiresLoginException)),
+            Depends(RoleDependency(self.depend_roles, exception=RequiresLoginException(self.prefix_url))),
+            Depends(ScopeDependency(scopes, exception=RequiresLoginException(self.prefix_url))),
+        ]
+
+    def depend_r(self, scopes: list[str] = ["read"]):
+        return self.dependencies(scopes)
+
+    def depend_w(self, scopes: list[str] = ["read", "write"]):
+        return self.dependencies(scopes)
+
+    def depend_d(self, scopes: list[str] = ["read", "write", "delete"]):
+        return self.dependencies(scopes)

@@ -19,7 +19,6 @@ async def page_login(
     req: page_req,
     next: str = None,
 ):
-    print("page[login]requser ", req.user)
     page.addContext("nextpage", next)
     return page.response(req, "/html/login.html")
 
@@ -28,6 +27,7 @@ async def page_login(
 async def page_js_login(next: str, req: page_req):
     if next is None or next == "None":
         next = "/page/dashboard"
+    page.addContext("nextpage", next)
     return page.response(req, "/html/login.js")
 
 
