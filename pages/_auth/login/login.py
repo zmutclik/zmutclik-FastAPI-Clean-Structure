@@ -10,7 +10,7 @@ from app._sys.user.exceptions import UserNotFoundException, UserNotActiveExcepti
 from pages._auth.login.request import LoginRequest
 
 router = APIRouter(prefix="/login")
-page = PageResponse(os.path.dirname(__file__), router.prefix)
+page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/page" + router.prefix)
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 

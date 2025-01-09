@@ -1,6 +1,6 @@
 from .session_ import session, dbapps_engine
 from .session_core import session_core, dbcore_engine
-from .session_logs import session_logs, dblogs_engine
+from .session_logs import session_logs
 
 __all__ = [
     "session",
@@ -8,5 +8,4 @@ __all__ = [
     "session_core",
     "dbcore_engine",
     "session_logs",
-    "dblogs_engine",
 ]

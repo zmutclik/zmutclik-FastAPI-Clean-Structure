@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from contextvars import ContextVar, Token
@@ -27,21 +29,27 @@ def reset_session_context(context: Token) -> None:
     session_context.reset(context)
 
 
-try:
-    dblogs_engine = create_engine(config.DBLOGS_URL.replace("aiomysql", "pymysql"))
-    with dblogs_engine.begin() as connection:
-        if not dblogs_engine.dialect.has_table(table_name="logs", connection=connection):
-            Base.metadata.create_all(bind=dblogs_engine)
-except OperationalError as err:
-    if "1045" in err.args[0]:
-        print("DATABASE LOGS : Access Denied")
-    elif "2003" in err.args[0]:
-        print("DATABASE LOGS : Connection Refused")
-    else:
-        raise
+def async_engine(tahunbulan: datetime = None):
+    if tahunbulan is None:
+        tahunbulan = datetime.now()
 
-async_engine = create_async_engine(config.DBLOGS_URL)  # , echo=True)
-async_session = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+    DB_FILE = ".db/logs/logs_{}.db".format(tahunbulan.strftime("%Y-%m"))
+    DB_ENGINE = "sqlite+aiosqlite:///" + DB_FILE
+    dblogs_engine = create_engine(DB_ENGINE.replace("+aiosqlite", ""))
+
+    if not os.path.exists(DB_FILE):
+        with open(DB_FILE, "w") as f:
+            f.write("")
+
+    if os.path.exists(DB_FILE):
+        file_stats = os.stat(DB_FILE)
+        if file_stats.st_size == 0:
+            Base.metadata.create_all(bind=dblogs_engine)
+
+    return create_async_engine(DB_ENGINE)
+
+
+async_session = sessionmaker(bind=async_engine(), class_=AsyncSession, expire_on_commit=False)
 session_logs: Union[AsyncSession, async_scoped_session] = async_scoped_session(
     session_factory=async_session,
     scopefunc=get_session_id,

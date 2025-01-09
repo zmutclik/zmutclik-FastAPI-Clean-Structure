@@ -1,10 +1,7 @@
 import random
 import string
 import time
-import threading
 import asyncio
-from typing import Union
-from pythondi import inject
 
 from fastapi import Request, Response
 
@@ -14,12 +11,9 @@ from app._sys.logs.schema import LogsSchema
 
 from core import config
 
-# from app._sys.logs.exceptions import LogsNotFoundException, LogsDuplicateException
-
 
 class LogsService:
     def __init__(self):
-        # self.logs_repo = LogsRepo()
         pass
 
     async def start(self, request: Request):
@@ -50,4 +44,4 @@ class LogsService:
             response.set_cookie(key=config.CLIENT_KEY, value=request.user.client_id)
 
         if request.user.channel != "page_js" or request.user.channel != "static":
-            threading.Thread(target=LogsRepo().save(self.data_created)).start()
+            asyncio.create_task(LogsRepo().save(self.data_created))

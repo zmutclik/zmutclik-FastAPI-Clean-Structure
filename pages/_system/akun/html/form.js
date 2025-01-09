@@ -26,7 +26,7 @@ $(document).ready(function () {
     $("#form_ input[name='full_name']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '{{prefix_url}}/';
+        window.location.href = '{{prefix_url}}';
     });
 
     $("#form_").on("submit", function () {

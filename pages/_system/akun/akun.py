@@ -32,6 +32,7 @@ async def page_akun(req: page_req):
 @router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=page.depend_w())
 async def page_form_add_akun(req: page_req):
     page.addContext("data_privileges", await PrivilegeQueryService().get_privileges())
+    page.addContext("data_scopes", await ScopeQueryService().get_scopes())
     return page.response(req, "/html/form.html")
 
 
