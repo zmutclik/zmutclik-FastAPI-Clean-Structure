@@ -6,12 +6,12 @@ from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from core.db.base import BaseCore as Base
+from core.db.base import BaseAuth as Base
 from core.db.mixins import TimestampLogMixin
 
 
 class Privilege(Base, TimestampLogMixin):
-    __tablename__ = "_privilege"
+    __tablename__ = "privilege"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     privilege = Column(String(64), unique=True)

@@ -4,15 +4,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
 
-from core.db.base import BaseCore as Base
+from core.db.base import BaseAuth as Base
 
 
 class UserScope(Base):
-    __tablename__ = "_user_scope"
+    __tablename__ = "user_scope"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("_user.id"))
-    scope_id = Column(Integer, ForeignKey("_scope.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    scope_id = Column(Integer, ForeignKey("scope.id"))
 
     USER = relationship("User", back_populates="SCOPE")
     SCOPE = relationship("Scope", back_populates="USERSCOPE")

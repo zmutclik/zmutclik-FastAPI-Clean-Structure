@@ -1,4 +1,4 @@
-from .user import User
+from .user_ import User
 from .user_privilege import UserPrivilege
 from .user_scope import UserScope
 

@@ -4,15 +4,15 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
 
-from core.db.base import BaseCore as Base
+from core.db.base import BaseAuth as Base
 
 
 class UserPrivilege(Base):
-    __tablename__ = "_user_privilege"
+    __tablename__ = "user_privilege"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("_user.id"))
-    privilege_id = Column(Integer, ForeignKey("_privilege.id"))
+    user_id = Column(Integer, ForeignKey("user.id"))
+    privilege_id = Column(Integer, ForeignKey("privilege.id"))
 
     USER = relationship("User", back_populates="PRIVILEGE")
     PRIVILEGE = relationship("Privilege", back_populates="USERPRIVILEGE")

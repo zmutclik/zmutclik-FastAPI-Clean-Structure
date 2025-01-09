@@ -37,20 +37,6 @@ def reset_session_context(context: Token) -> None:
     session_context.reset(context)
 
 
-# try:
-#     dbcore_engine = create_engine(config.DBCORE_URL.replace("aiomysql", "pymysql"))
-#     with dbcore_engine.begin() as connection:
-#         if not dbcore_engine.dialect.has_table(table_name="sys_cross_origin", connection=connection):
-#             Base.metadata.create_all(bind=dbcore_engine)
-# except OperationalError as err:
-#     if "1045" in err.args[0]:
-#         print("DATABASE CORE : Access Denied")
-#     elif "2003" in err.args[0]:
-#         print("DATABASE CORE : Connection Refused")
-#     else:
-#         raise
-
-
 DB_FILE = ".db/system/core.db"
 DB_ENGINE = "sqlite+aiosqlite:///" + DB_FILE
 dbcore_engine = create_engine(DB_ENGINE.replace("+aiosqlite", ""))
@@ -64,32 +50,7 @@ if os.path.exists(DB_FILE):
         Base.metadata.create_all(bind=dbcore_engine)
         with dbcore_engine.begin() as connection:
             with Session(bind=connection) as db:
-                db.add(
-                    User(
-                        **{
-                            "username": "admin",
-                            "email": "admin@test.id",
-                            "nohp": "62812345678",
-                            "full_name": "Admin SeMuT",
-                            "hashed_password": "$2b$12$ofIPPqnjPf54SzEvctr3DOzNqyjZQqDaA3GraVDvBobo/UfjtGqQm",
-                            "created_user": "init_app",
-                        }
-                    )
-                )
-                db.add(Scope(**{"scope": "read", "desc": "", "created_user": "init_app"}))
-                db.add(Scope(**{"scope": "write", "desc": "", "created_user": "init_app"}))
-                db.add(Scope(**{"scope": "delete", "desc": "", "created_user": "init_app"}))
-                db.add(Privilege(**{"privilege": "system", "desc": "Privilage Khusus Administrator Core System", "created_user": "init_app"}))
-                db.add(Privilege(**{"privilege": "admin", "desc": "Privilage Khusus Administrator Applikasi", "created_user": "init_app"}))
-                db.add(Privilege(**{"privilege": "user", "desc": "Privilage Standart Users", "created_user": "init_app"}))
-                db.commit()
-                db.add(UserPrivilege(**{"id": 1, "user_id": 1, "privilege_id": 1}))
-                db.add(UserPrivilege(**{"id": 2, "user_id": 1, "privilege_id": 2}))
-                db.add(UserPrivilege(**{"id": 3, "user_id": 1, "privilege_id": 3}))
-                db.add(UserScope(**{"id": 1, "user_id": 1, "scope_id": 1}))
-                db.add(UserScope(**{"id": 2, "user_id": 1, "scope_id": 2}))
-                db.add(UserScope(**{"id": 3, "user_id": 1, "scope_id": 3}))
-                db.commit()
+                pass
 
 
 async_engine = create_async_engine(DB_ENGINE)  # , echo=True)

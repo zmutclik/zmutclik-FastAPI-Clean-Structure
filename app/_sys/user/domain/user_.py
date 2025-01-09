@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from passlib.context import CryptContext
 
-from core.db.base import BaseCore as Base
+from core.db.base import BaseAuth as Base
 from core.db.mixins import TimestampLogMixin
 from app._sys.user.exceptions.user import PasswordDoesNotMatchException
 
@@ -18,7 +18,7 @@ def get_password_hash(password):
 
 
 class User(Base, TimestampLogMixin):
-    __tablename__ = "_user"
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(32), unique=True)

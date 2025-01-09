@@ -10,6 +10,7 @@ from core.fastapi.middlewares import (
     AuthenticationMiddleware,
     SQLAlchemyMiddleware,
     SQLAlchemyCoreMiddleware,
+    SQLAlchemyAuthMiddleware,
     LogsMiddleware,
 )
 from core.exceptions import CustomException
@@ -77,7 +78,8 @@ def on_auth_error(request: Request, exc: Exception):
 def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyMiddleware)
     app.add_middleware(SQLAlchemyCoreMiddleware)
-    app.add_middleware(LogsMiddleware)
+    app.add_middleware(SQLAlchemyAuthMiddleware)
+    # app.add_middleware(LogsMiddleware)
     app.add_middleware(
         AuthenticationMiddleware,
         backend=AuthBackend(),

@@ -2,9 +2,9 @@ from typing import Union, Optional, Any
 from pythondi import inject
 
 from sqlalchemy import or_, select
-from datatables import DataTable
+from core.utils.datatables import DataTable
 
-from core.db import dbcore_engine
+from core.db import session_auth
 from app._sys.user.domain import User
 from app._sys.user.repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from app._sys.user.schema import UserSchema
@@ -52,9 +52,10 @@ class UserQueryService:
             request_params=params,
             table=query,
             column_names=["DT_RowId", "id", "username", "email", "nohp", "full_name", "disabled"],
-            engine=dbcore_engine,
+            engine=session_auth,
             # callbacks=callbacks,
         )
+        await datatable.generate()
         return datatable.output_result()
 
     async def verify_password(self, user: User, plain_password: str) -> bool:

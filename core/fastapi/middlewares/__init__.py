@@ -1,6 +1,7 @@
 from .authentication import AuthenticationMiddleware, AuthBackend
 from .sqlalchemy_ import SQLAlchemyMiddleware
 from .sqlalchemy_core import SQLAlchemyCoreMiddleware
+from .sqlalchemy_auth import SQLAlchemyAuthMiddleware
 from .logs import LogsMiddleware
 
 __all__ = [
@@ -8,5 +9,6 @@ __all__ = [
     "AuthBackend",
     "SQLAlchemyMiddleware",
     "SQLAlchemyCoreMiddleware",
+    "SQLAlchemyAuthMiddleware",
     "LogsMiddleware",
 ]

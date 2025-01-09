@@ -1,4 +1,4 @@
-from .user import UserRepo, UserSQLRepo
+from .user_ import UserRepo, UserSQLRepo
 from .user_privilege import UserPrivilegeRepo, UserPrivilegeSQLRepo
 from .user_scope import UserScopeRepo, UserScopeSQLRepo
 
