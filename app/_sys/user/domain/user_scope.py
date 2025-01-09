@@ -10,7 +10,7 @@ from core.db.base import BaseCore as Base
 class UserScope(Base):
     __tablename__ = "_user_scope"
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("_user.id"))
     scope_id = Column(Integer, ForeignKey("_scope.id"))
 

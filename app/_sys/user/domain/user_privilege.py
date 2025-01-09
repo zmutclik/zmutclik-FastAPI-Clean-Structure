@@ -10,7 +10,7 @@ from core.db.base import BaseCore as Base
 class UserPrivilege(Base):
     __tablename__ = "_user_privilege"
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("_user.id"))
     privilege_id = Column(Integer, ForeignKey("_privilege.id"))
 

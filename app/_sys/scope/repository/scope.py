@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from app._sys.scope.domain import Scope
-from core.db import session
+from core.db import session_core as session
 from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
 
 

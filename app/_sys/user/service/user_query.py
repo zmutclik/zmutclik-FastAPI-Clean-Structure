@@ -4,7 +4,7 @@ from pythondi import inject
 from sqlalchemy import or_, select
 from datatables import DataTable
 
-from core.db.session_ import async_engine, dbapps_engine
+from core.db import dbcore_engine
 from app._sys.user.domain import User
 from app._sys.user.repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from app._sys.user.schema import UserSchema
@@ -52,7 +52,7 @@ class UserQueryService:
             request_params=params,
             table=query,
             column_names=["DT_RowId", "id", "username", "email", "nohp", "full_name", "disabled"],
-            engine=dbapps_engine,
+            engine=dbcore_engine,
             # callbacks=callbacks,
         )
         return datatable.output_result()
