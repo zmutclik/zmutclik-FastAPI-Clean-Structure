@@ -17,13 +17,13 @@ class ScopeQueryService:
         self.scope_repo = scope_repo
 
     async def get_scope_by_id(self, scope_id: str) -> Optional[ScopeSchema]:
-        data_get = await self.scope_repo.get_by_id(scope_id)
+        data_get = await self.scope_repo.get_scope(scope_id)
         if not data_get:
             raise ScopeNotFoundException
         return data_get
 
     async def get_scope(self, scope: str) -> Optional[ScopeSchema]:
-        data_get = await self.scope_repo.get(scope)
+        data_get = await self.scope_repo.get_scope_by(scope)
         if not data_get:
             raise ScopeNotFoundException
         return data_get

@@ -4,7 +4,6 @@ from pythondi import inject
 from sqlalchemy import or_, select
 from core.utils.datatables import DataTable
 
-from core.db import session_auth
 from app._sys.user.domain import User
 from app._sys.user.repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from app._sys.user.schema import UserSchema
@@ -47,6 +46,7 @@ class UserQueryService:
         return data_get
 
     async def datatable(self, params: dict[str, Any]):
+        from core.db import session_auth    
         query = select(User, User.id.label("DT_RowId")).where(User.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,

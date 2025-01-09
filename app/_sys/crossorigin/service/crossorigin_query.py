@@ -17,13 +17,13 @@ class CrossOriginQueryService:
         self.crossorigin_repo = crossorigin_repo
 
     async def get_crossorigin_by_id(self, crossorigin_id: str) -> Optional[CrossOriginSchema]:
-        data_get = self.crossorigin_repo.get_by_id(crossorigin_id)
+        data_get = self.crossorigin_repo.get_crossorigin(crossorigin_id)
         if not data_get:
             raise CrossOriginNotFoundException
         return data_get
 
     async def get_crossorigin(self, link: str) -> Optional[CrossOriginSchema]:
-        data_get = self.crossorigin_repo.get(link)
+        data_get = self.crossorigin_repo.get_crossorigin_by(link)
         if not data_get:
             raise CrossOriginNotFoundException
         return data_get

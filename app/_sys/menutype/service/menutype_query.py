@@ -17,19 +17,19 @@ class MenuTypeQueryService:
         self.menutype_repo = menutype_repo
 
     async def get_menutype_by_id(self, menutype_id: str) -> Optional[MenuTypeSchema]:
-        data_get = self.menutype_repo.get_by_id(menutype_id)
+        data_get = self.menutype_repo.get_menutype(menutype_id)
         if not data_get:
             raise MenuTypeNotFoundException
         return data_get
 
     async def get_menutype(self, menutype: str) -> Optional[MenuTypeSchema]:
-        data_get = self.menutype_repo.get(menutype)
+        data_get = self.menutype_repo.get_menutype_by(menutype)
         if not data_get:
             raise MenuTypeNotFoundException
         return data_get
 
     async def get_all_menutype(self) -> list[MenuTypeSchema]:
-        data_get = self.menutype_repo.get_all()
+        data_get = self.menutype_repo.get_menutypes()
         if not data_get:
             raise MenuTypeNotFoundException
         return data_get

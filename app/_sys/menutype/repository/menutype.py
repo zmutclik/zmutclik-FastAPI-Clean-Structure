@@ -16,43 +16,43 @@ class MenuTypeRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get(self, menutype: str) -> Optional[MenuType]:
+    async def get_menutype(self, menutype_id: int) -> Optional[MenuType]:
         pass
 
     @abstractmethod
-    async def get_by_id(self, menutype_id: int) -> Optional[MenuType]:
+    async def get_menutype_by(self, menutype: str) -> Optional[MenuType]:
         pass
 
     @abstractmethod
-    async def get_all(self) -> list[MenuType]:
+    async def get_menutypes(self) -> list[MenuType]:
         pass
 
     @abstractmethod
-    async def save(self, menutype: MenuType) -> MenuType:
+    async def save_menutype(self, menutype: MenuType) -> MenuType:
         pass
 
     @abstractmethod
-    async def update(self, menutype: MenuType, **kwargs) -> MenuType:
+    async def update_menutype(self, menutype: MenuType, **kwargs) -> MenuType:
         pass
 
     @abstractmethod
-    async def delete(self, menutype: MenuType, deleted_user: str) -> None:
+    async def delete_menutype(self, menutype: MenuType, deleted_user: str) -> None:
         pass
 
 
 class MenuTypeSQLRepo(MenuTypeRepo):
-    async def get(self, menutype: str) -> Optional[MenuType]:
+    async def get_menutype(self, menutype_id: int) -> Optional[MenuType]:
+        return await session.get(MenuType, menutype_id)
+
+    async def get_menutype_by(self, menutype: str) -> Optional[MenuType]:
         result = await session.execute(select(MenuType).where(MenuType.menutype == menutype, MenuType.deleted_at == None))
         return result.scalars().first()
 
-    async def get_by_id(self, menutype_id: int) -> Optional[MenuType]:
-        return await session.get(MenuType, menutype_id)
-
-    async def get_all(self) -> list[MenuType]:
+    async def get_menutypes(self) -> list[MenuType]:
         result = await session.execute(select(MenuType).where(MenuType.deleted_at == None).order_by(MenuType.menutype))
         return result.scalars().all()
 
-    async def save(self, menutype: MenuType) -> MenuType:
+    async def save_menutype(self, menutype: MenuType) -> MenuType:
         try:
             await session.add(menutype)
             await session.commit()
@@ -62,7 +62,7 @@ class MenuTypeSQLRepo(MenuTypeRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving menutype: {str(e)}")
 
-    async def update(self, menutype: MenuType, **kwargs) -> MenuType:
+    async def update_menutype(self, menutype: MenuType, **kwargs) -> MenuType:
         try:
             for key, value in kwargs.items():
                 if hasattr(menutype, key) and value is not None:
@@ -74,7 +74,7 @@ class MenuTypeSQLRepo(MenuTypeRepo):
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating menutype: {str(e)}")
 
-    async def delete(self, menutype: MenuType, deleted_user: str) -> None:
+    async def delete_menutype(self, menutype: MenuType, deleted_user: str) -> None:
         try:
             if not menutype.deleted_at:
                 menutype.deleted_at = datetime.now()

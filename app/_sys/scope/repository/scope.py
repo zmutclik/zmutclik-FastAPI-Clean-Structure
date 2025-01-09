@@ -16,7 +16,11 @@ class ScopeRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get(self, scope: str) -> Optional[Scope]:
+    async def get_scope(self, scope_id: int) -> Optional[Scope]:
+        pass
+
+    @abstractmethod
+    async def get_scope_by(self, scope: str) -> Optional[Scope]:
         pass
 
     @abstractmethod
@@ -24,35 +28,31 @@ class ScopeRepo:
         pass
 
     @abstractmethod
-    async def get_by_id(self, scope_id: int) -> Optional[Scope]:
+    async def save_scope(self, scope: Scope) -> Scope:
         pass
 
     @abstractmethod
-    async def save(self, scope: Scope) -> Scope:
+    async def update_scope(self, scope: Scope, **kwargs) -> Scope:
         pass
 
     @abstractmethod
-    async def update(self, scope: Scope, **kwargs) -> Scope:
-        pass
-
-    @abstractmethod
-    async def delete(self, scope: Scope, deleted_user: str) -> None:
+    async def delete_scope(self, scope: Scope, deleted_user: str) -> None:
         pass
 
 
 class ScopeSQLRepo(ScopeRepo):
-    async def get(self, scope: str) -> Optional[Scope]:
-        result = await session.execute(select(Scope).where(Scope.scope == Scope, Scope.deleted_at == None))
+    async def get_scope(self, scope_id: int) -> Optional[Scope]:
+        return await session.get(Scope, scope_id)
+
+    async def get_scope_by(self, scope: str) -> Optional[Scope]:
+        result = await session.execute(select(Scope).where(Scope.scope == scope, Scope.deleted_at == None))
         return result.scalars().first()
 
     async def get_scopes(self) -> list[Scope]:
         result = await session.execute(select(Scope).where(Scope.deleted_at == None).order_by(Scope.id))
         return result.scalars().all()
 
-    async def get_by_id(self, scope_id: int) -> Optional[Scope]:
-        return await session.get(Scope, scope_id)
-
-    async def save(self, scope: Scope) -> Scope:
+    async def save_scope(self, scope: Scope) -> Scope:
         try:
             await session.add(scope)
             await session.commit()
@@ -62,7 +62,7 @@ class ScopeSQLRepo(ScopeRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving scope: {str(e)}")
 
-    async def update(self, scope: Scope, **kwargs) -> Scope:
+    async def update_scope(self, scope: Scope, **kwargs) -> Scope:
         try:
             for key, value in kwargs.items():
                 if hasattr(scope, key) and value is not None:
@@ -74,7 +74,7 @@ class ScopeSQLRepo(ScopeRepo):
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating scope: {str(e)}")
 
-    async def delete(self, scope: Scope, deleted_user: str) -> None:
+    async def delete_scope(self, scope: Scope, deleted_user: str) -> None:
         try:
             if not scope.deleted_at:
                 scope.deleted_at = datetime.now()

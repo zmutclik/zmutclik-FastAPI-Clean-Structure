@@ -16,15 +16,15 @@ class PrivilegeRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get_privilege(self, privilege: str) -> Optional[Privilege]:
+    async def get_privilege(self, privilege_id: int) -> Optional[Privilege]:
+        pass
+
+    @abstractmethod
+    async def get_privilege_by(self, privilege: str) -> Optional[Privilege]:
         pass
 
     @abstractmethod
     async def get_privileges(self) -> list[Privilege]:
-        pass
-
-    @abstractmethod
-    async def get_privilege_by_id(self, privilege_id: int) -> Optional[Privilege]:
         pass
 
     @abstractmethod
@@ -41,16 +41,16 @@ class PrivilegeRepo:
 
 
 class PrivilegeSQLRepo(PrivilegeRepo):
-    async def get_privilege(self, privilege: str) -> Optional[Privilege]:
+    async def get_privilege(self, privilege_id: int) -> Optional[Privilege]:
+        return await session.get(Privilege, privilege_id)
+
+    async def get_privilege_by(self, privilege: str) -> Optional[Privilege]:
         result = await session.execute(select(Privilege).where(Privilege.privilege == privilege, Privilege.deleted_at == None))
         return result.scalars().first()
 
     async def get_privileges(self) -> list[Privilege]:
         result = await session.execute(select(Privilege).where(Privilege.deleted_at == None).order_by(Privilege.privilege))
         return result.scalars().all()
-
-    async def get_privilege_by_id(self, privilege_id: int) -> Optional[Privilege]:
-        return await session.get(Privilege, privilege_id)
 
     async def save_privilege(self, privilege: Privilege) -> Privilege:
         try:

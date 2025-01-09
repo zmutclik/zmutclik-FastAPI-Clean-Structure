@@ -21,23 +21,23 @@ class CrossOriginRepo:
         pass
 
     @abstractmethod
-    async def get(self, link: str) -> Optional[CrossOrigin]:
+    async def get_crossorigin(self, crossorigin_id: int) -> Optional[CrossOrigin]:
         pass
 
     @abstractmethod
-    async def get_by_id(self, crossorigin_id: int) -> Optional[CrossOrigin]:
+    async def get_crossorigin_by(self, link: str) -> Optional[CrossOrigin]:
         pass
 
     @abstractmethod
-    async def save(self, crossorigin: CrossOrigin) -> CrossOrigin:
+    async def save_crossorigin(self, crossorigin: CrossOrigin) -> CrossOrigin:
         pass
 
     @abstractmethod
-    async def update(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
+    async def update_crossorigin(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
         pass
 
     @abstractmethod
-    async def delete(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
+    async def delete_crossorigin(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
         pass
 
 
@@ -51,14 +51,14 @@ class CrossOriginSQLRepo(CrossOriginRepo):
             res.append("*")
         return res
 
-    async def get(self, link: str) -> Optional[CrossOrigin]:
+    async def get_crossorigin(self, crossorigin_id: int) -> Optional[CrossOrigin]:
+        return await session.get(CrossOrigin, crossorigin_id)
+
+    async def get_crossorigin_by(self, link: str) -> Optional[CrossOrigin]:
         result = await session.execute(select(CrossOrigin).where(CrossOrigin.link == link))
         return result.scalars().first()
 
-    async def get_by_id(self, crossorigin_id: int) -> Optional[CrossOrigin]:
-        return await session.get(CrossOrigin, crossorigin_id)
-
-    async def save(self, crossorigin: CrossOrigin) -> CrossOrigin:
+    async def save_crossorigin(self, crossorigin: CrossOrigin) -> CrossOrigin:
         try:
             await session.add(crossorigin)
             await session.commit()
@@ -68,7 +68,7 @@ class CrossOriginSQLRepo(CrossOriginRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving crossorigin: {str(e)}")
 
-    async def update(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
+    async def update_crossorigin(self, crossorigin: CrossOrigin, **kwargs) -> CrossOrigin:
         try:
             for key, value in kwargs.items():
                 if hasattr(crossorigin, key) and value is not None:
@@ -80,7 +80,7 @@ class CrossOriginSQLRepo(CrossOriginRepo):
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating crossorigin: {str(e)}")
 
-    async def delete(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
+    async def delete_crossorigin(self, crossorigin: CrossOrigin, deleted_user: str) -> None:
         try:
             if not crossorigin.deleted_at:
                 crossorigin.deleted_at = datetime.now()

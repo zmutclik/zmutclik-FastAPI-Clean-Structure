@@ -31,7 +31,7 @@ class MenuCommandService:
             icon_color=icon_color,
             menutype_id=menutype_id,
         )
-        data_saved = await self.menu_repo.save(menu=data_create)
+        data_saved = await self.menu_repo.save_menu(menu=data_create)
         return data_saved
 
     async def update_menu(
@@ -47,7 +47,7 @@ class MenuCommandService:
         parent_id: Union[int, None],
         disabled: Union[bool, None],
     ) -> MenuSchema:
-        data_get = await self.menu_repo.get_by_id(menu_id)
+        data_get = await self.menu_repo.get_menu(menu_id)
         if not data_get:
             raise MenuNotFoundException
 
@@ -71,12 +71,12 @@ class MenuCommandService:
         if disabled:
             updates["disabled"] = disabled
 
-        data_updated = await self.menu_repo.update(data_get, updates)
+        data_updated = await self.menu_repo.update_menu(data_get, updates)
         return data_updated
 
     async def delete_menu(self, menu_id: int, username: str) -> None:
-        data_get = await self.menu_repo.get_by_id(menu_id)
+        data_get = await self.menu_repo.get_menu(menu_id)
         if not data_get:
             raise MenuNotFoundException
 
-        await self.menu_repo.delete(data_get, username)
+        await self.menu_repo.delete_menu(data_get, username)

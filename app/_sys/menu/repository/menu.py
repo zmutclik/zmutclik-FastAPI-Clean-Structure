@@ -16,31 +16,31 @@ class MenuRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get_by_id(self, menu_id: int) -> Optional[Menu]:
+    async def get_menu(self, menu_id: int) -> Optional[Menu]:
         pass
 
     @abstractmethod
-    async def get_by_menutype(self, menutype_id: int) -> list[Menu]:
+    async def get_menu_by(self, menutype_id: int) -> list[Menu]:
         pass
 
     @abstractmethod
-    async def save(self, menu: Menu) -> Menu:
+    async def save_menu(self, menu: Menu) -> Menu:
         pass
 
     @abstractmethod
-    async def update(self, menu: Menu, **kwargs) -> Menu:
+    async def update_menu(self, menu: Menu, **kwargs) -> Menu:
         pass
 
     @abstractmethod
-    async def delete(self, menu: Menu, deleted_user: str) -> None:
+    async def delete_menu(self, menu: Menu, deleted_user: str) -> None:
         pass
 
 
 class MenuSQLRepo(MenuRepo):
-    async def get_by_id(self, menu_id: int) -> Optional[Menu]:
+    async def get_menu(self, menu_id: int) -> Optional[Menu]:
         return await session.get(Menu, menu_id)
 
-    async def get_by_menutype(self, menutype_id: int) -> list[Menu]:
+    async def get__menu_by(self, menutype_id: int) -> list[Menu]:
         result = await session.execute(
             select(Menu)
             .where(
@@ -51,7 +51,7 @@ class MenuSQLRepo(MenuRepo):
         )
         return result.scalars().all()
 
-    async def save(self, menu: Menu) -> Menu:
+    async def save_menu(self, menu: Menu) -> Menu:
         try:
             await session.add(menu)
             await session.commit()
@@ -61,7 +61,7 @@ class MenuSQLRepo(MenuRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving menu: {str(e)}")
 
-    async def update(self, menu: Menu, **kwargs) -> Menu:
+    async def update_menu(self, menu: Menu, **kwargs) -> Menu:
         try:
             for key, value in kwargs.items():
                 if hasattr(menu, key) and value is not None:
@@ -73,7 +73,7 @@ class MenuSQLRepo(MenuRepo):
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating menu: {str(e)}")
 
-    async def delete(self, menu: Menu, deleted_user: str) -> None:
+    async def delete_menu(self, menu: Menu, deleted_user: str) -> None:
         try:
             if not menu.deleted_at:
                 menu.deleted_at = datetime.now()

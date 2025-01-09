@@ -17,19 +17,19 @@ class SysRepoQueryService:
         self.sysrepo_repo = sysrepo_repo
 
     async def get_sysrepo_by_id(self, sysrepo_id: str) -> Optional[SysRepoSchema]:
-        data_get = self.sysrepo_repo.get_by_id(sysrepo_id)
+        data_get = self.sysrepo_repo.get_sysrepo(sysrepo_id)
         if not data_get:
             raise SysRepoNotFoundException
         return data_get
 
     async def get_sysrepo_active(self, allocation: str) -> Optional[SysRepoSchema]:
-        data_get = self.sysrepo_repo.get_active(allocation=allocation)
+        data_get = self.sysrepo_repo.get_sysrepo_active(allocation=allocation)
         if not data_get:
             raise SysRepoNotFoundException
         return data_get
 
     async def get_sysrepo_by(self, allocation: str, name: str) -> Optional[SysRepoSchema]:
-        data_get = self.sysrepo_repo.get_by(allocation=allocation, name=name)
+        data_get = self.sysrepo_repo.get_sysrepo_by(allocation=allocation, name=name)
         if not data_get:
             raise SysRepoNotFoundException
         return data_get

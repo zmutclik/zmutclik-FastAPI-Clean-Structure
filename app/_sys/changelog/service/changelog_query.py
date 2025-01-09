@@ -17,13 +17,13 @@ class ChangeLogQueryService:
         self.changelog_repo = changelog_repo
 
     async def get_changelog_by_id(self, privilege_id: str) -> Optional[ChangeLogSchema]:
-        data_get = self.changelog_repo.get_by_id(privilege_id)
+        data_get = self.changelog_repo.get_changelog(privilege_id)
         if not data_get:
             raise ChangeLogNotFoundException
         return data_get
 
-    async def get_changelog(self, privilege: str) -> Optional[ChangeLogSchema]:
-        data_get = self.changelog_repo.get(privilege)
+    async def get_changelog(self, version_name: str) -> Optional[ChangeLogSchema]:
+        data_get = self.changelog_repo.get_changelog_by(version_name)
         if not data_get:
             raise ChangeLogNotFoundException
         return data_get

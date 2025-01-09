@@ -16,35 +16,35 @@ class SysRepoRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get_by_id(self, sysrepo_id: int) -> Optional[SysRepo]:
+    async def get_sysrepo(self, sysrepo_id: int) -> Optional[SysRepo]:
         pass
 
     @abstractmethod
-    async def get_by(self, allocation: str, name: str) -> Optional[SysRepo]:
+    async def get_sysrepo_by(self, allocation: str, name: str) -> Optional[SysRepo]:
         pass
 
     @abstractmethod
-    async def get_active(self, allocation: str) -> Optional[SysRepo]:
+    async def get_sysrepo_active(self, allocation: str) -> Optional[SysRepo]:
         pass
 
     @abstractmethod
-    async def save(self, sysrepo: SysRepo) -> SysRepo:
+    async def save_sysrepo(self, sysrepo: SysRepo) -> SysRepo:
         pass
 
     @abstractmethod
-    async def update(self, sysrepo: SysRepo, **kwargs) -> SysRepo:
+    async def update_sysrepo(self, sysrepo: SysRepo, **kwargs) -> SysRepo:
         pass
 
     @abstractmethod
-    async def delete(self, sysrepo: SysRepo, deleted_user: str) -> None:
+    async def delete_sysrepo(self, sysrepo: SysRepo, deleted_user: str) -> None:
         pass
 
 
 class SysRepoSQLRepo(SysRepoRepo):
-    async def get_by_id(self, sysrepo_id: int) -> Optional[SysRepo]:
+    async def get_sysrepo(self, sysrepo_id: int) -> Optional[SysRepo]:
         return await session.get(SysRepo, sysrepo_id)
 
-    async def get_by(self, allocation: str, name: str) -> Optional[SysRepo]:
+    async def get_sysrepo_by(self, allocation: str, name: str) -> Optional[SysRepo]:
         result = await session.execute(
             select(SysRepo)
             .where(
@@ -57,7 +57,7 @@ class SysRepoSQLRepo(SysRepoRepo):
         )
         return result.scalars().first()
 
-    async def get_active(self, allocation: str) -> Optional[SysRepo]:
+    async def get_sysrepo_active(self, allocation: str) -> Optional[SysRepo]:
         result = await session.execute(
             select(SysRepo)
             .where(
@@ -69,7 +69,7 @@ class SysRepoSQLRepo(SysRepoRepo):
         )
         return result.scalars().first()
 
-    async def save(self, sysrepo: SysRepo) -> SysRepo:
+    async def save_sysrepo(self, sysrepo: SysRepo) -> SysRepo:
         try:
             await session.add(sysrepo)
             await session.commit()
@@ -79,7 +79,7 @@ class SysRepoSQLRepo(SysRepoRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving user: {str(e)}")
 
-    async def update(self, sysrepo: SysRepo, **kwargs) -> SysRepo:
+    async def update_sysrepo(self, sysrepo: SysRepo, **kwargs) -> SysRepo:
         try:
             for key, value in kwargs.items():
                 if hasattr(sysrepo, key) and value is not None:
@@ -91,7 +91,7 @@ class SysRepoSQLRepo(SysRepoRepo):
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating user: {str(e)}")
 
-    async def delete(self, sysrepo: SysRepo, deleted_user: str) -> None:
+    async def delete_sysrepo(self, sysrepo: SysRepo, deleted_user: str) -> None:
         try:
             if not sysrepo.deleted_at:
                 sysrepo.deleted_at = datetime.now()

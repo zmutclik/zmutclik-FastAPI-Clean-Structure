@@ -16,43 +16,43 @@ class ChangeLogRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get(self, version_name: str) -> Optional[ChangeLog]:
+    async def get_changelog(self, changelog_id: int) -> Optional[ChangeLog]:
         pass
 
     @abstractmethod
-    async def get_by_id(self, changelog_id: int) -> Optional[ChangeLog]:
+    async def get_changelog_by(self, version_name: str) -> Optional[ChangeLog]:
         pass
 
     @abstractmethod
-    async def get_last(self) -> Optional[ChangeLog]:
+    async def get_last_changelog(self) -> Optional[ChangeLog]:
         pass
 
     @abstractmethod
-    async def save(self, changelog: ChangeLog) -> ChangeLog:
+    async def save_changelog(self, changelog: ChangeLog) -> ChangeLog:
         pass
 
     @abstractmethod
-    async def update(self, changelog: ChangeLog, **kwargs) -> ChangeLog:
+    async def update_changelog(self, changelog: ChangeLog, **kwargs) -> ChangeLog:
         pass
 
     @abstractmethod
-    async def delete(self, changelog: ChangeLog, deleted_user: str) -> None:
+    async def delete_changelog(self, changelog: ChangeLog, deleted_user: str) -> None:
         pass
 
 
 class ChangeLogRepoSQLRepo(ChangeLogRepo):
-    async def get(self, version_name: str) -> Optional[ChangeLog]:
+    async def get_changelog(self, changelog_id: int) -> Optional[ChangeLog]:
+        return await session.get(ChangeLog, changelog_id)
+
+    async def get_changelog_by(self, version_name: str) -> Optional[ChangeLog]:
         result = await session.execute(select(ChangeLog).where(ChangeLog.version_name == version_name))
         return result.scalars().first()
 
-    async def get_by_id(self, changelog_id: int) -> Optional[ChangeLog]:
-        return await session.get(ChangeLog, changelog_id)
-
-    async def get_last(self) -> Optional[ChangeLog]:
+    async def get_last_changelog(self) -> Optional[ChangeLog]:
         result = await session.execute(select(ChangeLog).where(ChangeLog.deleted_at == None).order_by(ChangeLog.id.desc()))
         return result.scalars().first()
 
-    async def save(self, changelog: ChangeLog) -> ChangeLog:
+    async def save_changelog(self, changelog: ChangeLog) -> ChangeLog:
         try:
             await session.add(changelog)
             await session.commit()
@@ -62,7 +62,7 @@ class ChangeLogRepoSQLRepo(ChangeLogRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving user: {str(e)}")
 
-    async def update(self, changelog: ChangeLog, **kwargs) -> ChangeLog:
+    async def update_changelog(self, changelog: ChangeLog, **kwargs) -> ChangeLog:
         try:
             for key, value in kwargs.items():
                 if hasattr(changelog, key) and value is not None:
@@ -74,7 +74,7 @@ class ChangeLogRepoSQLRepo(ChangeLogRepo):
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating user: {str(e)}")
 
-    async def delete(self, changelog: ChangeLog, deleted_user: str) -> None:
+    async def delete_changelog(self, changelog: ChangeLog, deleted_user: str) -> None:
         try:
             if not changelog.deleted_at:
                 changelog.deleted_at = datetime.now()
