@@ -31,6 +31,11 @@ depend_w = [
     Depends(RoleDependency("user", exception=RequiresLoginException(depend_redirect_url))),
     Depends(ScopeDependency(["read", "write"], exception=RequiresLoginException(depend_redirect_url))),
 ]
+depend_d = [
+    Depends(PermissionDependency(permissions=[IsAuthenticated])),
+    Depends(RoleDependency("user", exception=RequiresLoginException(depend_redirect_url))),
+    Depends(ScopeDependency(["read", "write", "delete"], exception=RequiresLoginException(depend_redirect_url))),
+]
 
 
 class PathJS(str, Enum):
@@ -108,3 +113,9 @@ async def update_user(user_id: int, dataIn: AkunRequest, req: page_req):
         disabled=dataIn.disabled,
     )
     return data_updated
+
+
+@akun_router.delete("/{PathCheck}/{user_id:int}", status_code=202, dependencies=depend_d)
+async def delete_user(user_id: int, req: page_req):
+    data_get = await UserQueryService().get_user(user_id)
+    await UserCommandService().delete_user(user_id, req.user.username)
