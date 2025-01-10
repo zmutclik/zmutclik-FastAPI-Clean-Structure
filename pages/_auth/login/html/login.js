@@ -21,7 +21,7 @@ $(document).ready(function () {
         if (formLogin.valid()) {
             $('#formLogin input,#formLogin button').blur();
             $("#formLogin").LoadingOverlay("show");
-            axios.post('{{prefix_url_post}}/login', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() })
+            axios.post('{{prefix_url_post}}', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() })
                 .then(function (response) {
                     Swal.fire({
                         icon: "success",

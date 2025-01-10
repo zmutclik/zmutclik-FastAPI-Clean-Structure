@@ -36,10 +36,10 @@ class UserAuthService:
         scope_by_id = await self.user_scope_repo.get_by_user(user.id)
 
         for item in roles_by_id:
-            dataget = await self.privilege_repo.get_privilege_by_id(item.privilege_id)
+            dataget = await self.privilege_repo.get_privilege(item.privilege_id)
             roles.append(dataget.privilege)
         for item in scope_by_id:
-            dataget = await self.scope_repo.get_by_id(item.scope_id)
+            dataget = await self.scope_repo.get_scope(item.scope_id)
             scopes.append(dataget.scope)
 
         access_token = token_create(

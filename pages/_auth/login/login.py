@@ -23,7 +23,7 @@ async def page_login(
     return page.response(req, "/html/login.html")
 
 
-@router.get("/{PathCheck}/login.js")
+@router.get("/{PathCheck}.js")
 async def page_js_login(next: str, req: page_req):
     if next is None or next == "None":
         next = "/page/dashboard"
@@ -31,7 +31,7 @@ async def page_js_login(next: str, req: page_req):
     return page.response(req, "/html/login.js")
 
 
-@router.post("/{PathCheck}/login", status_code=201)
+@router.post("/{PathCheck}", status_code=201)
 async def page_post_login(dataIn: LoginRequest, req: page_req, res: Response):
     sleep(1)
     user_query = UserQueryService()

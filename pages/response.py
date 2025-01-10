@@ -1,11 +1,7 @@
 import os
-from datetime import datetime
-from typing import Annotated
-from pydantic import BaseModel
 from fastapi import Request, HTTPException, Depends, Response
 from fastapi.templating import Jinja2Templates
 from core import config
-from app._sys.user.schema import UserSchema
 from app._sys.user.service import UserQueryService
 
 from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
@@ -88,12 +84,15 @@ class PageResponse:
             context=self.context,
         )
 
-    def dependencies(self, scopes: list[str]):
-        return [
-            Depends(PermissionDependency(permissions=[IsAuthenticated], exception=RequiresLoginException)),
-            Depends(RoleDependency(self.depend_roles, exception=RequiresLoginException(self.prefix_url))),
-            Depends(ScopeDependency(scopes, exception=RequiresLoginException(self.prefix_url))),
-        ]
+    def dependencies(self, scopes: list[str] = None):
+        if scopes is None:
+            return [Depends(PermissionDependency(permissions=[IsAuthenticated], exception=RequiresLoginException))]
+        else:
+            return [
+                Depends(PermissionDependency(permissions=[IsAuthenticated], exception=RequiresLoginException)),
+                Depends(RoleDependency(self.depend_roles, exception=RequiresLoginException(self.prefix_url))),
+                Depends(ScopeDependency(scopes, exception=RequiresLoginException(self.prefix_url))),
+            ]
 
     def depend_r(self, scopes: list[str] = ["read"]):
         return self.dependencies(scopes)
