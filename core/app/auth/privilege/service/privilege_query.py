@@ -1,10 +1,6 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from sqlalchemy import or_, select
-from datatables import DataTable
-
-from core.db.session_ import async_engine
 from ..domain import Privilege
 from ..repository import PrivilegeRepo
 from ..schema import PrivilegeSchema
@@ -32,12 +28,16 @@ class PrivilegeQueryService:
         return await self.privilege_repo.get_privileges()
 
     async def datatable_privilege(self, params: dict[str, Any]):
+        from sqlalchemy import or_, select
+        from core.utils.datatables import DataTable
+        from core.db import session_auth
+
         query = select(Privilege, Privilege.id.label("DT_RowId")).where(Privilege.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,
             table=query,
             column_names=["DT_RowId", "id", "privilege", "desc"],
-            engine=async_engine,
+            engine=session_auth,
             # callbacks=callbacks,
         )
         return datatable.output_result()

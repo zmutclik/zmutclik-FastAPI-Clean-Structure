@@ -1,13 +1,10 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from sqlalchemy import or_, select
-from core.utils.datatables import DataTable
-
 from ..domain import User
+from ..exceptions import UserNotFoundException, UserNotActiveException
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from ..schema import UserSchema
-from ..exceptions import UserNotFoundException, UserNotActiveException
 
 
 class UserQueryService:
@@ -46,7 +43,10 @@ class UserQueryService:
         return data_get
 
     async def datatable(self, params: dict[str, Any]):
-        from core.db import session_auth    
+        from sqlalchemy import or_, select
+        from core.utils.datatables import DataTable
+        from core.db import session_auth
+
         query = select(User, User.id.label("DT_RowId")).where(User.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,

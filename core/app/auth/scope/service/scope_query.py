@@ -1,14 +1,10 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from sqlalchemy import or_, select
-from datatables import DataTable
-
-from core.db.session_ import async_engine
 from ..domain import Scope
+from ..exceptions import ScopeNotFoundException
 from ..repository import ScopeRepo
 from ..schema import ScopeSchema
-from ..exceptions import ScopeNotFoundException
 
 
 class ScopeQueryService:
@@ -32,12 +28,17 @@ class ScopeQueryService:
         return await self.scope_repo.get_scopes()
 
     async def datatable_scope(self, params: dict[str, Any]):
+        from sqlalchemy import or_, select
+        from core.utils.datatables import DataTable
+        from core.db import session_auth
+
         query = select(Scope, Scope.id.label("DT_RowId")).where(Scope.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,
             table=query,
             column_names=["DT_RowId", "id", "scope", "desc"],
-            engine=async_engine,
+            engine=session_auth,
             # callbacks=callbacks,
         )
+        await datatable.generate()
         return datatable.output_result()
