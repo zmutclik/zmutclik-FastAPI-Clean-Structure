@@ -6,23 +6,9 @@ from starlette.staticfiles import StaticFiles
 
 from core import config
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import (
-    AuthBackend,
-    AuthenticationMiddleware,
-    SQLAlchemyMiddleware,
-    SQLAlchemyAuthMiddleware,
-    SQLAlchemyMenuMiddleware,
-    LogsMiddleware,
-)
-from core.fastapi.middlewares.sqlalchemy_core import SQLAlchemyCoreMiddleware
+from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware, LogsMiddleware
 from core.exceptions import CustomException
 from core.di import init_di
-
-from core.db import dbcore_engine
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from app._sys.crossorigin.domain import CrossOrigin
-from app._sys.crossorigin.repository import CrossOriginRepo
 
 from api import router
 from pages import pages_app
@@ -35,6 +21,11 @@ def init_routers(app: FastAPI) -> None:
 
 
 def init_cors(app: FastAPI) -> None:
+    from core.db import dbcore_engine
+    from sqlalchemy.orm import Session
+    from sqlalchemy import select
+    from app._sys.crossorigin.domain import CrossOrigin
+
     try:
         with dbcore_engine.begin() as connection:
             with Session(bind=connection) as db:
@@ -79,9 +70,6 @@ def on_auth_error(request: Request, exc: Exception):
 
 def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyMiddleware)
-    app.add_middleware(SQLAlchemyCoreMiddleware)
-    app.add_middleware(SQLAlchemyMenuMiddleware)
-    app.add_middleware(SQLAlchemyAuthMiddleware)
     # app.add_middleware(LogsMiddleware)
     app.add_middleware(
         AuthenticationMiddleware,
@@ -92,11 +80,11 @@ def init_middleware(app: FastAPI) -> None:
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="config.APP_NAME",
-        description="config.APP_DESCRIPTION",
-        version='config.APP_VERSION',
-        docs_url=None if "config.ENV" == "production" else "/docs",
-        redoc_url=None if "config.ENV" == "production" else "/redoc",
+        title=config.APP_NAME,
+        description=config.APP_DESCRIPTION,
+        version=config.APP_VERSION,
+        docs_url=None if config.ENV == "production" else "/docs",
+        redoc_url=None if config.ENV == "production" else "/redoc",
         dependencies=[Depends(Logging)],
     )
     init_routers(app=app)

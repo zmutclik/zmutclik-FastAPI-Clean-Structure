@@ -60,7 +60,7 @@ if os.path.exists(DB_FILE):
                 db.add(
                     SysRepo(
                         **{
-                            "name": "MariaDB",
+                            "name": "DBAPPS_LOCAL",
                             "allocation": "DBAPPS_URL_DEFAULT",
                             "datalink": "mysql+aiomysql://{user}:{password}@127.0.0.1:3307/db",
                             "user": "root",
@@ -73,12 +73,38 @@ if os.path.exists(DB_FILE):
                 db.add(
                     SysRepo(
                         **{
+                            "name": "DBAPPS_DEVELOPMENT",
+                            "allocation": "DBAPPS_URL_DEFAULT",
+                            "datalink": "mysql+aiomysql://{user}:{password}@127.0.0.1:3307/db",
+                            "user": "root",
+                            "password": "password",
+                            "is_active": False,
+                            "created_user": "SeMuT CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    SysRepo(
+                        **{
+                            "name": "DBAPPS_PRODUCTION",
+                            "allocation": "DBAPPS_URL_DEFAULT",
+                            "datalink": "mysql+aiomysql://{user}:{password}@127.0.0.1:3307/db",
+                            "user": "root",
+                            "password": "password",
+                            "is_active": False,
+                            "created_user": "SeMuT CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    SysRepo(
+                        **{
                             "name": "RabbitMQ",
                             "allocation": "RabbitMQ",
                             "datalink": "amqp://{user}:{password}@192.168.40.5:5672//semut-dev",
                             "user": "guest",
                             "password": "guest",
-                            "is_active": True,
+                            "is_active": False,
                             "created_user": "SeMuT CiLiK",
                         }
                     )
