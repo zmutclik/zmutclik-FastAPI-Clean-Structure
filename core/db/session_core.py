@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, Session
 from contextvars import ContextVar, Token
@@ -15,12 +16,7 @@ from core import config
 from .base import BaseCore as Base
 from app._sys.changelog.domain import ChangeLog
 from app._sys.crossorigin.domain import CrossOrigin
-from app._sys.menu.domain import Menu
-from app._sys.menutype.domain import MenuType
-from app._sys.privilege.domain import Privilege
-from app._sys.scope.domain import Scope
 from app._sys.sysrepo.domain import SysRepo
-from app._sys.user.domain import User, UserPrivilege, UserScope
 
 session_context: ContextVar[str] = ContextVar("session_context_core")
 
@@ -50,7 +46,47 @@ if os.path.exists(DB_FILE):
         Base.metadata.create_all(bind=dbcore_engine)
         with dbcore_engine.begin() as connection:
             with Session(bind=connection) as db:
-                pass
+                db.add(
+                    ChangeLog(
+                        **{
+                            "dateupdate": datetime.now(),
+                            "version_name": "init",
+                            "description": "Initial Commit",
+                            "created_user": "SeMuT CiLiK",
+                            "created_user": "SeMuT CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    SysRepo(
+                        **{
+                            "name": "MariaDB",
+                            "allocation": "DBAPPS_URL_DEFAULT",
+                            "datalink": "mysql+aiomysql://{user}:{password}@127.0.0.1:3307/db",
+                            "user": "root",
+                            "password": "password",
+                            "is_active": True,
+                            "created_user": "SeMuT CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    SysRepo(
+                        **{
+                            "name": "RabbitMQ",
+                            "allocation": "RabbitMQ",
+                            "datalink": "amqp://{user}:{password}@192.168.40.5:5672//semut-dev",
+                            "user": "guest",
+                            "password": "guest",
+                            "is_active": True,
+                            "created_user": "SeMuT CiLiK",
+                        }
+                    )
+                )
+                db.add(CrossOrigin(**{"link": "http://localhost", "created_user": "init system"}))
+                db.add(CrossOrigin(**{"link": "http://127.0.0.1", "created_user": "init system"}))
+                db.add(CrossOrigin(**{"link": "http://127.0.0.1:8001", "created_user": "init system"}))
+                db.commit()
 
 
 async_engine = create_async_engine(DB_ENGINE)  # , echo=True)
