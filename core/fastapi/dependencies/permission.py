@@ -30,6 +30,11 @@ class RoleDependency(SecurityBase):
         self.exception = exception
 
     async def __call__(self, request: Request):
+        try:
+            if request.scope["path"] == self.exception.nextRouter:
+                self.exception.nextRouter = "/page/dashboard"
+        except:
+            pass
         if not all(roles in request.user.roles for roles in self.required_roles):
             raise self.exception
 
@@ -42,6 +47,11 @@ class ScopeDependency(SecurityBase):
         self.exception = exception
 
     async def __call__(self, request: Request):
+        try:
+            if request.scope["path"] == self.exception.nextRouter:
+                self.exception.nextRouter = "/page/dashboard"
+        except:
+            pass
         if not all(scopes in request.user.scopes for scopes in self.required_scopes):
             raise self.exception
 

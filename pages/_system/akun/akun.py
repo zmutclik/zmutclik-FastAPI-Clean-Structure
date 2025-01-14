@@ -15,7 +15,7 @@ from app._sys.privilege.service import PrivilegeQueryService
 from app._sys.scope.service import ScopeQueryService
 
 router = APIRouter(prefix="/sys/akun")
-page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/page" + router.prefix, depend_roles=["user"])
+page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix, depend_roles=["admin"])
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 

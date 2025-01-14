@@ -17,10 +17,8 @@ def global_context():
     }
 
 
-async def depend_user(request: Request):
-    print(request.user)
-    print(request.scope["route"].name)
-    return await UserQueryService().get_user_by(username=request.user.username)
+# async def depend_user(request: Request):
+#     return await UserQueryService().get_user_by(username=request.user.username)
 
 
 class PageResponse:
@@ -30,7 +28,7 @@ class PageResponse:
         self.path = path_template.replace(root_path, "")
         self.context = {}
         self.user = None
-        self.prefix_url = prefix_url
+        self.prefix_url = "/page" + prefix_url
         self.depend_roles = depend_roles
 
     async def request(self, request: Request, response: Response, PathCheck: str = None):

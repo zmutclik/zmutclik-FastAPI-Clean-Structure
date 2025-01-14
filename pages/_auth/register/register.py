@@ -12,7 +12,7 @@ from core import config
 from pages.response import PageResponse
 
 router = APIRouter(prefix="/register")
-page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/page" + router.prefix)
+page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 
