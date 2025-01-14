@@ -2,7 +2,7 @@ import os
 from fastapi import Request, HTTPException, Depends, Response
 from fastapi.templating import Jinja2Templates
 from core import config
-from app._sys.user.service import UserQueryService
+from core.app.auth.user.service import UserQueryService
 
 from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
 from core.exceptions import RequiresLoginException

@@ -14,9 +14,9 @@ from sqlalchemy.exc import OperationalError
 
 from core import config
 from .base import BaseCore as Base
-from app._sys.changelog.domain import ChangeLog
-from app._sys.crossorigin.domain import CrossOrigin
-from app._sys.sysrepo.domain import SysRepo
+from core.app.system.changelog.domain import ChangeLog
+from core.app.system.crossorigin.domain import CrossOrigin
+from core.app.system.sysrepo.domain import SysRepo
 
 session_context: ContextVar[str] = ContextVar("session_context_core")
 

@@ -13,8 +13,8 @@ from sqlalchemy.exc import OperationalError
 
 from core import config
 from .base import BaseMenu as Base
-from app._sys.menu.domain import Menu
-from app._sys.menutype.domain import MenuType
+from core.app.menu.menu.domain import Menu
+from core.app.menu.menutype.domain import MenuType
 
 session_context: ContextVar[str] = ContextVar("session_context_menu")
 

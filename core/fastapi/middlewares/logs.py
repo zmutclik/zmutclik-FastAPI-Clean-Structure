@@ -1,6 +1,6 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request
-from app._sys.logs.service import LogsService
+from core.app.logs.service import LogsService
 
 
 class LogsMiddleware(BaseHTTPMiddleware):

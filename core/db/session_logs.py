@@ -12,7 +12,7 @@ from sqlalchemy.exc import OperationalError
 from core import config
 from .base import BaseLogs as Base
 
-from app._sys.logs.domain import Logs
+from core.app.logs.domain import Logs
 
 session_context: ContextVar[str] = ContextVar("session_context_logs")
 

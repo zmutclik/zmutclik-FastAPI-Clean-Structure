@@ -4,15 +4,15 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from pages.response import PageResponse
-from app._sys.user.service import UserQueryService, UserCommandService
-from app._sys.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
+
+from core.app.auth.user.service import UserQueryService, UserCommandService
+from core.app.auth.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
+from core.app.auth.privilege.service import PrivilegeQueryService
+from core.app.auth.scope.service import ScopeQueryService
 
 from pages._system.akun.request import AkunRequest
 from pages._system.akun.response import AkunResponse
 from fastapi.exceptions import RequestValidationError
-
-from app._sys.privilege.service import PrivilegeQueryService
-from app._sys.scope.service import ScopeQueryService
 
 router = APIRouter(prefix="/sys/akun")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix, depend_roles=["admin"])

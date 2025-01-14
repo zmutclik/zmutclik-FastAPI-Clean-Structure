@@ -8,9 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_scop
 from sqlalchemy import create_engine
 
 from .base import BaseAuth as Base
-from app._sys.privilege.domain import Privilege
-from app._sys.scope.domain import Scope
-from app._sys.user.domain import User, UserPrivilege, UserScope
+from core.app.auth.privilege.domain import Privilege
+from core.app.auth.scope.domain import Scope
+from core.app.auth.user.domain import User, UserPrivilege, UserScope
 
 session_context: ContextVar[str] = ContextVar("session_context_auth")
 

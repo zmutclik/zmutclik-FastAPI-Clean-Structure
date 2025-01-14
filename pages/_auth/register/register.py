@@ -5,7 +5,7 @@ from time import sleep
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from app._sys.user.service import UserQueryService, UserCommandService
+from core.app.auth.user.service import UserQueryService, UserCommandService
 from pages._auth.register.request import RegisterRequest
 from fastapi.exceptions import RequestValidationError
 from core import config

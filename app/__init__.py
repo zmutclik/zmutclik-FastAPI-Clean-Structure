@@ -32,7 +32,7 @@ def init_cors(app: FastAPI) -> None:
     from core.db import dbcore_engine
     from sqlalchemy.orm import Session
     from sqlalchemy import select
-    from app._sys.crossorigin.domain import CrossOrigin
+    from core.app.system.crossorigin.domain import CrossOrigin
 
     try:
         with dbcore_engine.begin() as connection:

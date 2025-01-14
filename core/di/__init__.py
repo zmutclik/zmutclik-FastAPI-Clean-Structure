@@ -1,13 +1,13 @@
 from pythondi import Provider, configure
 
-from app._sys.changelog.repository import ChangeLogRepo, ChangeLogRepoSQLRepo
-from app._sys.crossorigin.repository import CrossOriginRepo, CrossOriginSQLRepo
-from app._sys.menu.repository import MenuRepo, MenuSQLRepo
-from app._sys.menutype.repository import MenuTypeRepo, MenuTypeSQLRepo
-from app._sys.privilege.repository import PrivilegeRepo, PrivilegeSQLRepo
-from app._sys.scope.repository import ScopeRepo, ScopeSQLRepo
-from app._sys.sysrepo.repository import SysRepoRepo, SysRepoSQLRepo
-from app._sys.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo, UserScopeRepo, UserScopeSQLRepo
+from core.app.system.changelog.repository import ChangeLogRepo, ChangeLogRepoSQLRepo
+from core.app.system.crossorigin.repository import CrossOriginRepo, CrossOriginSQLRepo
+from core.app.menu.menu.repository import MenuRepo, MenuSQLRepo
+from core.app.menu.menutype.repository import MenuTypeRepo, MenuTypeSQLRepo
+from core.app.auth.privilege.repository import PrivilegeRepo, PrivilegeSQLRepo
+from core.app.auth.scope.repository import ScopeRepo, ScopeSQLRepo
+from core.app.system.sysrepo.repository import SysRepoRepo, SysRepoSQLRepo
+from core.app.auth.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo, UserScopeRepo, UserScopeSQLRepo
 
 
 def init_di():
