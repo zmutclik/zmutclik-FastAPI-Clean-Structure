@@ -32,8 +32,10 @@ class PageResponse:
         self.depend_roles = depend_roles
 
     async def request(self, request: Request, response: Response, PathCheck: str = None):
-        # self.initContext(request, request.user.client_id, "-")
-        # return request
+        # if config.DEBUG:
+        #     self.initContext(request, request.user.client_id, "-")
+        #     return request
+        
         if PathCheck is not None:
             path_check = PathCheck.split(".")
             if len(path_check) == 3:

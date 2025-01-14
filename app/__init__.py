@@ -6,7 +6,15 @@ from starlette.staticfiles import StaticFiles
 
 from core import config
 from core.fastapi.dependencies import Logging
-from core.fastapi.middlewares import AuthBackend, AuthenticationMiddleware, SQLAlchemyMiddleware, LogsMiddleware
+from core.fastapi.middlewares import (
+    AuthBackend,
+    AuthenticationMiddleware,
+    SQLAlchemyMiddleware,
+    LogsMiddleware,
+    SQLAlchemyAuthMiddleware,
+    SQLAlchemyCoreMiddleware,
+    SQLAlchemyMenuMiddleware,
+)
 from core.exceptions import CustomException
 from core.di import init_di
 
@@ -70,7 +78,10 @@ def on_auth_error(request: Request, exc: Exception):
 
 def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyMiddleware)
-    # app.add_middleware(LogsMiddleware)
+    app.add_middleware(SQLAlchemyAuthMiddleware)
+    app.add_middleware(SQLAlchemyCoreMiddleware)
+    app.add_middleware(SQLAlchemyMenuMiddleware)
+    app.add_middleware(LogsMiddleware)
     app.add_middleware(
         AuthenticationMiddleware,
         backend=AuthBackend(),
