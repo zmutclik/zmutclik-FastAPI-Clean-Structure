@@ -11,7 +11,7 @@ from core.db.mixins import TimestampLogMixin
 
 
 class ChangeLog(Base, TimestampLogMixin):
-    __tablename__ = "sys_changelog"
+    __tablename__ = "changelog"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     dateupdate = Column(Date, nullable=False)

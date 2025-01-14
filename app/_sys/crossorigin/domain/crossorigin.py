@@ -10,7 +10,7 @@ from core.db.mixins import TimestampLogMixin
 
 
 class CrossOrigin(Base, TimestampLogMixin):
-    __tablename__ = "sys_cross_origin"
+    __tablename__ = "cross_origin"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     link = Column(String(64), unique=True)

@@ -11,6 +11,7 @@ from core.fastapi.middlewares import (
     SQLAlchemyMiddleware,
     SQLAlchemyCoreMiddleware,
     SQLAlchemyAuthMiddleware,
+    SQLAlchemyMenuMiddleware,
     LogsMiddleware,
 )
 from core.exceptions import CustomException
@@ -41,6 +42,7 @@ def init_cors(app: FastAPI) -> None:
                     allow_origins.append(item)
                 if allow_origins == []:
                     allow_origins.append("*")
+                print("allow_origins = ", allow_origins)
                 app.add_middleware(
                     CORSMiddleware,
                     allow_origins=allow_origins,
@@ -78,6 +80,7 @@ def on_auth_error(request: Request, exc: Exception):
 def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyMiddleware)
     app.add_middleware(SQLAlchemyCoreMiddleware)
+    app.add_middleware(SQLAlchemyMenuMiddleware)
     app.add_middleware(SQLAlchemyAuthMiddleware)
     app.add_middleware(LogsMiddleware)
     app.add_middleware(
