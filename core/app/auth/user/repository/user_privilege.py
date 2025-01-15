@@ -16,43 +16,39 @@ class UserPrivilegeRepo:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    async def get_by_id(self, user_privilege_id: int) -> Optional[UserPrivilege]:
+    async def get_userprivilege(self, user_privilege_id: int) -> Optional[UserPrivilege]:
         pass
 
     @abstractmethod
-    async def get(self, user_id: int, privilege_id: int) -> Optional[UserPrivilege]:
+    async def get_userprivilege_by(self, user_id: int, privilege_id: int) -> Optional[UserPrivilege]:
         pass
 
     @abstractmethod
-    async def get_by_user(self, user_id: int) -> list[UserPrivilege]:
+    async def get_userprivileges(self, user_id: int) -> list[UserPrivilege]:
         pass
 
     @abstractmethod
-    async def get_list_by_user(self, user_id: int) -> list[int]:
+    async def save_userprivilege(self, user_privilege: UserPrivilege) -> UserPrivilege:
         pass
 
     @abstractmethod
-    async def save(self, user_privilege: UserPrivilege) -> UserPrivilege:
+    async def delete_userprivilege(self, user_privilege: UserPrivilege) -> None:
         pass
 
     @abstractmethod
-    async def delete(self, user_privilege: UserPrivilege) -> None:
+    async def delete_userprivileges(self, user_id: int) -> None:
         pass
 
     @abstractmethod
-    async def delete_in_user(self, user_id: int) -> None:
-        pass
-
-    @abstractmethod
-    async def commit(self) -> None:
+    async def commit_userprivilege(self) -> None:
         pass
 
 
 class UserPrivilegeSQLRepo(UserPrivilegeRepo):
-    async def get_by_id(self, user_privilege_id: int) -> Optional[UserPrivilege]:
+    async def get_userprivilege(self, user_privilege_id: int) -> Optional[UserPrivilege]:
         return await session.get(UserPrivilege, user_privilege_id)
 
-    async def get(self, user_id: int, privilege_id: int) -> Optional[UserPrivilege]:
+    async def get_userprivilege_by(self, user_id: int, privilege_id: int) -> Optional[UserPrivilege]:
         result = await session.execute(
             select(UserPrivilege).where(
                 or_(
@@ -63,17 +59,11 @@ class UserPrivilegeSQLRepo(UserPrivilegeRepo):
         )
         return result.scalars().first()
 
-    async def get_by_user(self, user_id: int) -> list[UserPrivilege]:
+    async def get_userprivileges(self, user_id: int) -> list[UserPrivilege]:
         result = await session.execute(select(UserPrivilege).where(UserPrivilege.user_id == user_id))
         return result.scalars().all()
 
-    async def get_list_by_user(self, user_id: int) -> list[int]:
-        privileges = []
-        for item in await self.get_by_user(user_id):
-            privileges.append(item.id)
-        return privileges
-
-    async def save(self, user_privilege: UserPrivilege) -> UserPrivilege:
+    async def save_userprivilege(self, user_privilege: UserPrivilege) -> UserPrivilege:
         try:
             session.add(user_privilege)
             await session.commit()
@@ -83,21 +73,21 @@ class UserPrivilegeSQLRepo(UserPrivilegeRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving user: {str(e)}")
 
-    async def delete(self, user_privilege: UserPrivilege) -> None:
+    async def delete_userprivilege(self, user_privilege: UserPrivilege) -> None:
         try:
             await session.delete(user_privilege)
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
 
-    async def delete_in_user(self, user_id: int) -> None:
+    async def delete_userprivileges(self, user_id: int) -> None:
         try:
             await session.execute(delete(UserPrivilege).where(UserPrivilege.user_id == user_id))
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
 
-    async def commit(self) -> None:
+    async def commit_userprivilege(self) -> None:
         try:
             await session.commit()
         except SQLAlchemyError as e:

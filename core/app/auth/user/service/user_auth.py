@@ -33,8 +33,8 @@ class UserAuthService:
     async def token_create(self, user: User) -> str:
         roles = []
         scopes = []
-        roles_by_id = await self.user_privilege_repo.get_by_user(user.id)
-        scope_by_id = await self.user_scope_repo.get_by_user(user.id)
+        roles_by_id = await self.user_privilege_repo.get_userprivileges(user.id)
+        scope_by_id = await self.user_scope_repo.get_userscopes(user.id)
 
         for item in roles_by_id:
             dataget = await self.privilege_repo.get_privilege(item.privilege_id)
@@ -55,7 +55,7 @@ class UserAuthService:
         return access_token
 
     async def generate_cache_menu(self, user: User) -> None:
-        list_privilege = await self.user_privilege_repo.get_by_user(user.id)
+        list_privilege = await self.user_privilege_repo.get_userprivileges(user.id)
         for item in list_privilege:
             print(item.privilege_id)
             MenuQueryService().get_menus(item.pr)

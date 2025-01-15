@@ -20,17 +20,17 @@ class UserQueryService:
         self.user_scope_repo = user_scope_repo
 
     async def get_user(self, user_id: str) -> Optional[UserSchema]:
-        data_get = await self.user_repo.get(user_id)
+        data_get = await self.user_repo.get_user(user_id)
         if not data_get:
             raise UserNotFoundException
         return data_get
 
     async def get_user_privileges(self, user_id: str):
-        data_get = await self.user_privilege_repo.get_by_user(user_id)
+        data_get = await self.user_privilege_repo.get_userprivileges(user_id)
         return data_get
 
     async def get_user_scopes(self, user_id: str):
-        data_get = await self.user_scope_repo.get_by_user(user_id)
+        data_get = await self.user_scope_repo.get_userscopes(user_id)
         return data_get
 
     async def get_user_by(
@@ -39,7 +39,7 @@ class UserQueryService:
         email: Union[str, None] = None,
         nohp: Union[str, None] = None,
     ) -> Optional[UserSchema]:
-        data_get = await self.user_repo.get_by(username, email, nohp)
+        data_get = await self.user_repo.get_user_by(username, email, nohp)
         return data_get
 
     async def datatable(self, params: dict[str, Any]):
