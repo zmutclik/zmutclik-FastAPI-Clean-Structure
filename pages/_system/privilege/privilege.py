@@ -110,7 +110,7 @@ async def update_privilege(privilege_id: int, dataIn: PrivilegeRequest, req: pag
     return data_updated
 
 
-# @router.delete("/{PathCheck}/{user_id:int}", status_code=202, dependencies=page.depend_d())
-# async def delete_privilege(user_id: int, req: page_req):
-#     await UserQueryService().get_user(user_id)
-#     await UserCommandService().delete_user(user_id, req.user.username)
+@router.delete("/{PathCheck}/{privilege_id:int}", status_code=202, dependencies=page.depend_d())
+async def delete_privilege(privilege_id: int, req: page_req):
+    await PrivilegeQueryService().get_privilege(privilege_id)
+    await PrivilegeCommandService().delete_privilege(privilege_id, req.user.username)
