@@ -5,13 +5,13 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from pages.response import PageResponse
 
-from core.app.auth.user.service import UserQueryService, UserCommandService
 from core.app.auth.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
+from core.app.auth.user.service import UserQueryService, UserCommandService
 from core.app.auth.privilege.service import PrivilegeQueryService
 from core.app.auth.scope.service import ScopeQueryService
 
-from pages._system.akun.request import AkunRequest
-from pages._system.akun.response import AkunResponse
+from .request import AkunRequest
+from .response import AkunResponse
 from fastapi.exceptions import RequestValidationError
 
 router = APIRouter(prefix="/sys/akun")

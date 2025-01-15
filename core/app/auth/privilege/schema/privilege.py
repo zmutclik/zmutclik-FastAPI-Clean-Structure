@@ -4,6 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class PrivilegeSchema(BaseModel):
-    id: int = Field(None, description="ID")
-    privilege: str = Field(None, description="Privilege name")
-    desc: str = Field(None, description="description")
+    id: int 
+    privilege: str 
+    desc: str 

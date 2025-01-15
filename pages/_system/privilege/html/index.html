@@ -1,6 +1,6 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
-{% block title %} Scope System {% endblock %}
+{% block title %} Privilege Manajemen {% endblock %}
 
 <!-- Element injected in the BODY element -->
 {% block body_class %} {% endblock body_class %}
@@ -8,8 +8,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
-{% include 'includes/_page_stylesheets.html' %}
-{% include 'includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/_page_stylesheets.html' %}
+{% include 'core/html/includes/_all_stylesheets.html' %}
 
 {% endblock stylesheets %}
 
@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="float-start mr-2">GROUPS</h1>
+                    <h1 class="float-start mr-2">PRIVILEGE</h1>
                     <h3 class="card-title mt-2">Manajemen</h3>
                 </div>
                 <div class="col-sm-6">
@@ -63,10 +63,10 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'includes/_all_javascripts.html' %}
-{% include 'includes/_page_javascripts.html' %}
+{% include 'core/html/includes/_all_javascripts.html' %}
+{% include 'core/html/includes/_page_javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/index.js"></script>
 
 {% endblock javascripts %}

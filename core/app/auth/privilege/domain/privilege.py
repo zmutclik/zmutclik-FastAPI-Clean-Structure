@@ -18,7 +18,8 @@ class Privilege(Base, TimestampLogMixin):
     desc = Column(String(255))
 
     USERPRIVILEGE = relationship("UserPrivilege", back_populates="PRIVILEGE")
+    PRIVILEGEMENUS = relationship("PrivilegeMenus", back_populates="PRIVILEGE")
 
     @classmethod
-    def create(cls, privilege: str, desc: str) -> "Privilege":
-        return cls(privilege=privilege, desc=desc)
+    def create(cls, created_user: str, privilege: str, desc: str) -> "Privilege":
+        return cls(privilege=privilege, desc=desc, created_user=created_user)

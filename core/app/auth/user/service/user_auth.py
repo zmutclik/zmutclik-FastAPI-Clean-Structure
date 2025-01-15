@@ -7,6 +7,7 @@ from ..domain import User, UserPrivilege, UserScope
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from ...privilege.repository import PrivilegeRepo
 from ...scope.repository import ScopeRepo
+from ....menu.menu.service import MenuQueryService
 from ..schema import UserSchema
 from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 from core import config
@@ -51,5 +52,12 @@ class UserAuthService:
             },
             expires_delta=timedelta(minutes=config.COOKIES_EXPIRED),
         )
-
         return access_token
+
+    async def generate_cache_menu(self, user: User) -> None:
+        list_privilege = await self.user_privilege_repo.get_by_user(user.id)
+        for item in list_privilege:
+            print(item.privilege_id)
+            MenuQueryService().get_menus(item.pr)
+        # print(list_privilege)
+        pass

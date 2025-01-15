@@ -54,7 +54,7 @@ class PrivilegeSQLRepo(PrivilegeRepo):
 
     async def save_privilege(self, privilege: Privilege) -> Privilege:
         try:
-            await session.add(privilege)
+            session.add(privilege)
             await session.commit()
             await session.refresh(privilege)
             return privilege
@@ -62,14 +62,14 @@ class PrivilegeSQLRepo(PrivilegeRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving user: {str(e)}")
 
-    async def update_privilege(self, privilege: Privilege, **kwargs) -> Privilege:
+    async def update_privilege(self, privilege_data: Privilege, **kwargs) -> Privilege:
         try:
             for key, value in kwargs.items():
-                if hasattr(privilege, key) and value is not None:
-                    setattr(privilege, key, value)
+                if hasattr(privilege_data, key) and value is not None:
+                    setattr(privilege_data, key, value)
             await session.commit()
-            await session.refresh(privilege)
-            return privilege
+            await session.refresh(privilege_data)
+            return privilege_data
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating user: {str(e)}")

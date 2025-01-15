@@ -1,5 +1,6 @@
 from .session_core import session_core, dbcore_engine
 from .session_auth import session_auth, dbauth_engine
+from .session_menu import session_menu, dbmenu_engine
 from .session_logs import session_logs
 from .session_ import session, dbapps_engine
 
@@ -11,4 +12,6 @@ __all__ = [
     "session_auth",
     "dbauth_engine",
     "session_logs",
+    "session_menu",
+    "dbmenu_engine",
 ]

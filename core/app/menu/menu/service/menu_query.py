@@ -17,13 +17,13 @@ class MenuQueryService:
         self.menu_repo = menu_repo
 
     async def get_menu_by_id(self, menu_id: str) -> Optional[MenuSchema]:
-        data_get = self.menu_repo.get_menu(menu_id)
+        data_get = await self.menu_repo.get_menu(menu_id)
         if not data_get:
             raise MenuNotFoundException
         return data_get
 
     async def get_menus(self, menutype_id: int) -> list[MenuSchema]:
-        data_get = self.menu_repo.get_menu_by(menutype_id)
+        data_get = await self.menu_repo.get_menus(menutype_id=menutype_id)
         if not data_get:
             raise MenuNotFoundException
         return data_get

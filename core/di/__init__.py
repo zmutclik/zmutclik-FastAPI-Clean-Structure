@@ -4,7 +4,7 @@ from core.app.system.changelog.repository import ChangeLogRepo, ChangeLogRepoSQL
 from core.app.system.crossorigin.repository import CrossOriginRepo, CrossOriginSQLRepo
 from core.app.menu.menu.repository import MenuRepo, MenuSQLRepo
 from core.app.menu.menutype.repository import MenuTypeRepo, MenuTypeSQLRepo
-from core.app.auth.privilege.repository import PrivilegeRepo, PrivilegeSQLRepo
+from core.app.auth.privilege.repository import PrivilegeRepo, PrivilegeSQLRepo,PrivilegeMenusRepo, PrivilegeMenusSQLRepo
 from core.app.auth.scope.repository import ScopeRepo, ScopeSQLRepo
 from core.app.system.sysrepo.repository import SysRepoRepo, SysRepoSQLRepo
 from core.app.auth.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo, UserScopeRepo, UserScopeSQLRepo
@@ -18,6 +18,7 @@ def init_di():
     provider.bind(MenuRepo, MenuSQLRepo)
     provider.bind(MenuTypeRepo, MenuTypeSQLRepo)
     provider.bind(PrivilegeRepo, PrivilegeSQLRepo)
+    provider.bind(PrivilegeMenusRepo, PrivilegeMenusSQLRepo)
     provider.bind(ScopeRepo, ScopeSQLRepo)
     provider.bind(SysRepoRepo, SysRepoSQLRepo)
     provider.bind(UserRepo, UserSQLRepo)

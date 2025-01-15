@@ -33,7 +33,6 @@ async def page_js_login(next: str, req: page_req):
 
 @router.post("/{PathCheck}", status_code=201)
 async def page_post_login(dataIn: LoginRequest, req: page_req, res: Response):
-    sleep(1)
     user_query = UserQueryService()
     data_get = await user_query.get_user_by(email=dataIn.email)
     if not data_get:
@@ -46,3 +45,5 @@ async def page_post_login(dataIn: LoginRequest, req: page_req, res: Response):
 
     access_token = await UserAuthService().token_create(data_get)
     res.set_cookie(key=config.COOKIES_KEY, value=access_token)
+    await UserAuthService().generate_cache_menu(data_get)
+    sleep(1)

@@ -1,6 +1,6 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
-{% block title %} Form Scope System {% endblock %}
+{% block title %} Form Privilege {% endblock %}
 
 <!-- Element injected in the BODY element -->
 {% block body_class %} {% endblock body_class %}
@@ -8,8 +8,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
-{% include 'includes/_form_stylesheets.html' %}
-{% include 'includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/_form_stylesheets.html' %}
+{% include 'core/html/includes/_all_stylesheets.html' %}
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 
@@ -24,8 +24,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="float-start mr-2">FORM GROUP</h1>
-                    <h3 class="card-title mt-2">GROUP Manajemen</h3>
+                    <h1 class="float-start mr-2">FORM PRIVILEGE</h1>
+                    <h3 class="card-title mt-2">Manajemen</h3>
                 </div>
                 <div class="col-sm-6">
                     <div class="float-end"><button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button></div>
@@ -70,14 +70,14 @@
 
                                 <div class="col-6">
                                     <form id="form_">
-                                        <input type="hidden" id="id" {% if scope %} value="{{group.id}}" {% endif %}>
+                                        <input type="hidden" id="id" {% if data_privilege %} value="{{data_privilege.id}}" {% endif %}>
                                         <div class="mb-3">
-                                            <label for="full_name" class="form-label">Grup</label>
-                                            <input type="text" class="form-control" name="group" placeholder="Nama Grup" {% if group %} value="{{group.group}}" readonly {% endif %} required>
+                                            <label for="full_name" class="form-label">Nama Privilege</label>
+                                            <input type="text" class="form-control" id="privilege" name="privilege" placeholder="Nama Privilege" {% if data_privilege %} value="{{data_privilege.privilege}}" {% endif %} required>
                                         </div>
                                         <div class="mb-3">
                                             <label for="username" class="form-label">Deskripsi</label>
-                                            <input type="text" class="form-control" name="desc" placeholder="Deskripsi Grup" {% if group %} value="{{group.desc}}" {% endif %} required>
+                                            <input type="text" class="form-control" id="desc" name="desc" placeholder="Deskripsi Grup" {% if data_privilege %} value="{{data_privilege.desc}}" {% endif %} required>
                                         </div>
                                         <div class="mb-3 mt-5 float-end">
                                             <button type="submit" class="btn btn-primary">SIMPAN</button>
@@ -104,18 +104,12 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'includes/_all_javascripts.html' %}
-{% include 'includes/_form_javascripts.html' %}
+{% include 'core/html/includes/_all_javascripts.html' %}
+{% include 'core/html/includes/_form_javascripts.html' %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <!-- ------------------- -->
-<script>
-    const api = axios.create({
-        baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if group %}/{{group.id}}{% endif %}',
-        timeout: 2000,
-        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
-    });
-</script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js{% if group %}/?group={{group.id}}{% endif %}"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}{% if data_privilege %}/{{data_privilege.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/form.js{% if data_privilege %}?privilege_id={{data_privilege.id}}{% endif %}"></script>
 
 {% endblock javascripts %}

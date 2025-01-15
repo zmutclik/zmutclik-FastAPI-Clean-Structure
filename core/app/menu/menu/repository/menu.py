@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from ..domain import Menu
+from ...menutype.domain import MenuType
 from core.db import session_menu as session
 from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
 
@@ -20,7 +21,7 @@ class MenuRepo:
         pass
 
     @abstractmethod
-    async def get_menu_by(self, menutype_id: int) -> list[Menu]:
+    async def get_menus(self, menutype_id: int) -> list[Menu]:
         pass
 
     @abstractmethod
@@ -40,7 +41,7 @@ class MenuSQLRepo(MenuRepo):
     async def get_menu(self, menu_id: int) -> Optional[Menu]:
         return await session.get(Menu, menu_id)
 
-    async def get__menu_by(self, menutype_id: int) -> list[Menu]:
+    async def get_menus(self, menutype_id: int) -> list[Menu]:
         result = await session.execute(
             select(Menu)
             .where(
