@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 .db/logs/*.db
 .db/system/*.db
+.db/cache/menu/*.json
+.db/cache/user/*.json

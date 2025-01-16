@@ -17,13 +17,13 @@ class UserPrivilege(Base):
     USER = relationship("User", back_populates="PRIVILEGE")
     PRIVILEGE = relationship("Privilege", back_populates="USERPRIVILEGE")
 
-    @hybrid_property
-    def privilege(self) -> str:
-        return self.PRIVILEGE.privilege
+    # @hybrid_property
+    # def privilege(self) -> str:
+    #     return self.PRIVILEGE.privilege
 
-    @hybrid_property
-    def desc(self) -> str:
-        return self.PRIVILEGE.desc
+    # @hybrid_property
+    # def desc(self) -> str:
+    #     return self.PRIVILEGE.desc
 
     @classmethod
     def create(

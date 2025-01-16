@@ -1,4 +1,6 @@
 import os
+import json
+from datetime import datetime
 from fastapi import Request, HTTPException, Depends, Response
 from fastapi.templating import Jinja2Templates
 from core import config
@@ -6,6 +8,7 @@ from core.app.auth.user.service import UserQueryService
 
 from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
 from core.exceptions import RequiresLoginException
+from core.utils import menu_to_html
 
 root_path = os.getcwd()
 
@@ -32,10 +35,9 @@ class PageResponse:
         self.depend_roles = depend_roles
 
     async def request(self, request: Request, response: Response, PathCheck: str = None):
-        # if config.DEBUG:
-        #     self.initContext(request, request.user.client_id, "-")
-        #     return request
-        
+        # self.initContext(request, request.user.client_id, "-")
+        # return request
+
         if PathCheck is not None:
             path_check = PathCheck.split(".")
             if len(path_check) == 3:
@@ -52,7 +54,20 @@ class PageResponse:
             #     thread.start()
             self.initContext(request, request.user.client_id, request.user.session_id)
 
-        # self.sidemenu = get_menus(1, user.id, req.scope["route"].name)
+            # self.sidemenu = menu_to_html(1, user.id, req.scope["route"].name)
+            if request.user.username is not None:
+                user_path = ".db/cache/user/{}.json".format(request.user.username)
+                if os.path.isfile(user_path):
+                    with open(user_path, "r") as file:
+                        user_json = json.load(file)
+                        user_json["created_at"] = datetime.strptime(user_json["created_at"], '%Y-%m-%dT%H:%M:%S')
+                        self.addContext("userloggedin", user_json)
+                menu_sidebar_path = ".db/cache/menu/{}_{}.json".format(request.user.username, "sidebar")
+                if os.path.isfile(menu_sidebar_path):
+                    with open(menu_sidebar_path, "r") as file:
+                        menu_sidebar_json = json.load(file)
+                        menu_sidebar = menu_to_html(menus=menu_sidebar_json, segmen=request.scope["route"].name)
+                        self.addContext("menu_sidebar", menu_sidebar)
 
         return request
 
@@ -66,7 +81,7 @@ class PageResponse:
         self.addContext("prefix_url_post", self.prefix_url + "/" + client_id + "." + session_id)
         self.addContext("TOKEN_KEY", config.COOKIES_KEY)
         self.addContext("segment", request.scope["route"].name)
-        self.addContext("userloggedin", request.user)
+        # self.addContext("userloggedin", request.user)
         # self.addData("sidemenu", self.sidemenu)
         self.addContext("TOKEN_EXPIRED", (config.COOKIES_EXPIRED * 60 * 1000) - 2000)
 

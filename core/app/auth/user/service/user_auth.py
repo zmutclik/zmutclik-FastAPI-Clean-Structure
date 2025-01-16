@@ -2,12 +2,14 @@ from pythondi import inject
 from datetime import timedelta
 import random
 import string
+import json
 
 from ..domain import User, UserPrivilege, UserScope
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
-from ...privilege.repository import PrivilegeRepo
+from ...privilege.repository import PrivilegeRepo, PrivilegeMenusRepo
 from ...scope.repository import ScopeRepo
 from ....menu.menu.service import MenuQueryService
+from ....menu.menutype.service import MenuTypeQueryService
 from ..schema import UserSchema
 from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 from core import config
@@ -22,12 +24,14 @@ class UserAuthService:
         user_privilege_repo: UserPrivilegeRepo,
         user_scope_repo: UserScopeRepo,
         privilege_repo: PrivilegeRepo,
+        privilege_menu_repo: PrivilegeMenusRepo,
         scope_repo: ScopeRepo,
     ):
         self.user_repo = user_repo
         self.user_privilege_repo = user_privilege_repo
         self.user_scope_repo = user_scope_repo
         self.privilege_repo = privilege_repo
+        self.privilege_menu_repo = privilege_menu_repo
         self.scope_repo = scope_repo
 
     async def token_create(self, user: User) -> str:
@@ -54,10 +58,22 @@ class UserAuthService:
         )
         return access_token
 
+    async def generate_cache_user(self, user: User) -> None:
+        user_schema = UserSchema.model_validate(user.__dict__)
+        with open(".db/cache/user/{}.json".format(user.username), "w") as outfile:
+            outfile.write(user_schema.model_dump_json())
+
     async def generate_cache_menu(self, user: User) -> None:
         list_privilege = await self.user_privilege_repo.get_userprivileges(user.id)
+        list_menu_id = []
         for item in list_privilege:
-            print(item.privilege_id)
-            MenuQueryService().get_menus(item.pr)
-        # print(list_privilege)
-        pass
+            PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(item.privilege_id)
+            if PrivilegeMenus:
+                for item in PrivilegeMenus:
+                    list_menu_id.append(item.menu_id)
+
+        for item in await MenuTypeQueryService().get_menutypes():
+            menus = await MenuQueryService().generate_menus(item.id, 0, list_menu_id)
+            menus_json = json.dumps(menus)
+            with open(".db/cache/menu/{}_{}.json".format(user.username, item.menutype), "w") as outfile:
+                outfile.write(menus_json)

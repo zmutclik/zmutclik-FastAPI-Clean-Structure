@@ -4,14 +4,25 @@ from pydantic import BaseModel, Field
 
 
 class MenuSchema(BaseModel):
-    id: int = Field(None, description="ID")
-    text: str = Field(None, description="label text")
-    segment: str = Field(None, description="segment func code")
-    tooltip: str = Field(None, description="tooltip")
-    href: str = Field(None, description="href link")
-    icon: str = Field(None, description="icon menu")
-    icon_color: str = Field(None, description="icon color menu")
-    sort: int = Field(None, description="sort number")
-    menutype_id: str = Field(None, description="menutype ID")
-    parent_id: str = Field(None, description="parent ID")
-    disabled: str = Field(None, description="disabled")
+    id: int
+    text: str
+    segment: str
+    tooltip: Optional[str] 
+    href: str
+    icon: str
+    icon_color: str
+    sort: int
+    menutype_id: int
+    parent_id: int
+    disabled: bool
+
+
+class MenuViewSchema(BaseModel):
+    id: str = Field(coerce_numbers_to_str=True)
+    text: str
+    segment: str
+    tooltip: Optional[str]
+    href: str
+    icon: str
+    disabled: Optional[bool] 
+    parent_id: str = Field(coerce_numbers_to_str=True)

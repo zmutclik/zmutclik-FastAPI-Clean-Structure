@@ -36,6 +36,10 @@ class MenuRepo:
     async def delete_menu(self, menu: Menu, deleted_user: str) -> None:
         pass
 
+    @abstractmethod
+    async def get_menus_by(self, menutype_id: int, parent_id: int = 0) -> list[Menu]:
+        pass
+
 
 class MenuSQLRepo(MenuRepo):
     async def get_menu(self, menu_id: int) -> Optional[Menu]:
@@ -83,3 +87,7 @@ class MenuSQLRepo(MenuRepo):
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseDeletingException(f"Error deleting menu: {str(e)}")
+
+    async def get_menus_by(self, menutype_id: int, parent_id: int = 0) -> list[Menu]:
+        stmt = await session.execute(select(Menu).where(Menu.menutype_id == menutype_id, Menu.parent_id == parent_id).order_by(Menu.sort))
+        return stmt.scalars().all()

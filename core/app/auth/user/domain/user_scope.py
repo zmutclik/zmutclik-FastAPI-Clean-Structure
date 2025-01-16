@@ -17,13 +17,13 @@ class UserScope(Base):
     USER = relationship("User", back_populates="SCOPE")
     SCOPE = relationship("Scope", back_populates="USERSCOPE")
 
-    @hybrid_property
-    def group(self) -> str:
-        return self.SCOPE.scope
+    # @hybrid_property
+    # def group(self) -> str:
+    #     return self.SCOPE.scope
 
-    @hybrid_property
-    def desc(self) -> str:
-        return self.SCOPE.desc
+    # @hybrid_property
+    # def desc(self) -> str:
+    #     return self.SCOPE.desc
 
     @classmethod
     def create(

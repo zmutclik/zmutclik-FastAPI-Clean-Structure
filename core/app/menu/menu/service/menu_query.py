@@ -7,7 +7,7 @@ from datatables import DataTable
 from core.db.session_ import async_engine
 from ..domain import Menu
 from ..repository import MenuRepo
-from ..schema import MenuSchema
+from ..schema import MenuSchema, MenuViewSchema
 from ..exceptions import MenuNotFoundException
 
 
@@ -53,3 +53,22 @@ class MenuQueryService:
             # callbacks=callbacks,
         )
         return datatable.output_result()
+
+    async def generate_menus(self, menutype_id: int, parent_id: int = 0, filter_menu: list[int] = []):
+        menus_result = []
+        data_get = await self.menu_repo.get_menus_by(menutype_id, parent_id)
+        for item in data_get:
+            menu_validate = MenuViewSchema.model_validate(item.__dict__)
+            menu_json = menu_validate.model_dump()
+            if menu_json["tooltip"] is None:
+                menu_json["tooltip"] = ""
+            menu_json["children"] = []
+
+            data_child = await self.menu_repo.get_menus_by(menutype_id, item.id)
+            if len(data_child) > 0:
+                menu_json["children"] = await self.generate_menus(menutype_id, item.id, filter_menu)
+
+            if item.id in filter_menu and not menu_validate.disabled:
+                menus_result.append(menu_json)
+
+        return menus_result

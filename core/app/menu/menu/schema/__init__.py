@@ -1,3 +1,3 @@
-from .menu import MenuSchema 
- 
-__all__ = ["MenuSchema"] 
+from .menu import MenuSchema, MenuViewSchema
+
+__all__ = ["MenuSchema", "MenuViewSchema"]
