@@ -8,8 +8,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
-{% include 'core/html/includes/_page_stylesheets.html' %}
-{% include 'core/html/includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/index/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
 
 {% endblock stylesheets %}
 
@@ -63,8 +63,8 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'core/html/includes/_all_javascripts.html' %}
-{% include 'core/html/includes/_page_javascripts.html' %}
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/index/javascripts.html' %}
 <!-- ------------------- -->
 <script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
 <script src="{{prefix_url_js}}/index.js"></script>

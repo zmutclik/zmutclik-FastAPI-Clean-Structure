@@ -54,20 +54,20 @@ class PageResponse:
             #     thread.start()
             self.initContext(request, request.user.client_id, request.user.session_id)
 
-            # self.sidemenu = menu_to_html(1, user.id, req.scope["route"].name)
-            if request.user.username is not None:
-                user_path = ".db/cache/user/{}.json".format(request.user.username)
-                if os.path.isfile(user_path):
-                    with open(user_path, "r") as file:
-                        user_json = json.load(file)
-                        user_json["created_at"] = datetime.strptime(user_json["created_at"], '%Y-%m-%dT%H:%M:%S')
-                        self.addContext("userloggedin", user_json)
-                menu_sidebar_path = ".db/cache/menu/{}_{}.json".format(request.user.username, "sidebar")
-                if os.path.isfile(menu_sidebar_path):
-                    with open(menu_sidebar_path, "r") as file:
-                        menu_sidebar_json = json.load(file)
-                        menu_sidebar = menu_to_html(menus=menu_sidebar_json, segmen=request.scope["route"].name)
-                        self.addContext("menu_sidebar", menu_sidebar)
+
+        if request.user.username is not None:
+            user_path = ".db/cache/user/{}.json".format(request.user.username)
+            if os.path.isfile(user_path):
+                with open(user_path, "r") as file:
+                    user_json = json.load(file)
+                    user_json["created_at"] = datetime.strptime(user_json["created_at"], '%Y-%m-%dT%H:%M:%S')
+                    self.addContext("userloggedin", user_json)
+            menu_sidebar_path = ".db/cache/menu/{}_{}.json".format(request.user.username, "sidebar")
+            if os.path.isfile(menu_sidebar_path):
+                with open(menu_sidebar_path, "r") as file:
+                    menu_sidebar_json = json.load(file)
+                    menu_sidebar = menu_to_html(menus=menu_sidebar_json, segmen=request.scope["route"].name)
+                    self.addContext("menu_sidebar", menu_sidebar)
 
         return request
 
