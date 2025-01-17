@@ -45,6 +45,7 @@ async def page_post_login(dataIn: LoginRequest, req: page_req, res: Response):
 
     access_token = await UserAuthService().token_create(data_get)
     res.set_cookie(key=config.COOKIES_KEY, value=access_token)
+    
     await UserAuthService().generate_cache_user(data_get)
     await UserAuthService().generate_cache_menu(data_get)
     # sleep(1)

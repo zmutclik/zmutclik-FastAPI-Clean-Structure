@@ -22,7 +22,7 @@ class PathJS(str, Enum):
 
 
 @router.get("/{PathCheck}/{menutype_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_privilege(menutype_id: int, req: page_req):
+async def page_system_menu(menutype_id: int, req: page_req):
     page.addContext("menutype_id", menutype_id)
     return page.response(req, "/html/menu/detail.html")
 

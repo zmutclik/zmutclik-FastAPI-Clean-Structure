@@ -24,7 +24,7 @@ class PathJS(str, Enum):
 
 
 @router.get("", response_class=HTMLResponse, dependencies=page.depend_r())
-async def page_privilege(req: page_req):
+async def page_settings_privilege(req: page_req):
     return page.response(req, "/html/index.html")
 
 
@@ -49,20 +49,20 @@ async def data_menus(privilege_id: int, menutype_id: int, req: page_req):
 
 
 @router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_form_add_privilege(req: page_req):
+async def page_settings_privilege_form_add(req: page_req):
     page.addContext("menutype", await MenuTypeQueryService().get_menutypes())
     return page.response(req, "/html/form.html")
 
 
 @router.get("/{PathCheck}/{privilege_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_form_edit_privilege(privilege_id: int, req: page_req):
+async def page_settings_privilege_form_edit(privilege_id: int, req: page_req):
     page.addContext("menutype", await MenuTypeQueryService().get_menutypes())
     page.addContext("data_privilege", await PrivilegeQueryService().get_privilege(privilege_id))
     return page.response(req, "/html/form.html")
 
 
 @router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_r())
-async def page_js_privilege(req: page_req, pathFile: PathJS, privilege_id: int = 0):
+async def page_settings_privilege_js(req: page_req, pathFile: PathJS, privilege_id: int = 0):
     page.addContext("privilege_id", privilege_id)
     return page.response(req, "/html/" + pathFile)
 

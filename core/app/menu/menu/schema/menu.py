@@ -25,5 +25,6 @@ class MenuViewSchema(BaseModel):
     href: str
     icon: str
     disabled: Optional[bool] 
+    parent_id: str = Field(coerce_numbers_to_str=True)
     
     children: List['MenuViewSchema'] = Field(default_factory=list)

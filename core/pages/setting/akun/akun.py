@@ -25,19 +25,19 @@ class PathJS(str, Enum):
 
 
 @router.get("", response_class=HTMLResponse, dependencies=page.depend_r())
-async def page_akun(req: page_req):
+async def page_settings_akun(req: page_req):
     return page.response(req, "/html/index.html")
 
 
 @router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_form_add_akun(req: page_req):
+async def page_settings_akun_form_add(req: page_req):
     page.addContext("data_privileges", await PrivilegeQueryService().get_privileges())
     page.addContext("data_scopes", await ScopeQueryService().get_scopes())
     return page.response(req, "/html/form.html")
 
 
 @router.get("/{PathCheck}/{user_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_form_edit_akun(user_id: int, req: page_req):
+async def page_settings_akun_form_edit(user_id: int, req: page_req):
     data_user_privileges = []
     for item in await UserQueryService().get_user_privileges(user_id):
         data_user_privileges.append(item.privilege_id)

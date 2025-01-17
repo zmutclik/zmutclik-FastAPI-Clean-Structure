@@ -22,17 +22,17 @@ class PathJS(str, Enum):
 
 
 @router.get("", response_class=HTMLResponse, dependencies=page.depend_r())
-async def page_privilege(req: page_req):
+async def page_system_menutype(req: page_req):
     return page.response(req, "/html/menutype/index.html")
 
 
 @router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_form_add_privilege(req: page_req):
+async def page_system_menutype_form_add(req: page_req):
     return page.response(req, "/html/menutype/form.html")
 
 
 @router.get("/{PathCheck}/{menutype_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_form_edit_privilege(menutype_id: int, req: page_req):
+async def page_system_menutype_form_edit(menutype_id: int, req: page_req):
     page.addContext("data_menutype", await MenuTypeQueryService().get_menutype(menutype_id))
     return page.response(req, "/html/menutype/form.html")
 

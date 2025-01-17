@@ -65,15 +65,21 @@ class UserAuthService:
 
     async def generate_cache_menu(self, user: User) -> None:
         list_privilege = await self.user_privilege_repo.get_userprivileges(user.id)
-        list_menu_id = []
+        list_filter_menu_id = []
+        is_privilege_system = False
         for item in list_privilege:
             PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(item.privilege_id)
+            if item.privilege_id==1:
+                is_privilege_system = True
             if PrivilegeMenus:
                 for item in PrivilegeMenus:
-                    list_menu_id.append(item.menu_id)
+                    list_filter_menu_id.append(item.menu_id)
+                    
+        if is_privilege_system:
+            list_filter_menu_id = None
 
         for item in await MenuTypeQueryService().get_menutypes():
-            menus = await MenuQueryService().generate_menus(item.id, 0, list_menu_id)
-            menus_json = json.dumps(menus)
+            menus = await MenuQueryService().generate_menus(item.id, 0, list_filter_menu_id)
+            menus_json = json.dumps([menu.model_dump() for menu in menus], indent=4)
             with open(".db/cache/menu/{}_{}.json".format(user.username, item.menutype), "w") as outfile:
                 outfile.write(menus_json)
