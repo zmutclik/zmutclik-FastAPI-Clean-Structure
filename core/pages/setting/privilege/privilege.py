@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from pages.response import PageResponse
+from core.pages.response import PageResponse
 
 from core.app.auth.privilege.service import PrivilegeQueryService, PrivilegeCommandService
 from core.app.menu.menu.service import MenuQueryService
@@ -13,8 +13,8 @@ from .request import PrivilegeRequest
 from .response import PrivilegeResponse
 from fastapi.exceptions import RequestValidationError
 
-router = APIRouter(prefix="/sys/privilege")
-page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix, depend_roles=["admin"])
+router = APIRouter(prefix="/privilege")
+page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/settings" + router.prefix, depend_roles=["admin"])
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 

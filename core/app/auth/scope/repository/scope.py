@@ -32,7 +32,7 @@ class ScopeRepo:
         pass
 
     @abstractmethod
-    async def update_scope(self, scope: Scope, **kwargs) -> Scope:
+    async def update_scope(self, scope_data: Scope, **kwargs) -> Scope:
         pass
 
     @abstractmethod
@@ -62,14 +62,14 @@ class ScopeSQLRepo(ScopeRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving scope: {str(e)}")
 
-    async def update_scope(self, scope: Scope, **kwargs) -> Scope:
+    async def update_scope(self, scope_data: Scope, **kwargs) -> Scope:
         try:
             for key, value in kwargs.items():
-                if hasattr(scope, key) and value is not None:
-                    setattr(scope, key, value)
+                if hasattr(scope_data, key) and value is not None:
+                    setattr(scope_data, key, value)
             await session.commit()
-            await session.refresh(scope)
-            return scope
+            await session.refresh(scope_data)
+            return scope_data
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating scope: {str(e)}")

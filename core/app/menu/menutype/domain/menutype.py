@@ -17,7 +17,7 @@ class MenuType(Base, TimestampLogMixin):
     desc = Column(String(256))
 
     MENU = relationship("Menu", back_populates="MENUTYPE")
-    
+
     @classmethod
-    def create(cls, menutype: str, desc: str) -> "MenuType":
-        return cls(menutype=menutype, desc=desc)
+    def create(cls, created_user: str, menutype: str, desc: str) -> "MenuType":
+        return cls(menutype=menutype, desc=desc, created_user=created_user)

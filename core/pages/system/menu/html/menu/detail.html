@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
 {% block title %} Form Menu {% endblock %}
 
@@ -103,8 +103,8 @@
                                                     <label for="menudisabled" class="col-sm-2 form-label">Disabled</label>
                                                     <div class="col-sm-10">
                                                         <select class="form-select" aria-label="Default select" id="menudisabled" name="disabled">
-                                                            <option value="1">Tidak Aktif</option>
-                                                            <option value="0">Aktif</option>
+                                                            <option value="0">Tidak Aktif</option>
+                                                            <option value="1">Aktif</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -156,13 +156,8 @@
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 
 <!-- ------------------- -->
-<script>
-    const api = axios.create({
-        baseURL: '{{prefix_url}}/detail/{{clientId}}/{{sessionId}}/{{menutype.id}}',
-        timeout: 2000,
-        headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') }
-    });
 </script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/detail.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}/{{menutype_id}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/{{menutype_id}}/detail.js"></script>
 
 {% endblock javascripts %}

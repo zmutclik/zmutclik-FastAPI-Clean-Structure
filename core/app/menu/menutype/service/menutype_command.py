@@ -12,10 +12,10 @@ class MenuTypeCommandService:
     def __init__(self, menutype_repo: MenuTypeRepo):
         self.menutype_repo = menutype_repo
 
-    async def create_menutype(self, menutype: str, desc: str) -> MenuTypeSchema:
+    async def create_menutype(self, created_user: str, menutype: str, desc: str) -> MenuTypeSchema:
         if await self.menutype_repo.get_menutype_by(menutype):
             raise MenuTypeDuplicateException
-        data_create = MenuType.create(menutype=menutype, desc=desc)
+        data_create = MenuType.create(menutype=menutype, desc=desc, created_user=created_user)
         data_saved = await self.menutype_repo.save_menutype(menutype=data_create)
         return data_saved
 
@@ -32,7 +32,7 @@ class MenuTypeCommandService:
         if desc:
             updates["desc"] = desc
 
-        data_updated = await self.menutype_repo.update_menutype(data_get, updates)
+        data_updated = await self.menutype_repo.update_menutype(data_get, **updates)
         return data_updated
 
     async def delete_menutype(self, menutype_id: int, username: str) -> None:

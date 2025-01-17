@@ -33,6 +33,7 @@ class Menu(Base, TimestampLogMixin):
     @classmethod
     def create(
         cls,
+        created_user: str,
         text: str,
         segment: str,
         tooltip: str,
@@ -42,6 +43,7 @@ class Menu(Base, TimestampLogMixin):
         menutype_id: int,
     ) -> "Menu":
         return cls(
+            created_user=created_user,
             text=text,
             segment=segment,
             tooltip=tooltip,

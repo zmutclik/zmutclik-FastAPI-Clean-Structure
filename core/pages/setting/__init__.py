@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Request
-from core import config
-from core.pages.auth import auth_router
-from core.pages.setting import pages_settings
-from core.pages.system import pages_sys
 
+from fastapi import FastAPI, Request
+
+from .akun import akun_router
+from .privilege import privilege_router
+from core import config
 #######################################################################################################################
-pages_app = FastAPI(
-    title=config.APP_NAME + " [ Pages ]",
+pages_settings = FastAPI(
+    title=config.APP_NAME + " [ Pages / Settings ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},
@@ -14,10 +14,8 @@ pages_app = FastAPI(
 )
 
 ### Sub FastAPI ###
-pages_app.include_router(auth_router)
-
-pages_app.mount("/settings", pages_settings)
-pages_app.mount("/sys", pages_sys)
+pages_settings.include_router(akun_router)
+pages_settings.include_router(privilege_router)
 
 
 #######################################################################################################################
@@ -29,12 +27,12 @@ from core.exceptions import CustomException
 from fastapi.exceptions import RequestValidationError
 
 
-@pages_app.exception_handler(RequiresLoginException)
+@pages_settings.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
     return RedirectResponse(_.nextRouter)
 
 
-@pages_app.exception_handler(CustomException)
+@pages_settings.exception_handler(CustomException)
 async def custom_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
         status_code=exc.code,
@@ -42,7 +40,7 @@ async def custom_exception_handler(request: Request, exc: CustomException):
     )
 
 
-@pages_app.exception_handler(RequestValidationError)
+@pages_settings.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     details = exc.errors()
     modified_details = []
@@ -66,4 +64,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-__all__ = ["pages_app"]
+__all__ = ["pages_settings"]

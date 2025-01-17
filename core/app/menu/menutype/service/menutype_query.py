@@ -1,9 +1,6 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from sqlalchemy import or_, select
-from datatables import DataTable
-
 from core.db.session_ import async_engine
 from ..domain import MenuType
 from ..repository import MenuTypeRepo
@@ -24,8 +21,6 @@ class MenuTypeQueryService:
 
     async def get_menutype_by(self, menutype: str) -> Optional[MenuTypeSchema]:
         data_get = await self.menutype_repo.get_menutype_by(menutype)
-        if not data_get:
-            raise MenuTypeNotFoundException
         return data_get
 
     async def get_menutypes(self) -> list[MenuTypeSchema]:
@@ -35,12 +30,17 @@ class MenuTypeQueryService:
         return data_get
 
     async def datatable_menutype(self, params: dict[str, Any]):
+        from sqlalchemy import or_, select
+        from core.utils.datatables import DataTable
+        from core.db import session_menu
+
         query = select(MenuType, MenuType.id.label("DT_RowId")).where(MenuType.deleted_at == None)
         datatable: DataTable = DataTable(
             request_params=params,
             table=query,
             column_names=["DT_RowId", "id", "menutype", "desc"],
-            engine=async_engine,
+            engine=session_menu,
             # callbacks=callbacks,
         )
+        await datatable.generate()
         return datatable.output_result()

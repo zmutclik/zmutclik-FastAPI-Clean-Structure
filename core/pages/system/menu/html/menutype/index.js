@@ -4,7 +4,7 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
@@ -17,7 +17,7 @@ $(document).ready(function () {
         "autoWidth": false,
         "responsive": true,
         columns: [
-            { "data": "menutype", "title": "TIPE MENU", },
+            { "data": "menutype", "title": "PAKET MENU", },
             { "data": "desc", "title": "DESKRIPSI", },
             { "data": "id", "title": "" },
         ],
@@ -25,9 +25,9 @@ $(document).ready(function () {
             sClass: "right", searchable: false, orderable: false, bSortable: false, targets: -1, sWidth: "0px",
             render: function (data, type, row, meta) {
                 btnhtml = "<div class=\"btn-group\" role=\"group\">";
+                btnhtml += "<button type=\"button\" class=\"btn btn-primary btnDetail\"><i class=\"	far fa-eye\"></i></button>";
                 btnhtml += "<button type=\"button\" class=\"btn btn-success btnEdit\"><i class=\"fas fa-pencil-alt\"></i></button>";
                 btnhtml += "<button type=\"button\" class=\"btn btn-danger btnDelete\"><i class=\"fas fa-trash-alt\"></i></button>";
-                btnhtml += "<button type=\"button\" class=\"btn btn-primary btnDetail\"><i class=\"	far fa-eye\"></i></button>";
                 btnhtml += "</div>"
                 return btnhtml;
             }
@@ -35,15 +35,15 @@ $(document).ready(function () {
     });
 
     $("#btnTambah").on("click", function () {
-        window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/add';
+        window.location.href = '{{prefix_url_post}}/add';
     });
 
     $("#table_").on("click", '.btnEdit', function () {
-        window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
+        window.location.href = '{{prefix_url_post}}/' + $(this).parents('tr').attr('id');
     });
 
     $("#table_").on("click", '.btnDetail', function () {
-        window.location.href = '{{prefix_url}}/detail/{{clientId}}/{{sessionId}}/' + $(this).parents('tr').attr('id');
+        window.location.href = '{{prefix_url_menu}}/' + $(this).parents('tr').attr('id');
     });
 
     $("#table_").on("click", '.btnDelete', function () {

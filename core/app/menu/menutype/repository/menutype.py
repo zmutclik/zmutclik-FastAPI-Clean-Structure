@@ -32,7 +32,7 @@ class MenuTypeRepo:
         pass
 
     @abstractmethod
-    async def update_menutype(self, menutype: MenuType, **kwargs) -> MenuType:
+    async def update_menutype(self, menutype_data: MenuType, **kwargs) -> MenuType:
         pass
 
     @abstractmethod
@@ -54,7 +54,7 @@ class MenuTypeSQLRepo(MenuTypeRepo):
 
     async def save_menutype(self, menutype: MenuType) -> MenuType:
         try:
-            await session.add(menutype)
+            session.add(menutype)
             await session.commit()
             await session.refresh(menutype)
             return menutype
@@ -62,14 +62,14 @@ class MenuTypeSQLRepo(MenuTypeRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving menutype: {str(e)}")
 
-    async def update_menutype(self, menutype: MenuType, **kwargs) -> MenuType:
+    async def update_menutype(self, menutype_data: MenuType, **kwargs) -> MenuType:
         try:
             for key, value in kwargs.items():
-                if hasattr(menutype, key) and value is not None:
-                    setattr(menutype, key, value)
+                if hasattr(menutype_data, key) and value is not None:
+                    setattr(menutype_data, key, value)
             await session.commit()
-            await session.refresh(menutype)
-            return menutype
+            await session.refresh(menutype_data)
+            return menutype_data
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating menutype: {str(e)}")

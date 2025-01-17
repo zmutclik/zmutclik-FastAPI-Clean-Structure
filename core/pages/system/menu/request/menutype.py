@@ -3,7 +3,6 @@ from typing import Optional
 from pydantic import BaseModel, Field 
  
  
-class MenuTypeSchema(BaseModel): 
-    id: int
+class MenuTypeRequest(BaseModel): 
     menutype: str
     desc: str

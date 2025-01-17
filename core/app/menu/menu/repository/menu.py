@@ -21,6 +21,10 @@ class MenuRepo:
         pass
 
     @abstractmethod
+    async def get_menu_by(self, menutype_id: int, text: str) -> Optional[MenuType]:
+        pass
+
+    @abstractmethod
     async def get_menus(self, menutype_id: int) -> list[Menu]:
         pass
 
@@ -29,7 +33,7 @@ class MenuRepo:
         pass
 
     @abstractmethod
-    async def update_menu(self, menu: Menu, **kwargs) -> Menu:
+    async def update_menu(self, menu_data: Menu, **kwargs) -> Menu:
         pass
 
     @abstractmethod
@@ -45,6 +49,18 @@ class MenuSQLRepo(MenuRepo):
     async def get_menu(self, menu_id: int) -> Optional[Menu]:
         return await session.get(Menu, menu_id)
 
+    async def get_menu_by(self, menutype_id: int, text: str) -> Optional[MenuType]:
+        result = await session.execute(
+            select(Menu)
+            .where(
+                Menu.menutype_id == menutype_id,
+                Menu.text == text,
+                Menu.deleted_at == None,
+            )
+            .order_by(Menu.sort)
+        )
+        return result.scalars().first()
+
     async def get_menus(self, menutype_id: int) -> list[Menu]:
         result = await session.execute(
             select(Menu)
@@ -58,7 +74,7 @@ class MenuSQLRepo(MenuRepo):
 
     async def save_menu(self, menu: Menu) -> Menu:
         try:
-            await session.add(menu)
+            session.add(menu)
             await session.commit()
             await session.refresh(menu)
             return menu
@@ -66,14 +82,14 @@ class MenuSQLRepo(MenuRepo):
             await session.rollback()
             raise DatabaseSavingException(f"Error saving menu: {str(e)}")
 
-    async def update_menu(self, menu: Menu, **kwargs) -> Menu:
+    async def update_menu(self, menu_data: Menu, **kwargs) -> Menu:
         try:
             for key, value in kwargs.items():
-                if hasattr(menu, key) and value is not None:
-                    setattr(menu, key, value)
+                if hasattr(menu_data, key) and value is not None:
+                    setattr(menu_data, key, value)
             await session.commit()
-            await session.refresh(menu)
-            return menu
+            await session.refresh(menu_data)
+            return menu_data
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseUpdatingException(f"Error updating menu: {str(e)}")

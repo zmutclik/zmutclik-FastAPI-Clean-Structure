@@ -6,10 +6,10 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from core.app.auth.user.service import UserQueryService, UserCommandService
-from pages._auth.register.request import RegisterRequest
+from core.pages.auth.register.request import RegisterRequest
 from fastapi.exceptions import RequestValidationError
 from core import config
-from pages.response import PageResponse
+from core.pages.response import PageResponse
 
 router = APIRouter(prefix="/register")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)

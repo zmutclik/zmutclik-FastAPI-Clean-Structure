@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from pages.response import PageResponse
+from core.pages.response import PageResponse
 
 from core.app.auth.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
 from core.app.auth.user.service import UserQueryService, UserCommandService
@@ -14,8 +14,8 @@ from .request import AkunRequest
 from .response import AkunResponse
 from fastapi.exceptions import RequestValidationError
 
-router = APIRouter(prefix="/sys/akun")
-page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix, depend_roles=["admin"])
+router = APIRouter(prefix="/akun")
+page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/settings" + router.prefix, depend_roles=["admin"])
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 

@@ -32,7 +32,7 @@ class PrivilegeRepo:
         pass
 
     @abstractmethod
-    async def update_privilege(self, privilege: Privilege, **kwargs) -> Privilege:
+    async def update_privilege(self, privilege_data: Privilege, **kwargs) -> Privilege:
         pass
 
     @abstractmethod

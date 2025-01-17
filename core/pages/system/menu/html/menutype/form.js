@@ -15,7 +15,7 @@ $(document).ready(function () {
     $("#form_ input[name='scope']").focus();
 
     $(".btnBack").on("click", function () {
-        window.location.href = '{{prefix_url}}/';
+        window.location.href = '{{prefix_url}}';
     });
 
     $("#form_").on("submit", function () {
@@ -31,25 +31,27 @@ $(document).ready(function () {
                     idU = response.data.id;
                     Swal.fire("Tersimpan!", "", "success")
                         .then(() => {
-                            window.location.href = '{{prefix_url}}/{{clientId}}/{{sessionId}}/' + idU;
+                            window.location.href = '{{prefix_url_post}}/' + idU;
                         });
                 })
                 .catch(function (error) {
-                    if (error.status == 401 || error.status == 400) {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "error",
-                            title: error.response.data.detail,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                    if (error.status == 422) {
-                        de = {}
-                        $.each(error.response.data.detail, function (i, v) {
-                            de[v.loc[1]] = v["msg"];
-                        });
-                        form_.showErrors(de);
+                    switch (error.response.data.error_code) {
+                        case 422:
+                            de = {}
+                            $.each(error.response.data.detail, function (i, v) {
+                                de[v.loc[1]] = v["message"];
+                            });
+                            form_.showErrors(de);
+                            break;
+                        default:
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "error",
+                                title: error.response.data.error_code + " : " + error.response.data.message,
+                            }).then((result) => {
+                                if (error.response.data.error_code in [10000, 10001, 10002])
+                                    window.location.reload(true);
+                            });
                     }
                 })
                 .finally(() => {

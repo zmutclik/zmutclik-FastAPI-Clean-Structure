@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
 {% block title %} Form Menu {% endblock %}
 
@@ -8,8 +8,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
-{% include 'includes/_form_stylesheets.html' %}
-{% include 'includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/form/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
 
 {% endblock stylesheets %}
 
@@ -23,7 +23,7 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1 class="float-start mr-2">FORM MENU</h1>
-                    <h3 class="card-title mt-2">MENU Manajemen</h3>
+                    <h3 class="card-title mt-2">Manajemen</h3>
                 </div>
                 <div class="col-sm-6">
                     <div class="float-end"><button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button></div>
@@ -45,12 +45,12 @@
                             <form id="form_">
                                 <input type="hidden" id="id" {% if menutype %} value="{{menutype.id}}" {% endif %}>
                                 <div class="mb-3">
-                                    <label for="full_name" class="form-label">Menu Tipe</label>
-                                    <input type="text" class="form-control" name="menutype" placeholder="Nama Tipe Menu" {% if menutype %} value="{{menutype.menutype}}" readonly {% endif %} required>
+                                    <label for="full_name" class="form-label">Nama Paket Menu</label>
+                                    <input type="text" class="form-control" name="menutype" placeholder="Nama Paket Menu" {% if data_menutype %} value="{{data_menutype.menutype}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Deskripsi</label>
-                                    <input type="text" class="form-control" name="desc" placeholder="Deskripsi" {% if menutype %} value="{{menutype.desc}}" {% endif %} required>
+                                    <input type="text" class="form-control" name="desc" placeholder="Deskripsi" {% if data_menutype %} value="{{data_menutype.desc}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
                                     <button type="submit" class="btn btn-primary">SIMPAN</button>
@@ -76,10 +76,10 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'includes/_all_javascripts.html' %}
-{% include 'includes/_form_javascripts.html' %}
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/form/javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if menutype %}/{{menutype.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}{% if data_menutype %}/{{data_menutype.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/form.js"></script>
 
 {% endblock javascripts %}

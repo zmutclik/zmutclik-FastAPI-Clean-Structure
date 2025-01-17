@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field
+from typing import Optional,List
+from pydantic import BaseModel, Field,ConfigDict
 
 
 class MenuSchema(BaseModel):
@@ -10,7 +10,7 @@ class MenuSchema(BaseModel):
     tooltip: Optional[str] 
     href: str
     icon: str
-    icon_color: str
+    icon_color: Optional[str] 
     sort: int
     menutype_id: int
     parent_id: int
@@ -25,4 +25,5 @@ class MenuViewSchema(BaseModel):
     href: str
     icon: str
     disabled: Optional[bool] 
-    parent_id: str = Field(coerce_numbers_to_str=True)
+    
+    children: List['MenuViewSchema'] = Field(default_factory=list)

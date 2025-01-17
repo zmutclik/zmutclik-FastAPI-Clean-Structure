@@ -21,25 +21,22 @@ mnEditor.onClickDelete((event) => {
 mnEditor.onClickEdit((event) => {
     let itemData = event.item.getDataset();
     mnEditor.edit(event.item); // set the item in edit mode
-    api.get('/data/' + itemData['id'])
+    api.get('/' + itemData['id'])
         .then(function (response) {
             $('.panelSubmit').hide();
             $('#menuid').val(response.data.id);
             $('#menutext').val(response.data.text);
-            $('#menutooltop').val(response.data.tooltop);
+            $('#menutooltop').val(response.data.tooltip);
             $('#menuhref').val(response.data.href);
             $('#menuicon').val(response.data.icon);
             $('#menusegment').val(response.data.segment);
-            if (response.data.disabled)
-                $('#menudisabled').val('1').trigger('change');
-            else
-                $('#menudisabled').val('0').trigger('change');
+            $('#menudisabled').val1(response.data.disabled).trigger('change');
             $('#menutext').focus();
-            toggleBtn();
         })
         .catch(function (error) {
         })
         .finally(function () {
+            toggleBtn();
         });
 });
 
@@ -87,7 +84,7 @@ $(document).ready(function () {
     getMenu();
     toggleBtn();
     $(".btnBack").on("click", function () {
-        window.location.href = '{{prefix_url}}/';
+        window.location.href = '{{prefix_url_menutype}}';
     });
     $("#btnAdd,.btnCancel").on("click", function () {
         toggleBtn();
@@ -107,7 +104,7 @@ $(document).ready(function () {
             menuid = $("#menuid").val();
             if (menuid !== '') menuid = "/" + menuid
 
-            api.post('/data' + menuid, {
+            api.post(menuid, {
                 "text": $("#form_ input[name='text']").val(),
                 "tooltip": $("#form_ input[name='tooltip']").val(),
                 "href": $("#form_ input[name='href']").val(),
@@ -120,21 +117,23 @@ $(document).ready(function () {
                     getMenu();
                 })
                 .catch(function (error) {
-                    if (error.status == 401 || error.status == 400) {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "error",
-                            title: error.response.data.detail,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                    if (error.status == 422) {
-                        de = {}
-                        $.each(error.response.data.detail, function (i, v) {
-                            de[v.loc[1]] = v["msg"];
-                        });
-                        form_.showErrors(de);
+                    switch (error.response.data.error_code) {
+                        case 422:
+                            de = {}
+                            $.each(error.response.data.detail, function (i, v) {
+                                de[v.loc[1]] = v["message"];
+                            });
+                            form_.showErrors(de);
+                            break;
+                        default:
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "error",
+                                title: error.response.data.error_code + " : " + error.response.data.message,
+                            }).then((result) => {
+                                if (error.response.data.error_code in [10000, 10001, 10002])
+                                    window.location.reload(true);
+                            });
                     }
                 })
                 .finally(() => {
