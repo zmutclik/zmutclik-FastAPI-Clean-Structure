@@ -1,52 +1,95 @@
 import os
-import sqlite3
 from pydantic_settings import BaseSettings
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, Table, MetaData, select
+
+DBCORE_FILE = ".db/system/core.db"
+DBCORE_ENGINE = "sqlite+aiosqlite:///" + DBCORE_FILE
+dbcore_engine = create_engine(DBCORE_ENGINE.replace("+aiosqlite", ""))
+
+DBAUTH_FILE = ".db/system/auth.db"
+DBAUTH_ENGINE = "sqlite+aiosqlite:///" + DBAUTH_FILE
+dbauth_engine = create_engine(DBAUTH_ENGINE.replace("+aiosqlite", ""))
+
+DBMENU_FILE = ".db/system/menu.db"
+DBMENU_ENGINE = "sqlite+aiosqlite:///" + DBMENU_FILE
+dbmenu_engine = create_engine(DBMENU_ENGINE.replace("+aiosqlite", ""))
 
 
-DB_FILE = ".db/system/core.db"
-DB_ENGINE = "sqlite:///" + DB_FILE
-repository_db = ""
-repository_rmq = ""
-version_name = "null" 
-
-if os.path.exists(DB_FILE):
-    file_stats = os.stat(DB_FILE)
+#######################################################################################################################
+if os.path.exists(DBCORE_FILE):
+    file_stats = os.stat(DBCORE_FILE)
     if file_stats.st_size != 0:
-        with sqlite3.connect(".db/system/core.db") as conn:
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
+        metadata = MetaData()
+        repo_table = Table("repository", metadata, autoload_with=dbcore_engine)
+        vers_table = Table("changelog", metadata, autoload_with=dbcore_engine)
+        core_table = Table("coresystem", metadata, autoload_with=dbcore_engine)
+        origin_table = Table("cross_origin", metadata, autoload_with=dbcore_engine)
 
-        cursor.execute("SELECT * FROM repository where allocation='DBAPPS_URL_DEFAULT' and is_active='1' ORDER BY id DESC LIMIT 1")
-        _r = cursor.fetchone()
-        if _r:
-            repository_db = _r["datalink"].format(user=_r["user"], password=_r["password"])
-            
-        cursor.execute("SELECT * FROM repository where allocation='RabbitMQ' and is_active='1' ORDER BY id DESC LIMIT 1")
-        _r = cursor.fetchone()
-        if _r:
-            repository_rmq = _r["datalink"].format(user=_r["user"], password=_r["password"])
-            
-        cursor.execute("SELECT * FROM changelog ORDER BY dateupdate DESC LIMIT 1")
-        _r = cursor.fetchone()
-        if _r:
-            version_name = _r["version_name"]
+
+def get_repository(allocation: str):
+    return (
+        select(repo_table)
+        .where(repo_table.c.deleted_at == None, repo_table.c.allocation == allocation, repo_table.c.is_active == True)
+        .order_by(repo_table.c.id.desc())
+    )
+
+
+repository_db = ""
+repository_mql = ""
+version_name = "zero"
+allow_origins = []
+configdefault = {
+    "environment": "development",
+    "app_name": "FastAPI cleanStructure",
+    "app_desc": "This is a very fancy project, with auto docs for the API and everything.",
+    "app_host": "127.0.0.1",
+    "app_port": 8016,
+    "client_key": "fastapi-clean-structure_client",
+    "jwt_scret_key": "fastapi",
+    "jwt_algorithm": "HS512",
+    "cookies_key": "fastapi-clean-structure_token",
+    "cookies_exp": 30,
+    "debug": True,
+}
+
+if os.path.exists(DBCORE_FILE):
+    file_stats = os.stat(DBCORE_FILE)
+    if file_stats.st_size != 0:
+        with dbcore_engine.begin() as connection:
+            with Session(bind=connection) as db:
+                for item in db.execute(get_repository("DBAPPS_URL_DEFAULT")):
+                    repository_db = item.datalink.format(user=item.user, password=item.password)
+                for item in db.execute(get_repository("RabbitMQ")):
+                    repository_mql = item.datalink.format(user=item.user, password=item.password)
+                stmt = select(vers_table).limit(1).order_by(vers_table.c.id.desc())
+                for item in db.execute(stmt):
+                    version_name = item.version_name
+                stmt = select(core_table).limit(1)
+                for item in db.execute(stmt):
+                    configdefault = item._mapping
+                result = db.execute(select(origin_table.c.link).where(origin_table.c.deleted_at == None))
+                allow_origins = [item.link for item in result]
+                if allow_origins == []:
+                    allow_origins.append("*")
 
 
 class Config(BaseSettings):
-    APP_NAME: str = "FastAPI cleanStructure"
-    APP_DESCRIPTION: str = "This is a very fancy project, with auto docs for the API and everything."
+    APP_NAME: str = configdefault["app_name"]
+    APP_DESCRIPTION: str = configdefault["app_desc"]
     APP_VERSION: str = version_name
-    ENV: str = "development"
-    DEBUG: bool = True
-    APP_HOST: str = "localhost"
-    APP_PORT: int = 8016
+    ENV: str = configdefault["environment"]
+    DEBUG: bool = configdefault["debug"]
+    APP_HOST: str = configdefault["app_host"]
+    APP_PORT: int = configdefault["app_port"]
     DBAPPS_URL: str = repository_db
-    CELERY_BROKER_URL: str = repository_rmq
-    JWT_SECRET_KEY: str = "fastapi"
-    JWT_ALGORITHM: str = "HS512"
-    CLIENT_KEY: str = "fastapi-clean-structure_client"
-    COOKIES_KEY: str = "fastapi-clean-structure_token"
-    COOKIES_EXPIRED: int = 30
+    CELERY_BROKER_URL: str = repository_mql
+    JWT_SECRET_KEY: str = configdefault["jwt_scret_key"]
+    JWT_ALGORITHM: str = configdefault["jwt_algorithm"]
+    CLIENT_KEY: str = configdefault["client_key"]
+    COOKIES_KEY: str = configdefault["cookies_key"]
+    COOKIES_EXPIRED: int = configdefault["cookies_exp"]
+    ALLOW_ORIGINS: list[str] = allow_origins
 
 
 config: Config = Config()

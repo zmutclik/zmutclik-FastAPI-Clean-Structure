@@ -7,9 +7,7 @@ from typing import Union
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_scoped_session
 
 from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError
 
-from core import config
 from .base import BaseLogs as Base
 
 from core.app.logs.domain import Logs

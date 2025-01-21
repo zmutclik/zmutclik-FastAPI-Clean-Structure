@@ -1,7 +1,6 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from core.db.session_ import async_engine
 from ..domain import SysRepo
 from ..repository import SysRepoRepo
 from ..schema import SysRepoSchema

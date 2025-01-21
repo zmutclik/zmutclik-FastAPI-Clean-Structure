@@ -29,32 +29,17 @@ def init_routers(app: FastAPI) -> None:
 
 
 def init_cors(app: FastAPI) -> None:
-    from core.db import dbcore_engine
-    from sqlalchemy.orm import Session
-    from sqlalchemy import select
-    from core.app.system.crossorigin.domain import CrossOrigin
-
-    try:
-        with dbcore_engine.begin() as connection:
-            with Session(bind=connection) as db:
-                result = db.execute(select(CrossOrigin.link).where(CrossOrigin.deleted_at == None)).all()
-                allow_origins = [item.link for item in result]
-                if allow_origins == []:
-                    allow_origins.append("*")
-                print("allow_origins = ", allow_origins)
-                app.add_middleware(
-                    CORSMiddleware,
-                    allow_origins=allow_origins,
-                    allow_credentials=True,
-                    allow_methods=["*"],
-                    allow_headers=["*"],
-                )
-    except:
-        print("Koneksi Database Core Error : app->init_cors")
+    print("allow_origins = ", config.ALLOW_ORIGINS)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=config.ALLOW_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 def init_listeners(app: FastAPI) -> None:
-    # Exception handler
     @app.exception_handler(CustomException)
     async def custom_exception_handler(request: Request, exc: CustomException):
         return JSONResponse(
@@ -81,7 +66,7 @@ def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyAuthMiddleware)
     app.add_middleware(SQLAlchemyCoreMiddleware)
     app.add_middleware(SQLAlchemyMenuMiddleware)
-    # app.add_middleware(LogsMiddleware)
+    app.add_middleware(LogsMiddleware)
     app.add_middleware(
         AuthenticationMiddleware,
         backend=AuthBackend(),

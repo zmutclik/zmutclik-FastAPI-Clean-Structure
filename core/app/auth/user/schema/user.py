@@ -18,6 +18,4 @@ class UserSchema(BaseModel):
 
     # PRIVILEGE: Optional[list[UserPrivilegeSchema]]
     # SCOPE: Optional[list[UserScopeSchema]]
-    class Config:
-        orm_mode = True
 
