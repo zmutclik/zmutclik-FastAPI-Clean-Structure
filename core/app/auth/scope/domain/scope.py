@@ -19,5 +19,5 @@ class Scope(Base, TimestampLogMixin):
     USERSCOPE = relationship("UserScope", back_populates="SCOPE")
 
     @classmethod
-    def create(cls, scope: str, desc: str) -> "Scope":
-        return cls(scope=scope, desc=desc)
+    def create(cls, creted_user: str, scope: str, desc: str) -> "Scope":
+        return cls(created_user=creted_user, scope=scope, desc=desc)

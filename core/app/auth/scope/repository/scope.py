@@ -54,7 +54,7 @@ class ScopeSQLRepo(ScopeRepo):
 
     async def save_scope(self, scope: Scope) -> Scope:
         try:
-            await session.add(scope)
+            session.add(scope)
             await session.commit()
             await session.refresh(scope)
             return scope
