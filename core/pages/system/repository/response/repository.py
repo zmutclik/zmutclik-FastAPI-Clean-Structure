@@ -3,7 +3,7 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 
-class SysRepoSchema(BaseModel):
+class SysRepoResponse(BaseModel):
     id: int
     name: str
     allocation: str

@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
 {% block title %} Form Scope System {% endblock %}
 
@@ -8,8 +8,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
-{% include 'includes/_form_stylesheets.html' %}
-{% include 'includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/form/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
 
 {% endblock stylesheets %}
 
@@ -43,32 +43,32 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <form id="form_">
-                                <input type="hidden" id="id" {% if repository %} value="{{repository.id}}" {% endif %}>
+                                <input type="hidden" id="id" {% if data_repository %} value="{{data_repository.id}}" {% endif %}>
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nama</label>
-                                    <input type="text" class="form-control" name="name" placeholder="Nama" {% if repository %} value="{{repository.name}}" readonly {% endif %} required>
+                                    <input type="text" class="form-control" name="name" placeholder="Nama" {% if data_repository %} value="{{data_repository.name}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="allocation" class="form-label">Peruntukan</label>
-                                    <input type="text" class="form-control" name="allocation" placeholder="Peruntukan Link" {% if repository %} value="{{repository.allocation}}" {% endif %} required>
+                                    <input type="text" class="form-control" name="allocation" placeholder="Peruntukan Link" {% if data_repository %} value="{{data_repository.allocation}}" readonly {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="datalink" class="form-label">Isi Data</label>
-                                    <input type="text" class="form-control" name="datalink" placeholder="Data Link" {% if repository %} value="{{repository.datalink}}" {% endif %} required>
+                                    <input type="text" class="form-control" name="datalink" placeholder="Data Link" {% if data_repository %} value="{{data_repository.datalink}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="user" class="form-label">User</label>
-                                    <input type="text" class="form-control" name="user" placeholder="User" {% if repository %} value="{{repository.user}}" {% endif %} required>
+                                    <input type="text" class="form-control" name="user" placeholder="User" {% if data_repository %} value="{{data_repository.user}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="text" class="form-control" name="password" placeholder="P45w012d" {% if repository %} value="{{repository.password}}" {% endif %} required>
+                                    <input type="text" class="form-control" name="password" placeholder="P45w012d" {% if data_repository %} value="{{data_repository.password}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="active" class="form-label">Aktif</label>
                                     <select class="form-select" aria-label="Default select" name="active">
-                                        <option value="true" {% if repository %}{% if repository.active %} selected {% endif %}{% endif %}>Aktif</option>
-                                        <option value="false" {% if repository %}{% if not repository.active %} selected {% endif %}{% endif %}>Tidak Aktif</option>
+                                        <option value="true" {% if data_repository %}{% if data_repository.is_active %} selected {% endif %}{% endif %}>Aktif</option>
+                                        <option value="false" {% if data_repository %}{% if not data_repository.is_active %} selected {% endif %}{% endif %}>Tidak Aktif</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
@@ -95,10 +95,10 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'includes/_all_javascripts.html' %}
-{% include 'includes/_form_javascripts.html' %}
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/form/javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}{% if repository %}/{{repository.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/form.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}{% if data_repository %}/{{data_repository.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/form.js"></script>
 
 {% endblock javascripts %}

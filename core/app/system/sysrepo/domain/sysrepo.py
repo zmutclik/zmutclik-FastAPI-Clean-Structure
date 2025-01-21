@@ -24,6 +24,7 @@ class SysRepo(Base, TimestampLogMixin):
     @classmethod
     def create(
         cls,
+        created_user: str,
         name: str,
         allocation: str,
         datalink: str,
@@ -32,6 +33,7 @@ class SysRepo(Base, TimestampLogMixin):
     ) -> "SysRepo":
 
         return cls(
+            created_user=created_user,
             name=name,
             allocation=allocation,
             datalink=datalink,

@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 
 from .menu import menu_router
 from .scope import scope_router
+from .repository import repository_router
 from core import config
 
 #######################################################################################################################
@@ -16,6 +17,7 @@ pages_sys = FastAPI(
 ### Sub FastAPI ###
 pages_sys.include_router(menu_router)
 pages_sys.include_router(scope_router)
+pages_sys.include_router(repository_router)
 
 
 #######################################################################################################################

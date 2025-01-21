@@ -13,10 +13,11 @@ class SysRepoCommandService:
     def __init__(self, sysrepo_repo: SysRepoRepo):
         self.sysrepo_repo = sysrepo_repo
 
-    async def create_sysrepo(self, name: str, allocation: str, datalink: str, user: str, password: str) -> SysRepoSchema:
+    async def create_sysrepo(self, created_user: str, name: str, allocation: str, datalink: str, user: str, password: str) -> SysRepoSchema:
         if await self.sysrepo_repo.get_sysrepo_by(allocation=allocation, name=name):
             raise SysRepoDuplicateException
         date_create = SysRepo.create(
+            created_user=created_user,
             name=name,
             allocation=allocation,
             datalink=datalink,
@@ -50,7 +51,7 @@ class SysRepoCommandService:
         if password:
             updates["password"] = password
 
-        data_updated = await self.sysrepo_repo.update_sysrepo(data_get, updates)
+        data_updated = await self.sysrepo_repo.update_sysrepo(data_get, **updates)
         return data_updated
 
     async def delete_sysrepo(self, sysrepo_id: int, username: str) -> None:

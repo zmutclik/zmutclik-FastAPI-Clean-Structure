@@ -71,7 +71,7 @@ class SysRepoSQLRepo(SysRepoRepo):
 
     async def save_sysrepo(self, sysrepo: SysRepo) -> SysRepo:
         try:
-            await session.add(sysrepo)
+            session.add(sysrepo)
             await session.commit()
             await session.refresh(sysrepo)
             return sysrepo
