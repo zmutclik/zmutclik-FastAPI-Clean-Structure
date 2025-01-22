@@ -7,11 +7,16 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
-                d.search.time_start = moment($('#time_start').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
-                d.search.time_end = moment($('#time_end').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
+                d.search.bulantahun = moment($('#time_start').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
+                d.search.time_start = moment($('#time_start').val(), "DD MMM YYYY HH:mm").unix();
+                d.search.time_end = moment($('#time_end').val(), "DD MMM YYYY HH:mm").unix();
                 d.search.ipaddress = $('#ipaddress').val();
+                d.search.routername = $('#routername').val();
+                d.search.clientid = $('#clientid').val();
+                d.search.username = $('#username').val();
+                d.search.channel = $('#channel').val();
                 d.search.method = $('#method').val();
                 d.search.status = $('#status').val();
                 d.search.path = $('#querypath').val();
@@ -31,7 +36,7 @@ $(document).ready(function () {
             { "data": "id", "title": "NO", },
             {
                 "data": function (source, type, val) {
-                    return moment(source.startTime, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+                    return moment.unix(source.startTime).format("YYYY-MM-DD HH:mm:ss");
                 }
                 , "title": "WAKTU",
             },
@@ -50,7 +55,7 @@ $(document).ready(function () {
                     return "<div class=\"row\"><div class=\"col\">" + source.method + "</div></div><div class=\"row\"><div class=\"col\">" + source.ipaddress + "</div></div>";
                 }, "title": "IP",
             },
-            { "data": "username", "title": "USERS", },
+            { "data": "user", "title": "USERS", },
             { "data": "status_code", "title": "CODE", },
             {
                 "data": function (source, type, val) {
@@ -76,7 +81,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#method,#status").on("change", function (e) {
+    $("#method,#status,#routername,#clientid,#username,#channel").on("change", function (e) {
         oTable.ajax.reload();
     });
 

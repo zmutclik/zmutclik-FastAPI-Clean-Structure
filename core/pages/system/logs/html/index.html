@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
 {% block title %} Logs {% endblock %}
 
@@ -9,8 +9,8 @@
 {% block stylesheets %}
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-{% include 'includes/_page_stylesheets.html' %}
-{% include 'includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/index/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
 
 {% endblock stylesheets %}
 
@@ -46,8 +46,8 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3 row">
-                                        <label for="tanggal_start" class="col-sm-2 col-form-label">Date Time</label>
-                                        <div class="col-sm-5">
+                                        <label for="tanggal_start" class="col-sm-3 col-form-label">Date Time</label>
+                                        <div class="col-sm-4">
                                             <input type="text" class="form-control" id="time_start">
                                         </div>
                                         <div class="col-sm-4">
@@ -58,19 +58,55 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label for="ipaddress" class="col-sm-2 col-form-label">IP Address</label>
-                                        <div class="col-sm-10">
+                                        <label for="ipaddress" class="col-sm-3 col-form-label">IP Address</label>
+                                        <div class="col-sm-9">
                                             <select class="form-select" id="ipaddress">
                                                 <option selected></option>
-                                                {% for item in ip %}
-                                                <option value="{{ item.ipaddress }}">{{ item.ipaddress }} ({{ item.count }})</option>
+                                                {% for item in data_ipaddress %}
+                                                <option value="{{ item.ipaddress }}">{{ item.ipaddress }} ( {{ item.count }} )</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label for="method" class="col-sm-2 col-form-label">Method</label>
-                                        <div class="col-sm-10">
+                                        <label for="routername" class="col-sm-3 col-form-label">Router Tujuan</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="routername">
+                                                <option selected></option>
+                                                {% for item in data_routername %}
+                                                <option value="{{ item.routername }}">{{ item.routername }} ( {{ item.count }} )</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="clientid" class="col-sm-3 col-form-label">Client ID</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="clientid">
+                                                <option selected></option>
+                                                {% for item in data_clientid %}
+                                                <option value="{{ item.clientid }}">{{ item.clientid }} : {{ item.usernames }} ( {{ item.count }} )</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="username" class="col-sm-3 col-form-label">User Akun</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="username">
+                                                <option selected></option>
+                                                {% for item in data_username %}
+                                                <option value="{{ item.username }}">{{ item.username }} ( {{ item.count }} )</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col">
+                                    <div class="mb-3 row">
+                                        <label for="method" class="col-sm-3 col-form-label">Method</label>
+                                        <div class="col-sm-9">
                                             <select class="form-select" id="method">
                                                 <option selected></option>
                                                 <option value="GET">GET</option>
@@ -81,12 +117,22 @@
                                             </select>
                                         </div>
                                     </div>
-
-                                </div>
-                                <div class="col">
                                     <div class="mb-3 row">
-                                        <label for="status" class="col-sm-2 col-form-label">Status</label>
-                                        <div class="col-sm-10">
+                                        <label for="channel" class="col-sm-3 col-form-label">Channel</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-select" id="channel">
+                                                <option selected></option>
+                                                <option value="api">Api</option>
+                                                <option value="page">Page</option>
+                                                <option value="page_js">Page JS</option>
+                                                <option value="static">Static</option>
+                                                <option value="">None</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label for="status" class="col-sm-3 col-form-label">Status</label>
+                                        <div class="col-sm-9">
                                             <select class="form-select" id="status">
                                                 <option selected></option>
                                                 <option value="2">200 an</option>
@@ -97,14 +143,14 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label for="queryreferer" class="col-sm-2 col-form-label">Referer</label>
-                                        <div class="col-sm-10">
+                                        <label for="queryreferer" class="col-sm-3 col-form-label">Referer</label>
+                                        <div class="col-sm-9">
                                             <input type="text" class="form-control" id="queryreferer">
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label for="querypath" class="col-sm-2 col-form-label">Path</label>
-                                        <div class="col-sm-10">
+                                        <label for="querypath" class="col-sm-3 col-form-label">Path</label>
+                                        <div class="col-sm-9">
                                             <input type="text" class="form-control" id="querypath">
                                         </div>
                                     </div>
@@ -132,12 +178,12 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'includes/_all_javascripts.html' %}
-{% include 'includes/_page_javascripts.html' %}
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/index/javascripts.html' %}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
 <!-- ------------------- -->
-<script>const api=axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}', timeout: 2000, headers:{ 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}')}});</script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/index.js"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/index.js"></script>
 
 {% endblock javascripts %}

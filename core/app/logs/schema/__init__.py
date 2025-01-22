@@ -1,3 +1,3 @@
-from .logs import LogsSchema 
- 
-__all__ = ["LogsSchema"] 
+from .logs import LogsSchema
+
+__all__ = ["LogsSchema"]

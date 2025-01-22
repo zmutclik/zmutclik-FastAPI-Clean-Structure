@@ -17,7 +17,7 @@ class Logs(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     client_id = Column(String(32), index=True)
-    # session_id = Column(String(32), index=True)
+    session_id = Column(String(32), index=True)
     startTime = Column(Float)
     app = Column(String(100), index=True)
     channel = Column(String(32), index=True)
@@ -80,3 +80,18 @@ class RouterName(Base):
     __tablename__ = "logs_router"
     id = Column(Integer, primary_key=True, autoincrement=True)
     routername = Column(String(255), index=True)
+
+
+class UserName(Base):
+    __tablename__ = "logs_username"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(255), index=True)
+
+
+class ClientID(Base):
+    __tablename__ = "logs_clientid"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    clientid = Column(String(255), index=True)
+    username = Column(String(255), index=True)
+    platform = Column(String(100), index=True)
+    browser = Column(String(100), index=True)

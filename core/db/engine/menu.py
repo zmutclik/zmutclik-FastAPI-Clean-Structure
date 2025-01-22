@@ -19,7 +19,7 @@ def menudb_create_all():
                         **{
                             "menutype": "sidebar",
                             "desc": "Side Bar Menu",
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -34,22 +34,37 @@ def menudb_create_all():
                             "sort": 1,
                             "menutype_id": 1,
                             "parent_id": 0,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
                 db.add(
                     Menu(
                         **{
-                            "text": "System",
-                            "segment": "system",
+                            "text": "Settings",
+                            "segment": "settings",
                             "href": "#",
                             "icon": "fas fa-cogs",
                             "icon_color": "",
                             "sort": 2,
                             "menutype_id": 1,
                             "parent_id": 0,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "System Core",
+                            "segment": "system",
+                            "href": "#",
+                            "icon": "fas fa-cogs",
+                            "icon_color": "",
+                            "sort": 3,
+                            "menutype_id": 1,
+                            "parent_id": 0,
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -57,14 +72,14 @@ def menudb_create_all():
                     Menu(
                         **{
                             "text": "Akun",
-                            "segment": "users",
-                            "href": "/page/sys/users/",
+                            "segment": "akun",
+                            "href": "/page/sys/akun",
                             "icon_color": "",
                             "icon": "fas fa-house-user",
                             "sort": 1,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -79,7 +94,7 @@ def menudb_create_all():
                             "sort": 2,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -94,7 +109,7 @@ def menudb_create_all():
                             "sort": 3,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -109,7 +124,7 @@ def menudb_create_all():
                             "sort": 4,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -124,7 +139,7 @@ def menudb_create_all():
                             "sort": 5,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -139,7 +154,7 @@ def menudb_create_all():
                             "sort": 6,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -154,7 +169,7 @@ def menudb_create_all():
                             "sort": 7,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -169,7 +184,7 @@ def menudb_create_all():
                             "sort": 8,
                             "menutype_id": 1,
                             "parent_id": 2,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
@@ -184,7 +199,7 @@ def menudb_create_all():
                             "sort": 3,
                             "menutype_id": 1,
                             "parent_id": 0,
-                            "created_user": "init system",
+                            "created_user": "SeMuT-CiLiK",
                         }
                     )
                 )
