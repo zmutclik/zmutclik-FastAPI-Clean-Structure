@@ -13,7 +13,8 @@ pages_sys = FastAPI(
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},
-    redoc_url=None,
+    docs_url=None if config.ENV == "production" else "/docs",
+    redoc_url=None if config.ENV == "production" else "/redoc",
 )
 
 ### Sub FastAPI ###

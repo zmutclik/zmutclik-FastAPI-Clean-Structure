@@ -1,16 +1,17 @@
-
 from fastapi import FastAPI, Request
 
 from .akun import akun_router
 from .privilege import privilege_router
 from core import config
+
 #######################################################################################################################
 pages_settings = FastAPI(
     title=config.APP_NAME + " [ Pages / Settings ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},
-    redoc_url=None,
+    docs_url=None if config.ENV == "production" else "/docs",
+    redoc_url=None if config.ENV == "production" else "/redoc",
 )
 
 ### Sub FastAPI ###
