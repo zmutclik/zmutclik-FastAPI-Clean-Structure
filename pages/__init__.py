@@ -4,6 +4,9 @@ from core.pages.auth import auth_router
 from core.pages.setting import pages_settings
 from core.pages.system import pages_sys
 
+from .dashboard import dashboard_router
+from .documentation import documentation_router
+
 #######################################################################################################################
 pages_app = FastAPI(
     title=config.APP_NAME + " [ Pages ]",
@@ -15,6 +18,8 @@ pages_app = FastAPI(
 
 ### Sub FastAPI ###
 pages_app.include_router(auth_router)
+pages_app.include_router(dashboard_router)
+pages_app.include_router(documentation_router)
 
 pages_app.mount("/settings", pages_settings)
 pages_app.mount("/sys", pages_sys)
