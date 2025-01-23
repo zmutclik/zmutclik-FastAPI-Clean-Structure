@@ -1,9 +1,8 @@
 import os
-from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from core.pages.response import PageResponse
+from core.pages.response import PageResponse, EnumJS
 
 from core.app.auth.scope.service import ScopeCommandService, ScopeQueryService
 
@@ -14,11 +13,6 @@ from fastapi.exceptions import RequestValidationError
 router = APIRouter(prefix="/scope")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/sys" + router.prefix, depend_roles=["system"])
 page_req = Annotated[PageResponse, Depends(page.request)]
-
-
-class PathJS(str, Enum):
-    indexJs = "index.js"
-    formJs = "form.js"
 
 
 @router.get("", response_class=HTMLResponse, dependencies=page.depend_w())
@@ -38,18 +32,18 @@ async def page_system_scope_form_edit(scope_id: int, req: page_req):
 
 
 @router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_js_scope(req: page_req, pathFile: PathJS):
+async def page_system_scope_js(req: page_req, pathFile: EnumJS):
     return page.response(req, "/html/" + pathFile)
 
 
 #######################################################################################################################
 @router.post("/{PathCheck}/datatables", status_code=202, dependencies=page.depend_r())
-async def datatables_scope(params: dict[str, Any], req: page_req) -> dict[str, Any]:
+async def page_system_scope_datatables(params: dict[str, Any], req: page_req) -> dict[str, Any]:
     return await ScopeQueryService().datatable_scope(params=params)
 
 
 @router.post("/{PathCheck}", status_code=201, response_model=ScopeReponse, dependencies=page.depend_w())
-async def create_scope(dataIn: ScopeRequest, req: page_req):
+async def page_system_scope_create(dataIn: ScopeRequest, req: page_req):
     data_get = await ScopeQueryService().get_scope_by(scope=dataIn.scope)
     if data_get is not None:
         errors = [{"loc": ["body", "scope"], "msg": "duplicate scope is use", "type": "value_error.duplicate"}]
@@ -60,7 +54,7 @@ async def create_scope(dataIn: ScopeRequest, req: page_req):
 
 
 @router.post("/{PathCheck}/{scope_id:int}", status_code=201, response_model=ScopeReponse, dependencies=page.depend_w())
-async def update_scope(scope_id: int, dataIn: ScopeRequest, req: page_req):
+async def page_system_scope_update(scope_id: int, dataIn: ScopeRequest, req: page_req):
     data_get = await ScopeQueryService().get_scope(scope_id)
 
     if dataIn.scope != data_get.scope:
@@ -74,6 +68,6 @@ async def update_scope(scope_id: int, dataIn: ScopeRequest, req: page_req):
 
 
 @router.delete("/{PathCheck}/{scope_id:int}", status_code=202, dependencies=page.depend_d())
-async def delete_scope(scope_id: int, req: page_req):
+async def page_system_scope_delete(scope_id: int, req: page_req):
     await ScopeQueryService().get_scope(scope_id)
     await ScopeCommandService().delete_scope(scope_id, req.user.username)

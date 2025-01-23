@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from core.pages.response import PageResponse
+from core.pages.response import PageResponse, EnumJS
 
 from core.app.auth.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
 from core.app.auth.user.service import UserQueryService, UserCommandService
@@ -17,11 +17,6 @@ from fastapi.exceptions import RequestValidationError
 router = APIRouter(prefix="/akun")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/settings" + router.prefix, depend_roles=["admin"])
 page_req = Annotated[PageResponse, Depends(page.request)]
-
-
-class PathJS(str, Enum):
-    indexJs = "index.js"
-    formJs = "form.js"
 
 
 @router.get("", response_class=HTMLResponse, dependencies=page.depend_r())
@@ -54,18 +49,18 @@ async def page_settings_akun_form_edit(user_id: int, req: page_req):
 
 
 @router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_r())
-async def page_js_akun(req: page_req, pathFile: PathJS):
+async def page_settings_akun_js(req: page_req, pathFile: EnumJS):
     return page.response(req, "/html/" + pathFile)
 
 
 #######################################################################################################################
 @router.post("/{PathCheck}/datatables", status_code=202, dependencies=page.depend_r())
-async def datatables_akun(params: dict[str, Any], req: page_req) -> dict[str, Any]:
+async def page_settings_akun_datatables(params: dict[str, Any], req: page_req) -> dict[str, Any]:
     return await UserQueryService().datatable(params=params)
 
 
 @router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w(), deprecated=True)
-async def create_user_akun(dataIn: AkunRequest, req: page_req):
+async def page_settings_akun_create(dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user_by(username=dataIn.username, email=dataIn.email, nohp=dataIn.nohp)
     if data_get is not None:
         raise DuplicateEmailOrNicknameOrNoHPException
@@ -77,7 +72,7 @@ async def create_user_akun(dataIn: AkunRequest, req: page_req):
 
 
 @router.post("/{PathCheck}/{user_id:int}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w())
-async def update_akun(user_id: int, dataIn: AkunRequest, req: page_req):
+async def page_settings_akun_update(user_id: int, dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user(user_id)
 
     if dataIn.username != data_get.username:
@@ -112,6 +107,6 @@ async def update_akun(user_id: int, dataIn: AkunRequest, req: page_req):
 
 
 @router.delete("/{PathCheck}/{user_id:int}", status_code=202, dependencies=page.depend_d())
-async def delete_akun(user_id: int, req: page_req):
+async def page_settings_akun_delete(user_id: int, req: page_req):
     await UserQueryService().get_user(user_id)
     await UserCommandService().delete_user(user_id, req.user.username)

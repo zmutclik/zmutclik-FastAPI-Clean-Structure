@@ -1,9 +1,8 @@
 import os
-from enum import Enum
-from typing import Annotated, Any,List
+from typing import Annotated, List
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from core.pages.response import PageResponse
+from core.pages.response import PageResponse, EnumJS
 
 from core.app.menu.menu.service import MenuQueryService, MenuCommandService
 from core.app.menu.menu.exceptions import MenuNotFoundException
@@ -17,23 +16,19 @@ page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/sys" +
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 
-class PathJS(str, Enum):
-    detailJs = "detail.js"
-
-
 @router.get("/{PathCheck}/{menutype_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
 async def page_system_menu(menutype_id: int, req: page_req):
     page.addContext("menutype_id", menutype_id)
-    return page.response(req, "/html/menu/detail.html")
+    return page.response(req, "/html/menu/index.html")
 
 
 @router.get("/{PathCheck}/{menutype_id:int}/menus", response_model=List[MenusResponse], status_code=200)
-async def get_menus_data(menutype_id: int, req: page_req):
+async def page_system_menu_get_datas(menutype_id: int, req: page_req):
     return await MenuQueryService().generate_menus(menutype_id=menutype_id, filter_menu=None)
 
 
 @router.get("/{PathCheck}/{menutype_id:int}/{menu_id:int}", response_model=MenuResponse, status_code=200)
-async def get_menu_data(menutype_id: int, menu_id: int, req: page_req):
+async def page_system_menu_get_data(menutype_id: int, menu_id: int, req: page_req):
     data_get = await MenuQueryService().get_menu(menu_id)
     if data_get.menutype_id != menutype_id:
         raise MenuNotFoundException
@@ -41,7 +36,7 @@ async def get_menu_data(menutype_id: int, menu_id: int, req: page_req):
 
 
 @router.get("/{PathCheck}/{menutype_id:int}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_js_privilege(menutype_id: int, req: page_req, pathFile: PathJS):
+async def page_system_menu_js(menutype_id: int, req: page_req, pathFile: EnumJS):
     page.addContext("prefix_url_menutype", "/page/sys/menutype")
     page.addContext("menutype_id", menutype_id)
     return page.response(req, "/html/menu/" + pathFile)
@@ -58,12 +53,12 @@ async def menu_sorting_save(parent_id: int, dataIn: List[MenusResponse]):
 
 
 @router.post("/{PathCheck}/{menutype_id:int}/menus", status_code=201, dependencies=page.depend_w())
-async def menu_sorting(dataIn: List[MenusResponse], req: page_req):
-    await menu_sorting_save( 0, dataIn)
-    
-    
+async def page_system_menu_sorting(dataIn: List[MenusResponse], req: page_req):
+    await menu_sorting_save(0, dataIn)
+
+
 @router.post("/{PathCheck}/{menutype_id:int}", status_code=201, response_model=MenuResponse, dependencies=page.depend_w())
-async def create_menutype(menutype_id: int, dataIn: MenuRequest, req: page_req):
+async def page_system_menu_create(menutype_id: int, dataIn: MenuRequest, req: page_req):
     data_filter = await MenuQueryService().get_menu_by(menutype_id=menutype_id, text=dataIn.text)
     if data_filter is not None:
         errors = [{"loc": ["body", "privilege"], "msg": "duplicate text label menu is use", "type": "value_error.duplicate"}]
@@ -83,7 +78,7 @@ async def create_menutype(menutype_id: int, dataIn: MenuRequest, req: page_req):
 
 
 @router.post("/{PathCheck}/{menutype_id:int}/{menu_id:int}", status_code=201, response_model=MenuResponse, dependencies=page.depend_w())
-async def update_privilege(menutype_id: int, menu_id: int, dataIn: MenuRequest, req: page_req):
+async def page_system_menu_update(menutype_id: int, menu_id: int, dataIn: MenuRequest, req: page_req):
     data_get = await MenuQueryService().get_menu(menu_id)
 
     if dataIn.text != data_get.text:
@@ -103,6 +98,7 @@ async def update_privilege(menutype_id: int, menu_id: int, dataIn: MenuRequest, 
     )
     return data_updated
 
+
 @router.delete("/{PathCheck}/{menutype_id:int}/{menu_id:int}", status_code=202)
-async def menu_delete(menutype_id: int, menu_id: int,  req: page_req):
+async def page_system_menu_delete(menutype_id: int, menu_id: int, req: page_req):
     await MenuCommandService().delete_menu(menu_id=menu_id, username=req.user.username)

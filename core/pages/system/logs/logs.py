@@ -1,9 +1,8 @@
 import os
-from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from core.pages.response import PageResponse
+from core.pages.response import PageResponse, EnumJS
 
 from core.app.logs.service import LogsQueryService
 
@@ -12,11 +11,6 @@ from fastapi.exceptions import RequestValidationError
 router = APIRouter(prefix="/logs")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/sys" + router.prefix, depend_roles=["system"])
 page_req = Annotated[PageResponse, Depends(page.request)]
-
-
-class PathJS(str, Enum):
-    indexJs = "index.js"
-    formJs = "form.js"
 
 
 @router.get("", response_class=HTMLResponse, dependencies=page.depend_w())
@@ -29,7 +23,7 @@ async def page_system_logs(req: page_req):
 
 
 @router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_w())
-async def page_js_repository(req: page_req, pathFile: PathJS):
+async def page_system_logs_js(req: page_req, pathFile: EnumJS):
     return page.response(req, "/html/" + pathFile)
 
 
