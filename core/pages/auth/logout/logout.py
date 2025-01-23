@@ -3,7 +3,7 @@ from time import sleep
 from typing import Annotated
 from fastapi import APIRouter, Response, Depends
 from core.config import config
-from core.exceptions import RequiresLoginException
+from fastapi.responses import RedirectResponse
 from core.pages.response import PageResponse
 
 router = APIRouter(prefix="/logout", tags=["AUTH / OUT"])
@@ -20,4 +20,6 @@ def page_auth_logout(response: Response, request: page_req):
     # thread.start()
 
     sleep(1)
-    raise RequiresLoginException(f"/auth/login")
+    response.status_code = 302  # Bisa diganti 301 atau 307 sesuai kebutuhan
+    response.headers["Location"] = f"/auth/login"
+    return response
