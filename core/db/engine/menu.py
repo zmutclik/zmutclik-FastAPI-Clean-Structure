@@ -191,12 +191,27 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
-                            "text": "Documentation",
-                            "segment": "documentation",
-                            "href": "/page/documentation",
-                            "icon": "fas fa-file-code",
+                            "text": "Page Documentation",
+                            "segment": "documentation_page",
+                            "href": "/page/documentation/page",
+                            "icon": "fab fa-html5",
                             "icon_color": "",
                             "sort": 4,
+                            "menutype_id": 1,
+                            "parent_id": 0,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "API Documentation",
+                            "segment": "documentation_api",
+                            "href": "/page/documentation/api",
+                            "icon": "fas fa-file-code",
+                            "icon_color": "",
+                            "sort": 5,
                             "menutype_id": 1,
                             "parent_id": 0,
                             "created_user": "SeMuT-CiLiK",
