@@ -4,7 +4,7 @@ $(document).ready(function () {
     oTable = $('#table_').DataTable({
         serverSide: true,
         ajax: {
-            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
@@ -17,8 +17,7 @@ $(document).ready(function () {
         "autoWidth": false,
         "responsive": true,
         columns: [
-            { "data": "datetime", "title": "WAKTU", "width": "15%" },
-            { "data": "version", "title": "VERSI", "width": "15%" },
+            { "data": "dateupdate", "title": "WAKTU", "width": "15%" },
             { "data": "version_name", "title": "NAMA", "width": "15%" },
             { "data": "description", "title": "DESKRIPSI", },
             { "data": "created_user", "title": "USER", "width": "10%" },
@@ -44,7 +43,7 @@ $(document).ready(function () {
             confirmButtonText: "Ya HAPUS",
         }).then((result) => {
             if (result.isConfirmed) {
-                api.delete(idU)
+                api_versi.delete(idU)
                     .then(function () {
                         Swal.fire("Terhapus!", "", "success")
                             .then(() => {

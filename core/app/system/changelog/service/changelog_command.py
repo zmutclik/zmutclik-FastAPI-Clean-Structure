@@ -13,13 +13,14 @@ class ChangeLogCommandService:
     def __init__(self, changelog_repo: ChangeLogRepo):
         self.changelog_repo = changelog_repo
 
-    async def create_changelog(self, dateupdate: date, version_name: str, desc: str) -> ChangeLogSchema:
+    async def create_changelog(self, created_user: str, dateupdate: date, version_name: str, description: str) -> ChangeLogSchema:
         if await self.changelog_repo.get_changelog_by(version_name=version_name):
             raise ChangeLogDuplicateException
         date_create = ChangeLog.create(
+            created_user=created_user,
             dateupdate=dateupdate,
             version_name=version_name,
-            desc=desc,
+            description=description,
         )
         data_saved = await self.changelog_repo.save_changelog(changelog=date_create)
         return data_saved

@@ -73,7 +73,7 @@ def menudb_create_all():
                         **{
                             "text": "Akun",
                             "segment": "akun",
-                            "href": "/page/sys/akun",
+                            "href": "/page/settings/akun",
                             "icon_color": "",
                             "icon": "fas fa-house-user",
                             "sort": 1,
@@ -86,11 +86,11 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
-                            "text": "Menu",
-                            "segment": "menu",
-                            "href": "/page/sys/menu/",
+                            "text": "Hak Akses",
+                            "segment": "privilege",
+                            "href": "/page/settings/privilege",
+                            "icon": "fas fa-object-group",
                             "icon_color": "",
-                            "icon": "fas fa-list-alt",
                             "sort": 2,
                             "menutype_id": 1,
                             "parent_id": 2,
@@ -101,29 +101,14 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
-                            "text": "Scope",
-                            "segment": "scope",
-                            "href": "/page/sys/scopes/",
-                            "icon": "fas fa-map-marker-alt",
+                            "text": "Setting Sistem",
+                            "segment": "coresetting",
+                            "href": "/page/sys/coresetting",
+                            "icon": "fas fa-headset",
                             "icon_color": "",
-                            "sort": 3,
+                            "sort": 1,
                             "menutype_id": 1,
-                            "parent_id": 2,
-                            "created_user": "SeMuT-CiLiK",
-                        }
-                    )
-                )
-                db.add(
-                    Menu(
-                        **{
-                            "text": "Group",
-                            "segment": "group",
-                            "href": "/page/sys/groups/",
-                            "icon": "fas fa-object-group",
-                            "icon_color": "",
-                            "sort": 4,
-                            "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -133,42 +118,12 @@ def menudb_create_all():
                         **{
                             "text": "Gudang Link",
                             "segment": "repository",
-                            "href": "/page/sys/repository/",
+                            "href": "/page/sys/repository",
                             "icon": "fas fa-link",
                             "icon_color": "",
-                            "sort": 5,
+                            "sort": 2,
                             "menutype_id": 1,
-                            "parent_id": 2,
-                            "created_user": "SeMuT-CiLiK",
-                        }
-                    )
-                )
-                db.add(
-                    Menu(
-                        **{
-                            "text": "Setting Sistem",
-                            "segment": "setting",
-                            "href": "/page/sys/systemsettings/",
-                            "icon": "fas fa-headset",
-                            "icon_color": "",
-                            "sort": 6,
-                            "menutype_id": 1,
-                            "parent_id": 2,
-                            "created_user": "SeMuT-CiLiK",
-                        }
-                    )
-                )
-                db.add(
-                    Menu(
-                        **{
-                            "text": "Logs",
-                            "segment": "logs",
-                            "href": "/page/sys/logs/",
-                            "icon": "fas fa-map-marked-alt",
-                            "icon_color": "",
-                            "sort": 7,
-                            "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -178,12 +133,57 @@ def menudb_create_all():
                         **{
                             "text": "Session",
                             "segment": "session",
-                            "href": "/page/sys/session/",
+                            "href": "/page/sys/session",
                             "icon": "fas fa-door-open",
                             "icon_color": "",
-                            "sort": 8,
+                            "sort": 3,
                             "menutype_id": 1,
-                            "parent_id": 2,
+                            "parent_id": 3,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "Scope",
+                            "segment": "scope",
+                            "href": "/page/sys/scope",
+                            "icon": "fas fa-map-marker-alt",
+                            "icon_color": "",
+                            "sort": 4,
+                            "menutype_id": 1,
+                            "parent_id": 3,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "Menu",
+                            "segment": "menu",
+                            "href": "/page/sys/menutype",
+                            "icon_color": "",
+                            "icon": "fas fa-list-alt",
+                            "sort": 5,
+                            "menutype_id": 1,
+                            "parent_id": 3,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "Logs",
+                            "segment": "logs",
+                            "href": "/page/sys/logs",
+                            "icon": "fas fa-map-marked-alt",
+                            "icon_color": "",
+                            "sort": 6,
+                            "menutype_id": 1,
+                            "parent_id": 3,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -196,7 +196,7 @@ def menudb_create_all():
                             "href": "/page/documentation",
                             "icon": "fas fa-file-code",
                             "icon_color": "",
-                            "sort": 3,
+                            "sort": 4,
                             "menutype_id": 1,
                             "parent_id": 0,
                             "created_user": "SeMuT-CiLiK",

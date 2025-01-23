@@ -39,7 +39,7 @@ async def page_system_menutype_form_edit(menutype_id: int, req: page_req):
 
 @router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_r())
 async def page_js_menutype(req: page_req, pathFile: PathJS):
-    page.addContext("prefix_url_menu", "/page/sys/menu" + "/" + req.user.client_id + "." + req.user.session_id)
+    page.addContext("prefix_url_menu", "/page/sys/menu/" + req.user.client_id + "." + req.user.session_id)
     return page.response(req, "/html/menutype/" + pathFile)
 
 

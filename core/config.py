@@ -40,7 +40,7 @@ repository_mql = ""
 version_name = "zero"
 allow_origins = []
 configdefault = {
-    "environment": "development",
+    "environment": "local",
     "app_name": "FastAPI cleanStructure",
     "app_desc": "This is a very fancy project, with auto docs for the API and everything.",
     "app_host": "127.0.0.1",

@@ -4,7 +4,7 @@ $(document).ready(function () {
     oTableCors = $('#table_cors').DataTable({
         serverSide: true,
         ajax: {
-            "url": '{{prefix_url}}/{{clientId}}/{{sessionId}}/cors/datatables', "contentType": "application/json", "type": "POST",
+            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
             "data": function (d) {
                 return JSON.stringify(d);
             }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
@@ -40,7 +40,7 @@ $(document).ready(function () {
             confirmButtonText: "Ya HAPUS",
         }).then((result) => {
             if (result.isConfirmed) {
-                api.delete("cors/" + idU)
+                api_cross.delete("" + idU)
                     .then(function () {
                         Swal.fire("Terhapus!", "", "success")
                             .then(() => {

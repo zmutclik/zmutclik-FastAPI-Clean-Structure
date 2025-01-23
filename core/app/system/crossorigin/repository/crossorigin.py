@@ -60,7 +60,7 @@ class CrossOriginSQLRepo(CrossOriginRepo):
 
     async def save_crossorigin(self, crossorigin: CrossOrigin) -> CrossOrigin:
         try:
-            await session.add(crossorigin)
+            session.add(crossorigin)
             await session.commit()
             await session.refresh(crossorigin)
             return crossorigin

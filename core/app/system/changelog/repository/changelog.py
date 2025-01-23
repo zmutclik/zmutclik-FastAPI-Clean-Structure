@@ -54,7 +54,7 @@ class ChangeLogRepoSQLRepo(ChangeLogRepo):
 
     async def save_changelog(self, changelog: ChangeLog) -> ChangeLog:
         try:
-            await session.add(changelog)
+            session.add(changelog)
             await session.commit()
             await session.refresh(changelog)
             return changelog

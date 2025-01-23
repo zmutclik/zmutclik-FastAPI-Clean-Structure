@@ -12,10 +12,10 @@ class CrossOriginCommandService:
     def __init__(self, crossorigin_repo: CrossOriginRepo):
         self.crossorigin_repo = crossorigin_repo
 
-    async def create_crossorigin(self, link: str) -> CrossOriginSchema:
+    async def create_crossorigin(self, created_user: str, link: str) -> CrossOriginSchema:
         if await self.crossorigin_repo.get_crossorigin_by(link):
             raise CrossOriginDuplicateException
-        data_create = CrossOrigin.create(link=link)
+        data_create = CrossOrigin.create(created_user=created_user, link=link)
         data_saved = await self.crossorigin_repo.save_crossorigin(crossorigin=data_create)
         return data_saved
 

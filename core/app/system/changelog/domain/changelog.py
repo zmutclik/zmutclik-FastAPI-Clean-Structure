@@ -21,15 +21,15 @@ class ChangeLog(Base, TimestampLogMixin):
     @classmethod
     def create(
         cls,
+        created_user: str,
         dateupdate: date,
-        version_number: str,
         version_name: str,
         description: str,
     ) -> "ChangeLog":
 
         return cls(
+            created_user=created_user,
             dateupdate=dateupdate,
-            version_number=version_number,
             version_name=version_name,
             description=description,
         )

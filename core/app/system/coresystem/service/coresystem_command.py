@@ -1,41 +1,45 @@
-from typing import Union 
-from pythondi import inject 
- 
-from app.coresystem.domain import CoreSYSTEM 
-from app.coresystem.repository import CoreSYSTEMRepo 
-from app.coresystem.schema import CoreSYSTEMSchema 
-from app.coresystem.exceptions import CoreSYSTEMNotFoundException, CoreSYSTEMDuplicateException 
- 
- 
-class CoreSYSTEMCommandService: 
-    @inject() 
-    def __init__(self, coresystem_repo: CoreSYSTEMRepo): 
-        self.coresystem_repo = coresystem_repo 
- 
-    async def create_coresystem(self, coresystem: str) -> CoreSYSTEMSchema: 
-        if await self.coresystem_repo.get(coresystem): 
-            raise CoreSYSTEMDuplicateException 
-        data_create = CoreSYSTEM.create(coresystem=coresystem) 
-        data_saved = await self.coresystem_repo.save(coresystem=data_create) 
-        return data_saved 
- 
-    async def update_coresystem(self, coresystem_id: int, coresystem: Union[str, None]) -> CoreSYSTEMSchema: 
-        data_get = await self.coresystem_repo.get_by_id(coresystem_id) 
-        if not data_get: 
-            raise CoreSYSTEMNotFoundException 
-        if await self.coresystem_repo.get(coresystem): 
-            raise CoreSYSTEMDuplicateException 
- 
-        updates = {} 
-        if coresystem: 
-            updates["coresystem"] = coresystem 
- 
-        data_updated = await self.coresystem_repo.update(data_get, updates) 
-        return data_updated 
- 
-    async def delete_coresystem(self, coresystem_id: int, username: str) -> None: 
-        data_get = await self.coresystem_repo.get_by_id(coresystem_id) 
-        if not data_get: 
-            raise CoreSYSTEMNotFoundException 
- 
-        await self.coresystem_repo.delete(data_get, username) 
+from typing import Union, Optional
+from pythondi import inject
+
+from ..domain import CoreSYSTEM
+from ..repository import CoreSYSTEMRepo
+from ..schema import CoreSYSTEMSchema
+
+
+class CoreSYSTEMService:
+    @inject()
+    def __init__(self, coresystem_repo: CoreSYSTEMRepo):
+        self.coresystem_repo = coresystem_repo
+
+    async def get_coresystem(self) -> Optional[CoreSYSTEMSchema]:
+        return await self.coresystem_repo.get()
+
+    async def update_coresystem(self, dataIn: CoreSYSTEMSchema) -> CoreSYSTEMSchema:
+        data_get = await self.coresystem_repo.get()
+
+        updates = {}
+        if data_get.environment != dataIn.environment:
+            updates["environment"] = dataIn.environment
+        if data_get.app_name != dataIn.app_name:
+            updates["app_name"] = dataIn.app_name
+        if data_get.app_desc != dataIn.app_desc:
+            updates["app_desc"] = dataIn.app_desc
+        if data_get.app_host != dataIn.app_host:
+            updates["app_host"] = dataIn.app_host
+        if data_get.app_port != dataIn.app_port:
+            updates["app_port"] = dataIn.app_port
+        if data_get.client_key != dataIn.client_key:
+            updates["client_key"] = dataIn.client_key
+        if data_get.jwt_scret_key != dataIn.jwt_scret_key:
+            updates["jwt_scret_key"] = dataIn.jwt_scret_key
+        if data_get.jwt_algorithm != dataIn.jwt_algorithm:
+            updates["jwt_algorithm"] = dataIn.jwt_algorithm
+        if data_get.cookies_key != dataIn.cookies_key:
+            updates["cookies_key"] = dataIn.cookies_key
+        if data_get.cookies_exp != dataIn.cookies_exp:
+            updates["cookies_exp"] = dataIn.cookies_exp
+        if data_get.debug != dataIn.debug:
+            updates["debug"] = dataIn.debug
+
+        data_updated = await self.coresystem_repo.update(data_get, **updates)
+        return data_updated

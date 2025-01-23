@@ -1,7 +1,6 @@
-from typing import Union, Optional, Any
+from typing import Optional, Any
 from pythondi import inject
 
-from core.db.session_ import async_engine
 from ..domain import MenuType
 from ..repository import MenuTypeRepo
 from ..schema import MenuTypeSchema

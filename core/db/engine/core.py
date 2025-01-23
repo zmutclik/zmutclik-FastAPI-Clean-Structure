@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 from core.config import DBCORE_FILE
 from ._func import check_exits, check_sizes
 
-
 def coredb_create_all():
     check_exits(DBCORE_FILE)
     if check_sizes(DBCORE_FILE):

@@ -16,5 +16,5 @@ class CrossOrigin(Base, TimestampLogMixin):
     link = Column(String(64), unique=True)
 
     @classmethod
-    def create(cls, link: str) -> "CrossOrigin":
-        return cls(link=link)
+    def create(cls, created_user: str, link: str) -> "CrossOrigin":
+        return cls(created_user=created_user, link=link)

@@ -4,6 +4,7 @@ from .menu import menu_router
 from .scope import scope_router
 from .repository import repository_router
 from .logs import logs_router
+from .coresetting import coresystem_router
 from core import config
 
 #######################################################################################################################
@@ -20,6 +21,7 @@ pages_sys.include_router(menu_router)
 pages_sys.include_router(scope_router)
 pages_sys.include_router(repository_router)
 pages_sys.include_router(logs_router)
+pages_sys.include_router(coresystem_router)
 
 
 #######################################################################################################################

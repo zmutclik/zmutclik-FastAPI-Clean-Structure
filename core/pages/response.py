@@ -1,5 +1,6 @@
 import os
 import json
+from enum import Enum
 from datetime import datetime
 from fastapi import Request, HTTPException, Depends, Response
 from fastapi.templating import Jinja2Templates
@@ -9,6 +10,7 @@ from core.app.auth.user.service import UserQueryService
 from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
 from core.exceptions import RequiresLoginException
 from core.utils import menu_to_html
+from jinja2 import TemplateNotFound
 
 root_path = os.getcwd()
 
@@ -20,8 +22,9 @@ def global_context():
     }
 
 
-# async def depend_user(request: Request):
-#     return await UserQueryService().get_user_by(username=request.user.username)
+class EnumJS(str, Enum):
+    a = "index.js"
+    b = "form.js"
 
 
 class PageResponse:
@@ -54,13 +57,12 @@ class PageResponse:
             #     thread.start()
             self.initContext(request, request.user.client_id, request.user.session_id)
 
-
         if request.user.username is not None:
             user_path = ".db/cache/user/{}.json".format(request.user.username)
             if os.path.isfile(user_path):
                 with open(user_path, "r") as file:
                     user_json = json.load(file)
-                    user_json["created_at"] = datetime.strptime(user_json["created_at"], '%Y-%m-%dT%H:%M:%S')
+                    user_json["created_at"] = datetime.strptime(user_json["created_at"], "%Y-%m-%dT%H:%M:%S")
                     self.addContext("userloggedin", user_json)
             menu_sidebar_path = ".db/cache/menu/{}_{}.json".format(request.user.username, "sidebar")
             if os.path.isfile(menu_sidebar_path):
@@ -91,13 +93,20 @@ class PageResponse:
         else:
             return "text/html"
 
+    def response_404(self, request: Request):
+        return self.templates.TemplateResponse(request=request, name="/core/html/layouts/404.html", media_type="text/html", status_code=404)
+
     def response(self, request: Request, path: str):
-        return self.templates.TemplateResponse(
-            request=request,
-            name=self.path + path,
-            media_type=self.media_type(path),
-            context=self.context,
-        )
+        try:
+            return self.templates.TemplateResponse(
+                request=request,
+                name=self.path + path,
+                media_type=self.media_type(path),
+                context=self.context,
+            )
+        except TemplateNotFound:
+            print("404")
+            return self.response_404(request)
 
     def dependencies(self, scopes: list[str] = None):
         if scopes is None:

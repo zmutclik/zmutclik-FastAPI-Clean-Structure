@@ -1,0 +1,188 @@
+{% extends "core/html/layouts/base.html" %}
+
+{% block title %} System Setting {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% include 'core/html/includes/index/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">SISTEM SETTING</h1>
+                    <h3 class="card-title mt-2">Manajemen</h3>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs text-center">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-setting" type="button" role="tab" aria-controls="nav-setting" aria-selected="true">System Setting</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-changelog" type="button" role="tab" aria-controls="nav-changelog" aria-selected="false">ChangLog</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="nav-cors-tab" data-bs-toggle="tab" data-bs-target="#nav-cors" type="button" role="tab" aria-controls="nav-cors" aria-selected="false">Cross-Origin Resource Sharing</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab" tabindex="0">
+                            <form id="form_setting">
+                                <div class="mb-3">
+                                    <label for="app_name" class="form-label">Nama Applikasi</label>
+                                    <input type="text" class="form-control" name="app_name" value="{{data_coresystem.app_name}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="app_desc" class="form-label">Deskripsi</label>
+                                    <input type="text" class="form-control" name="app_desc" value="{{data_coresystem.app_desc}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="app_host" class="form-label">HostName</label>
+                                    <input type="text" class="form-control" name="app_host" value="{{data_coresystem.app_host}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="app_port" class="form-label">Port Applikasi</label>
+                                    <input type="number" class="form-control" name="app_port" value="{{data_coresystem.app_port}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="jwt_scret_key" class="form-label">JWT Secret</label>
+                                    <input type="text" class="form-control" name="jwt_scret_key" value="{{data_coresystem.jwt_scret_key}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="jwt_algorithm" class="form-label">JWT Algorithm</label>
+                                    <select class="form-select" aria-label="Default select" name="jwt_algorithm" required>
+                                        <option value="HS256" {% if data_coresystem.jwt_algorithm=="HS256" %} selected {% endif %}>HS256</option>
+                                        <option value="HS384" {% if data_coresystem.jwt_algorithm=="HS384" %} selected {% endif %}>HS384</option>
+                                        <option value="HS512" {% if data_coresystem.jwt_algorithm=="HS512" %} selected {% endif %}>HS512</option>
+                                        <option value="RS256" {% if data_coresystem.jwt_algorithm=="RS256" %} selected {% endif %}>RS256</option>
+                                        <option value="RS384" {% if data_coresystem.jwt_algorithm=="RS384" %} selected {% endif %}>RS384</option>
+                                        <option value="RS512" {% if data_coresystem.jwt_algorithm=="RS512" %} selected {% endif %}>RS512</option>
+                                        <option value="ES256" {% if data_coresystem.jwt_algorithm=="ES256" %} selected {% endif %}>ES256</option>
+                                        <option value="ES384" {% if data_coresystem.jwt_algorithm=="ES384" %} selected {% endif %}>ES384</option>
+                                        <option value="ES512" {% if data_coresystem.jwt_algorithm=="ES512" %} selected {% endif %}>ES512</option>
+                                        <option value="PS256" {% if data_coresystem.jwt_algorithm=="PS256" %} selected {% endif %}>PS256</option>
+                                        <option value="PS384" {% if data_coresystem.jwt_algorithm=="PS384" %} selected {% endif %}>PS384</option>
+                                        <option value="PS512" {% if data_coresystem.jwt_algorithm=="PS512" %} selected {% endif %}>PS512</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cookies_key" class="form-label">Cookies Key</label>
+                                    <input type="text" class="form-control" name="cookies_key" value="{{data_coresystem.cookies_key}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="client_key" class="form-label">ClientID Key</label>
+                                    <input type="text" class="form-control" name="client_key" value="{{data_coresystem.client_key}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cookies_exp" class="form-label">Cookies Expired</label>
+                                    <input type="number" class="form-control" name="cookies_exp" value="{{data_coresystem.cookies_exp}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="environment" class="form-label">Environment</label>
+                                    <select class="form-select" aria-label="Default select" name="environment" required>
+                                        <option value="local" {% if data_coresystem.debug=="local" %} selected {% endif %}>LocalHost</option>
+                                        <option value="development" {% if data_coresystem.debug=="development" %} selected {% endif %}>Development</option>
+                                        <option value="production" {% if data_coresystem.debug=="production" %} selected {% endif %}>Production</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="debug" class="form-label">Debug</label>
+                                    <select class="form-select" aria-label="Default select" name="debug" required>
+                                        <option value="1" {% if data_coresystem.debug=="True" %} selected {% endif %}>Aktif</option>
+                                        <option value="0" {% if data_coresystem.debug=="False" %} selected {% endif %}>Tidak Aktif</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 mt-5 float-end">
+                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                </div>
+                            </form>
+                            <!-- /#nav-setting -->
+                        </div>
+                        <div class="tab-pane fade" id="nav-changelog" role="tabpanel" aria-labelledby="nav-changelog-tab" tabindex="0">
+                            <div class="row">
+                                <form id="form_changelog">
+                                    <div class="mb-3">
+                                        <label for="version_name" class="form-label">Versi Applikasi</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control col-2" name="version_name" placeholder="Nama Versi">
+                                            <input type="text" class="form-control" name="description" placeholder="Deskripsi">
+
+                                            <button type="submit" class="btn btn-primary">TAMBAHKAN</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <table id="table_" class="table table-bordered table-striped">
+                            </table>
+
+                            <!-- /#nav-changeLog -->
+                        </div>
+                        <div class="tab-pane fade" id="nav-cors" role="tabpanel" aria-labelledby="nav-cors-tab" tabindex="0">
+                            <div class="row">
+                                <form id="form_cors">
+                                    <div class="mb-3">
+                                        <label for="cors_link" class="form-label">Link COPS</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control col-12" id="cors_link" name="link" value="{{data_coresystem.cors}}" placeholder="https://localhost">
+
+                                            <button type="submit" class="btn btn-primary">TAMBAHKAN</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <table id="table_cors" class="table table-bordered table-striped">
+                            </table>
+
+                            <!-- /#nav-cross-origin -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/index/javascripts.html' %}
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_id.min.js" integrity="sha512-Orvt00GKq6XzBWqbltE094YknH2BN78wpQqLT/P3Jx3nhaBmEbd7JzVDJ2qLTu8J8SuMoACKoIxk851FS5ZIUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- ------------------- -->
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api_cross = axios.create({ baseURL: '{{prefix_url_crossorigin}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api_versi = axios.create({ baseURL: '{{prefix_url_changelog}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/form.js"></script>
+<script src="{{prefix_url_changelog}}/index.js"></script>
+<script src="{{prefix_url_changelog}}/form.js"></script>
+<script src="{{prefix_url_crossorigin}}/index.js"></script>
+<script src="{{prefix_url_crossorigin}}/form.js"></script>
+
+{% endblock javascripts %}
