@@ -6,7 +6,7 @@ from core.config import config
 from core.exceptions import RequiresLoginException
 from core.pages.response import PageResponse
 
-router = APIRouter(prefix="/timeout")
+router = APIRouter(prefix="/timeout", tags=["AUTH / OUT"])
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
 page_req = Annotated[PageResponse, Depends(page.request)]
 

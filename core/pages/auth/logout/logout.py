@@ -6,12 +6,12 @@ from core.config import config
 from core.exceptions import RequiresLoginException
 from core.pages.response import PageResponse
 
-router = APIRouter(prefix="/logout")
+router = APIRouter(prefix="/logout", tags=["AUTH / OUT"])
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 
-@router.get("/{username}", status_code=201, dependencies=page.depend_r())
+@router.get("/{username}", status_code=201, dependencies=page.dependencies())
 def page_auth_logout(response: Response, request: page_req):
     response.delete_cookie(key=config.COOKIES_KEY)
 

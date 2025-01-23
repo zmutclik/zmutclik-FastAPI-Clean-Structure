@@ -1,15 +1,15 @@
 from fastapi import FastAPI, Request
 
 from .login import login_router
+from .logout import logout_router
+from .timeout import timeout_router
 from .register import register_router
-from .logout import router as logout_router
-from .timeout import router as timeout_router
 
 from core import config
 
 #######################################################################################################################
 pages_auth = FastAPI(
-    title=config.APP_NAME + " [ Pages / System ]",
+    title=config.APP_NAME + " [ AUTH ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},
@@ -19,9 +19,9 @@ pages_auth = FastAPI(
 
 ### Sub FastAPI ###
 pages_auth.include_router(login_router)
-pages_auth.include_router(register_router)
 pages_auth.include_router(logout_router)
 pages_auth.include_router(timeout_router)
+pages_auth.include_router(register_router)
 
 
 #######################################################################################################################
