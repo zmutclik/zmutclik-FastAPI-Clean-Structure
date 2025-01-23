@@ -13,12 +13,12 @@ from core.pages.response import PageResponse
 
 router = APIRouter(prefix="/register")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
+page.prefix_url = "/auth" + router.prefix
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
 async def page_register(req: page_req):
-    print("page[login]requser ", req.user)
     return page.response(req, "/html/register.html")
 
 

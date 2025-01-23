@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
 from core import config
-from core.pages.auth import auth_router
 from core.pages.setting import pages_settings
 from core.pages.system import pages_sys
 
@@ -17,7 +16,6 @@ pages_app = FastAPI(
 )
 
 ### Sub FastAPI ###
-pages_app.include_router(auth_router)
 pages_app.include_router(dashboard_router)
 pages_app.include_router(documentation_router)
 

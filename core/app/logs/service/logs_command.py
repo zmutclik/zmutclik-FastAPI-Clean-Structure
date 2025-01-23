@@ -43,5 +43,5 @@ class LogsService:
         if self.data_created.channel == "page":
             response.set_cookie(key=config.CLIENT_KEY, value=request.user.client_id)
 
-        if request.user.channel != "page_js" or request.user.channel != "static":
-            asyncio.create_task(LogsRepo().save(self.data_created))
+        # if request.user.channel != "page_js" or request.user.channel != "static":
+        asyncio.create_task(LogsRepo().save(self.data_created))

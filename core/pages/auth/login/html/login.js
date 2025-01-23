@@ -29,7 +29,7 @@ $(document).ready(function () {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        // window.location.href = "{{nextpage}}";
+                        window.location.href = "{{nextpage}}";
                     });
                 })
                 .catch(function (error) {

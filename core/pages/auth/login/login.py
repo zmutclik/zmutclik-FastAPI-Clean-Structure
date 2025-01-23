@@ -11,11 +11,12 @@ from core.pages.auth.login.request import LoginRequest
 
 router = APIRouter(prefix="/login")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
+page.prefix_url = "/auth" + router.prefix
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def page_login(
+async def page_auth_login(
     req: page_req,
     next: str = None,
 ):
@@ -24,7 +25,7 @@ async def page_login(
 
 
 @router.get("/{PathCheck}.js")
-async def page_js_login(next: str, req: page_req):
+async def page_auth_login_js(next: str, req: page_req):
     if next is None or next == "None":
         next = "/page/dashboard"
     page.addContext("nextpage", next)
@@ -32,7 +33,7 @@ async def page_js_login(next: str, req: page_req):
 
 
 @router.post("/{PathCheck}", status_code=201)
-async def page_post_login(dataIn: LoginRequest, req: page_req, res: Response):
+async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Response):
     user_query = UserQueryService()
     data_get = await user_query.get_user_by(email=dataIn.email)
     if not data_get:
@@ -45,7 +46,7 @@ async def page_post_login(dataIn: LoginRequest, req: page_req, res: Response):
 
     access_token = await UserAuthService().token_create(data_get)
     res.set_cookie(key=config.COOKIES_KEY, value=access_token)
-    
+
     await UserAuthService().generate_cache_user(data_get)
     await UserAuthService().generate_cache_menu(data_get)
     # sleep(1)

@@ -20,12 +20,14 @@ from core.di import init_di
 
 from api import router
 from pages import pages_app
+from core.pages.auth import pages_auth
 
 
 def init_routers(app: FastAPI) -> None:
     app.include_router(router)
     app.mount("/static", StaticFiles(directory="static", html=False), name="static")
     app.mount("/page", pages_app)
+    app.mount("/auth", pages_auth)
 
 
 def init_cors(app: FastAPI) -> None:
@@ -66,7 +68,7 @@ def init_middleware(app: FastAPI) -> None:
     app.add_middleware(SQLAlchemyAuthMiddleware)
     app.add_middleware(SQLAlchemyCoreMiddleware)
     app.add_middleware(SQLAlchemyMenuMiddleware)
-    # app.add_middleware(LogsMiddleware)
+    app.add_middleware(LogsMiddleware)
     app.add_middleware(
         AuthenticationMiddleware,
         backend=AuthBackend(),

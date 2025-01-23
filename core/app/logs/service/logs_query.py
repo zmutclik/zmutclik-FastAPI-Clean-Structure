@@ -60,7 +60,10 @@ class LogsQueryService:
                     query = query.filter(Logs.user == params["search"]["username"])
 
                 if params["search"]["channel"] != "":
-                    query = query.filter(Logs.channel == params["search"]["channel"])
+                    if params["search"]["channel"] == "None":
+                        query = query.filter(Logs.channel == None)
+                    else:
+                        query = query.filter(Logs.channel == params["search"]["channel"])
 
                 query = query.order_by(Logs.startTime.desc())
 

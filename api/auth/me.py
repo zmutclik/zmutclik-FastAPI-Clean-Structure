@@ -26,10 +26,11 @@ from core.app.system.crossorigin.service import CrossOriginQueryService
 
 @auth_me_router.get(
     "test",
-    response_model=GetUserResponse,
+    # response_model=GetUserResponse,
     responses={"404": {"model": ExceptionResponseSchema}},
     # dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
     summary="Get My Data",
 )
 async def get_user(req: Request):
-    return await CrossOriginQueryService().get_crossorigin_by_id("1")
+    # return await CrossOriginQueryService().get_crossorigin_by_id("1")
+    pass

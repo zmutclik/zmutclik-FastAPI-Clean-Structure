@@ -25,29 +25,26 @@ class AuthBackend(AuthenticationBackend):
         authorization_cookie: str = get_specific_cookie(conn, config.COOKIES_KEY)
         current_user.client_id = get_specific_cookie(conn, config.CLIENT_KEY)
 
-        if "page" in conn.scope["path"]:
-            current_user.channel = "page"
-        if "static" in conn.scope["path"] or "favicon" in conn.scope["path"]:
-            current_user.channel = "static"
-
-        if "page" in conn.scope["path"] and ".js" in conn.scope["path"]:
-            current_user.channel = "page_js"
-
         if authorization is not None:
-            current_user.channel = "api"
             try:
                 scheme, credentials = authorization.split(" ")
                 if scheme.lower() != "bearer":
                     return False, current_user
             except ValueError:
                 return False, current_user
-
         elif authorization_cookie is not None:
-            current_user.channel = "page"
             credentials = authorization_cookie
-
         else:
             return False, current_user
+
+        if "api" in conn.scope["path"] and "api." not in conn.scope["path"]:
+            current_user.channel = "api"
+        if "page" in conn.scope["path"] or "auth/tim" in conn.scope["path"] or "auth/log" in conn.scope["path"] or "auth/reg" in conn.scope["path"]:
+            current_user.channel = "page"
+        if "static" in conn.scope["path"] or "favicon" in conn.scope["path"] or "openapi.json" in conn.scope["path"]:
+            current_user.channel = "static"
+        if "page" in conn.scope["path"] and ".js" in conn.scope["path"]:
+            current_user.channel = "page_js"
 
         if not credentials:
             return False, current_user
