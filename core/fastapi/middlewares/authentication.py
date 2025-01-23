@@ -41,7 +41,7 @@ class AuthBackend(AuthenticationBackend):
                     return False, current_user
             except ValueError:
                 return False, current_user
-        elif authorization_cookie is not None:
+        elif authorization_cookie is not None and current_user.channel != "api":
             credentials = authorization_cookie
         else:
             return False, current_user

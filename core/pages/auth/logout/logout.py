@@ -18,7 +18,6 @@ def page_auth_logout(response: Response, request: page_req):
     # SessionRepository().disable(req.state.sessionId)
     # thread = threading.Thread(target=SessionRepository().migrasi())
     # thread.start()
-
     sleep(1)
     response.status_code = 302  # Bisa diganti 301 atau 307 sesuai kebutuhan
     response.headers["Location"] = f"/auth/login"

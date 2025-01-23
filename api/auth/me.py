@@ -17,8 +17,8 @@ auth_me_router = APIRouter()
     dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
     summary="Get My Data",
 )
-async def get_user(req: Request):
-    return await UserQueryService().get_user(user_id=req.user.id)
+async def api_me(req: Request):
+    return await UserQueryService().get_user_by(username=req.user.username)
 
 
 from core.app.system.crossorigin.service import CrossOriginQueryService
@@ -31,6 +31,6 @@ from core.app.system.crossorigin.service import CrossOriginQueryService
     # dependencies=[Depends(PermissionDependency([IsAuthenticated]))],
     summary="Get My Data",
 )
-async def get_user(req: Request):
+async def api_test(req: Request):
     # return await CrossOriginQueryService().get_crossorigin_by_id("1")
     pass
