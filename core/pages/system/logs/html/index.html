@@ -173,6 +173,40 @@
     <!-- /.content -->
 </div>
 
+
+<!-- Modal -->
+<div class="modal" id="ErrorModal" tabindex="-1" aria-labelledby="ErrorModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Detaik Error</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 row">
+                    <label for="error_type" class="col-sm-1 col-form-label">Error Type</label>
+                    <div class="col-sm-11">
+                        <input type="text" class="form-control-plaintext" id="error_type" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="error_message" class="col-sm-1 col-form-label">Message</label>
+                    <div class="col-sm-11">
+                        <input type="text" class="form-control-plaintext" id="error_message" readonly>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="error_traceback" class="form-label">TrackBack</label>
+                    <textarea class="form-control-plaintext" id="error_traceback" rows="20" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->

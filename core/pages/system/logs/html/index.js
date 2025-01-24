@@ -56,7 +56,14 @@ $(document).ready(function () {
                 }, "title": "IP",
             },
             { "data": "user", "title": "USERS", },
-            { "data": "status_code", "title": "CODE", },
+            {
+                "data": function (source, type, val) {
+                    if (/\b50[0-9]\b/.test(source.status_code)) {
+                        return '<a href="#" class="show_ErrorModal" data-bs-toggle="modal" data-bs-target="#ErrorModal" attid="' + source.id + '"><b>' + source.status_code + '</b></a>';
+                    } else
+                        return source.status_code;
+                }, "title": "CODE",
+            },
             {
                 "data": function (source, type, val) {
                     return source.process_time.toFixed(3);
@@ -73,6 +80,20 @@ $(document).ready(function () {
         ]
     });
 
+    $("#table_").on("click", '.show_ErrorModal', function () {
+        $("#ErrorModal").LoadingOverlay("show");
+        api.get('/error/' + $(this).parents('tr').attr('id'))
+            .then(function (response) {
+                $("#error_type").val(response.data["error_type"])
+                $("#error_message").val(response.data["error_message"])
+                $("#error_traceback").val(response.data["error_traceback"])
+            })
+            .catch(function (error) {
+            })
+            .finally(function () {
+                $("#ErrorModal").LoadingOverlay("hide");
+            });
+    });
     $("#time_start,#time_end").flatpickr({
         enableTime: true,
         dateFormat: "d M Y H:i",

@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 from core.pages.response import PageResponse, EnumJS
 
 from core.app.logs.service import LogsQueryService
+from .response import LogErrorResponse
 
 from fastapi.exceptions import RequestValidationError
 
@@ -20,6 +21,11 @@ async def page_system_logs(req: page_req):
     page.addContext("data_username", await LogsQueryService().get_username())
     page.addContext("data_clientid", await LogsQueryService().get_clientid())
     return page.response(req, "/html/index.html")
+
+
+@router.get("/{PathCheck}/error/{logerror_id:int}", response_model=LogErrorResponse, dependencies=page.depend_w())
+async def page_system_logs_error(logerror_id: int, req: page_req):
+    return await LogsQueryService().get_logerror(logerror_id)
 
 
 @router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_w())

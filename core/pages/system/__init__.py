@@ -70,5 +70,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=content,
     )
 
+@pages_sys.get("/")
+async def page_system_check_error():
+    raise ValueError("Ini error yang harusnya terlihat!")
 
 __all__ = ["pages_sys"]

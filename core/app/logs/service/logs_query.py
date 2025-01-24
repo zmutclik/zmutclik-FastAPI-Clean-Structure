@@ -8,17 +8,20 @@ from core.app.logs.repository import LogsRepo
 
 class LogsQueryService:
 
-    async def get_ipaddress(self):
-        return await LogsRepo().get_ipaddress()
+    async def get_ipaddress(self, tahunbulan: datetime = None):
+        return await LogsRepo().get_ipaddress(tahunbulan=tahunbulan)
 
-    async def get_routers_name(self):
-        return await LogsRepo().get_routers_name()
+    async def get_routers_name(self, tahunbulan: datetime = None):
+        return await LogsRepo().get_routers_name(tahunbulan=tahunbulan)
 
-    async def get_username(self):
-        return await LogsRepo().get_username()
+    async def get_username(self, tahunbulan: datetime = None):
+        return await LogsRepo().get_username(tahunbulan=tahunbulan)
 
-    async def get_clientid(self):
-        return await LogsRepo().get_clientid()
+    async def get_clientid(self, tahunbulan: datetime = None):
+        return await LogsRepo().get_clientid(tahunbulan=tahunbulan)
+
+    async def get_logerror(self, logerror_id: int, tahunbulan: datetime = None):
+        return await LogsRepo().get_logerror(logerror_id=logerror_id, tahunbulan=tahunbulan)
 
     async def datatable_logs(self, params: dict[str, Any]):
         from sqlalchemy import or_, select
@@ -91,23 +94,3 @@ class LogsQueryService:
                 )
                 await datatable.generate()
                 return datatable.output_result()
-
-    # query = select(Logs, Logs.id.label("DT_RowId")).filter(
-    #     Logs.startTime >= params["search"]["time_start"],
-    #     Logs.startTime <= params["search"]["time_end"],
-    # )
-
-    # if params["search"]["ipaddress"] != "":
-    #     query = query.filter(Logs.ipaddress.like("%" + params["search"]["ipaddress"] + "%"))
-
-    # if params["search"]["method"] != "":
-    #     query = query.filter(Logs.method == params["search"]["method"])
-
-    # if params["search"]["status"] != "":
-    #     query = query.filter(Logs.status_code.like(params["search"]["status"] + "%"))
-
-    # if params["search"]["path"] != "":
-    #     query = query.filter(Logs.path.like("%" + params["search"]["path"] + "%"))
-
-    # if params["search"]["referer"] != "":
-    #     query = query.filter(Logs.referer.like("%" + params["search"]["referer"] + "%"))

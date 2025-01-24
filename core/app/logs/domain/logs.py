@@ -1,6 +1,6 @@
 import os
 import time
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text, Text
 from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -68,6 +68,17 @@ class Logs(Base):
             ipaddress=ipaddress,
             ipproxy=ipproxy,
         )
+
+
+class LogsError(Base):
+    __tablename__ = "logs_error"
+    id = Column(Integer, primary_key=True)
+    error_type = Column(String(250), index=True)
+    error_message = Column(String(250), index=True)
+    error_traceback = Column(Text)
+    file_name = Column(Text)
+    line_number = Column(Integer)
+    function_name = Column(String(250))
 
 
 class IpAddress(Base):

@@ -7,7 +7,7 @@ from fastapi import Request, Response
 
 from core.app.logs.domain import Logs
 from core.app.logs.repository import LogsRepo
-from core.app.logs.schema import LogsSchema
+from core.app.logs.schema import LogsSchema, LogErrorSchema
 
 from core import config
 
@@ -27,7 +27,7 @@ class LogsService:
 
         return request
 
-    def finish(self, request: Request, response: Response):
+    def finish(self, request: Request, response: Response, traceerror: LogErrorSchema):
         try:
             routername = request.scope["route"].name
         except:
@@ -44,4 +44,4 @@ class LogsService:
             response.set_cookie(key=config.CLIENT_KEY, value=request.user.client_id)
 
         # if request.user.channel != "page_js" or request.user.channel != "static":
-        asyncio.create_task(LogsRepo().save(self.data_created))
+        asyncio.create_task(LogsRepo().save(self.data_created, traceerror))

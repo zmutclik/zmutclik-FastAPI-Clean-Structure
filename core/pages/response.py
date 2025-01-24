@@ -105,7 +105,7 @@ class PageResponse:
                 context=self.context,
             )
         except TemplateNotFound:
-            print("404")
+            print("404 : ", path)
             return self.response_404(request)
 
     def dependencies(self, scopes: list[str] = None):

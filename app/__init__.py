@@ -49,7 +49,6 @@ def init_listeners(app: FastAPI) -> None:
             content={"error_code": exc.error_code, "message": exc.message},
         )
 
-
 def on_auth_error(request: Request, exc: Exception):
     status_code, error_code, message = 401, None, str(exc)
     if isinstance(exc, CustomException):
@@ -83,7 +82,7 @@ def create_app() -> FastAPI:
         version=config.APP_VERSION,
         docs_url=None if config.ENV == "production" else "/docs",
         redoc_url=None if config.ENV == "production" else "/redoc",
-        dependencies=[Depends(Logging)],
+        # dependencies=[Depends(Logging)],
     )
     init_routers(app=app)
     init_cors(app=app)

@@ -21,5 +21,6 @@ if __name__ == "__main__":
         host=config.APP_HOST,
         port=config.APP_PORT,
         reload=True if config.ENV != "production" else False,
+        log_level="debug" if config.DEBUG else "warning",
         workers=1,
     )
