@@ -47,8 +47,6 @@ class LogsMiddleware:
         except Exception as e:
             from core.app.logs.schema import LogErrorSchema
 
-            print("")
-
             tb = traceback.extract_tb(e.__traceback__)  # Ambil traceback
             last_trace = tb[-1]  # Baris terakhir traceback (tempat error terjadi)
 

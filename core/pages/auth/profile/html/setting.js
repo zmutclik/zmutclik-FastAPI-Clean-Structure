@@ -17,30 +17,35 @@ $(document).ready(function () {
         if (form_setting.valid()) {
             $("form input, form button").blur();
             $("#form_setting").LoadingOverlay("show");
-            api.post('/setting/{{id}}', {
-                "username": $("#form_setting input[name='username']").val(),
+            api.post('/setting', {
                 "full_name": $("#form_setting input[name='full_name']").val(),
                 "email": $("#form_setting input[name='email']").val(),
+                "nohp": $("#form_setting input[name='nohp']").val(),
             })
                 .then(function (response) {
                     Swal.fire("Tersimpan!", "", "success");
                 })
                 .catch(function (error) {
-                    if (error.status == 401 || error.status == 400) {
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "error",
-                            title: error.response.data.detail,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                    if (error.status == 422) {
-                        de = {}
-                        $.each(error.response.data.detail, function (i, v) {
-                            de[v.loc[1]] = v["msg"];
-                        });
-                        form_setting.showErrors(de);
+                    switch (error.response.data.error_code) {
+                        case 422:
+                            de = {}
+                            $.each(error.response.data.detail, function (i, v) {
+                                console.log(v);
+                                de[v.loc[1]] = v["message"];
+                            });
+                            console.log(de);
+
+                            form_.showErrors(de);
+                            break;
+                        default:
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "error",
+                                title: error.response.data.error_code + " : " + error.response.data.message,
+                            }).then((result) => {
+                                if (error.response.data.error_code in [10000, 10001, 10002])
+                                    window.location.reload(true);
+                            });
                     }
                 })
                 .finally(() => {

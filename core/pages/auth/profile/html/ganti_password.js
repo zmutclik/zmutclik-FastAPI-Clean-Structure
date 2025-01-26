@@ -42,7 +42,7 @@ function check(n, m) {
     $(".progress-bar").html(percentage + "%");
 }
 $(document).ready(function () {
-    $("#password_baru").keyup(function () {
+    $("#password_baru1").keyup(function () {
         var m = $(this).val();
         var n = m.length;
         check(n, m);
@@ -52,35 +52,38 @@ $(document).ready(function () {
     $("#form_gantipassword").on("submit", function () {
         if (form_gantipassword.valid()) {
             if (percentage <= 70) {
-                form_gantipassword.showErrors({ "baru": "Mohon kombinasi PASSWORD bernilai minimal 70%. !" });
-            } else if ($("#form_gantipassword input[name='lama']").val() == $("#form_gantipassword input[name='baru']").val()) {
-                form_gantipassword.showErrors({ "baru": "Password tidak boleh sama dengan yg lama." });
+                form_gantipassword.showErrors({ "password_baru1": "Mohon kombinasi PASSWORD bernilai minimal 70%. !" });
+            } else if ($("#form_gantipassword input[name='password_lama']").val() == $("#form_gantipassword input[name='password_baru1']").val()) {
+                form_gantipassword.showErrors({ "password_baru1": "Password tidak boleh sama dengan yg lama." });
             } else {
                 $("form input, form button").blur();
                 $("#form_gantipassword").LoadingOverlay("show");
-                api.post('/gantipassword/{{id}}', {
-                    "lama": $("#form_gantipassword input[name='lama']").val(),
-                    "baru": $("#form_gantipassword input[name='baru']").val(),
+                api.post('/gantipassword', {
+                    "password_lama": $("#form_gantipassword input[name='password_lama']").val(),
+                    "password_baru1": $("#form_gantipassword input[name='password_baru1']").val(),
+                    "password_baru2": $("#form_gantipassword input[name='password_baru2']").val(),
                 })
                     .then(function (response) {
                         Swal.fire("Tersimpan!", "", "success");
                     })
                     .catch(function (error) {
-                        if (error.status == 401 || error.status == 400) {
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "error",
-                                title: error.response.data.detail,
-                                showConfirmButton: false,
-                                timer: 2000
-                            });
-                        }
-                        if (error.status == 422) {
-                            de = {}
-                            $.each(error.response.data.detail, function (i, v) {
-                                de[v.loc[1]] = v["msg"];
-                            });
-                            form_setting.showErrors(de);
+                        switch (error.response.data.error_code) {
+                            case 422:
+                                de = {}
+                                $.each(error.response.data.detail, function (i, v) {
+                                    de[v.loc[1]] = v["message"];
+                                });
+                                form_gantipassword.showErrors(de);
+                                break;
+                            default:
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: error.response.data.error_code + " : " + error.response.data.message,
+                                }).then((result) => {
+                                    if (error.response.data.error_code in [10000, 10001, 10002])
+                                        window.location.reload(true);
+                                });
                         }
                     })
                     .finally(() => {

@@ -9,7 +9,12 @@ from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundEx
 
 class UserCommandService:
     @inject()
-    def __init__(self, user_repo: UserRepo, user_privilege_repo: UserPrivilegeRepo, user_scope_repo: UserScopeRepo):
+    def __init__(
+        self,
+        user_repo: UserRepo,
+        user_privilege_repo: UserPrivilegeRepo,
+        user_scope_repo: UserScopeRepo,
+    ):
         self.user_repo = user_repo
         self.user_privilege_repo = user_privilege_repo
         self.user_scope_repo = user_scope_repo
@@ -42,7 +47,9 @@ class UserCommandService:
 
         for item in privileges:
             user_privilege = UserPrivilege.create(data_saved.id, item)
-            await self.user_privilege_repo.save_userprivilege(user_privilege=user_privilege)
+            await self.user_privilege_repo.save_userprivilege(
+                user_privilege=user_privilege
+            )
 
         await self.user_privilege_repo.commit_userprivilege()
 
@@ -54,7 +61,9 @@ class UserCommandService:
 
         return data_saved
 
-    async def update_user_password(self, user_id: int, password1: str, password2: str) -> UserSchema:
+    async def update_user_password(
+        self, user_id: int, password1: str, password2: str
+    ) -> UserSchema:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
             raise UserNotFoundException
@@ -64,11 +73,11 @@ class UserCommandService:
     async def update_user(
         self,
         user_id: int,
-        username: Union[str, None],
-        email: Union[str, None],
-        nohp: Union[str, None],
-        full_name: Union[str, None],
-        disabled: Union[bool, None],
+        username: Union[str, None] = None,
+        email: Union[str, None] = None,
+        nohp: Union[str, None] = None,
+        full_name: Union[str, None] = None,
+        disabled: Union[bool, None] = None,
         privileges: list[int] = [],
         scopes: list[int] = [],
     ) -> UserSchema:
@@ -77,32 +86,34 @@ class UserCommandService:
             raise UserNotFoundException
 
         updates = {}
-        if full_name:
+        if full_name is not None:
             updates["username"] = username
-        if full_name:
+        if full_name is not None:
             updates["full_name"] = full_name
-        if email:
+        if email is not None:
             updates["email"] = email
-        if nohp:
+        if nohp is not None:
             updates["nohp"] = nohp
         if disabled is not None:
             updates["disabled"] = disabled
 
         data_updated = await self.user_repo.update_user(data_get, **updates)
 
-        await self.user_privilege_repo.delete_userprivileges(user_id=user_id)
-        for item in privileges:
-            user_privilege = UserPrivilege.create(user_id, item)
-            await self.user_privilege_repo.save_userprivilege(user_privilege=user_privilege)
+        if privileges != []:
+            await self.user_privilege_repo.delete_userprivileges(user_id=user_id)
+            for item in privileges:
+                user_privilege = UserPrivilege.create(user_id, item)
+                await self.user_privilege_repo.save_userprivilege(
+                    user_privilege=user_privilege
+                )
+            await self.user_privilege_repo.commit_userprivilege()
 
-        await self.user_privilege_repo.commit_userprivilege()
-
-        await self.user_scope_repo.delete_userscopes(user_id=user_id)
-        for item in scopes:
-            user_scope = UserScope.create(user_id, item)
-            await self.user_scope_repo.save_userscope(user_scope=user_scope)
-
-        await self.user_scope_repo.commit_userscope()
+        if scopes != []:
+            await self.user_scope_repo.delete_userscopes(user_id=user_id)
+            for item in scopes:
+                user_scope = UserScope.create(user_id, item)
+                await self.user_scope_repo.save_userscope(user_scope=user_scope)
+            await self.user_scope_repo.commit_userscope()
 
         return data_updated
 

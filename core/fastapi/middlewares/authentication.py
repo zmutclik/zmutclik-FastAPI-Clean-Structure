@@ -27,7 +27,7 @@ class AuthBackend(AuthenticationBackend):
 
         if "api" in conn.scope["path"] and "api." not in conn.scope["path"]:
             current_user.channel = "api"
-        if "page" in conn.scope["path"] or "auth/tim" in conn.scope["path"] or "auth/log" in conn.scope["path"] or "auth/reg" in conn.scope["path"]:
+        if "page" in conn.scope["path"] or "auth/pro" in conn.scope["path"] or "auth/tim" in conn.scope["path"] or "auth/log" in conn.scope["path"] or "auth/reg" in conn.scope["path"]:
             current_user.channel = "page"
         if "static" in conn.scope["path"] or "favicon" in conn.scope["path"] or "openapi.json" in conn.scope["path"]:
             current_user.channel = "static"

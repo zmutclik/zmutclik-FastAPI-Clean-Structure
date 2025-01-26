@@ -4,6 +4,7 @@ from .login import login_router
 from .logout import logout_router
 from .timeout import timeout_router
 from .register import register_router
+from .profile import profile_router
 
 from core import config
 
@@ -22,6 +23,7 @@ pages_auth.include_router(login_router)
 pages_auth.include_router(logout_router)
 pages_auth.include_router(timeout_router)
 pages_auth.include_router(register_router)
+pages_auth.include_router(profile_router)
 
 
 #######################################################################################################################

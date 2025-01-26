@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "core/html/layouts/base.html" %}
 
 {% block title %} Profile {% endblock %}
 
@@ -8,8 +8,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
-{% include 'includes/_page_stylesheets.html' %}
-{% include 'includes/_all_stylesheets.html' %}
+{% include 'core/html/includes/index/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
 
 {% endblock stylesheets %}
 
@@ -47,7 +47,7 @@
                                 <img class="profile-user-img img-fluid img-circle" src="/static/assets/img/avatar4.png" alt="User profile picture">
                             </div>
 
-                            <h3 class="profile-username text-center">{{data.full_name}}</h3>
+                            <h3 class="profile-username text-center">{{data_user.full_name}}</h3>
 
                             <p class="text-muted text-center">Software Engineer</p>
 
@@ -94,16 +94,20 @@
                                 <div class="tab-pane active" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab" tabindex="0">
                                     <form id="form_setting">
                                         <div class="mb-3">
+                                            <label for="fofull_name" class="form-label">Nama Lengkap</label>
+                                            <input type="text" class="form-control" id="fofull_name" name="full_name" placeholder="Nama Lengkap" {% if data_user %} value="{{data_user.full_name}}" {% endif %} required>
+                                        </div>
+                                        <div class="mb-3">
                                             <label for="fousername" class="form-label">Nama Akun</label>
-                                            <input type="text" class="form-control" id="fousername" name="username" placeholder="username" {% if data %} value="{{data.username}}" {% endif %} required>
+                                            <input type="text" class="form-control" id="fousername" name="username" placeholder="username" {% if data_user %} value="{{data_user.username}}" {% endif %} readonly>
                                         </div>
                                         <div class="mb-3">
                                             <label for="foemail" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="foemail" name="email" placeholder="email@contoh.com" {% if data %} value="{{data.email}}" {% endif %} required>
+                                            <input type="email" class="form-control" id="foemail" name="email" placeholder="email@contoh.com" {% if data_user %} value="{{data_user.email}}" {% endif %} required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="fofull_name" class="form-label">Nama Lengkap</label>
-                                            <input type="text" class="form-control" id="fofull_name" name="full_name" placeholder="Nama Lengkap" {% if data %} value="{{data.full_name}}" {% endif %} required>
+                                            <label for="foemail" class="form-label">No Handphone</label>
+                                            <input type="text" class="form-control" id="foenohp" name="nohp" placeholder="628123000000" {% if data_user %} value="{{data_user.nohp}}" {% endif %} required>
                                         </div>
                                         <div class="mb-3 mt-5 float-end">
                                             <button type="submit" class="btn btn-primary">SIMPAN</button>
@@ -115,11 +119,15 @@
                                     <form id="form_gantipassword">
                                         <div class="mb-3">
                                             <label for="password_lama" class="form-label">Password Lama</label>
-                                            <input type="text" class="form-control" id="password_lama" name="lama" placeholder="P45w012d L4mA" required>
+                                            <input type="text" class="form-control" id="password_lama" name="password_lama" placeholder="P45w012d L4mA" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="password_baru" class="form-label">Password Baru</label>
-                                            <input type="text" class="form-control" id="password_baru" name="baru" placeholder="P45w012d B4Ru" minlength="6" maxlength="32" required>
+                                            <label for="password_baru1" class="form-label">Password Baru</label>
+                                            <input type="text" class="form-control" id="password_baru1" name="password_baru1" placeholder="P45w012d B4Ru" minlength="6" maxlength="32" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="password_baru2" class="form-label">Ulangi Password Baru</label>
+                                            <input type="text" class="form-control" id="password_baru2" name="password_baru2" placeholder="P45w012d B4Ru" minlength="6" maxlength="32" required>
                                         </div>
                                         <div class="progress" id="progressbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 15px">
                                             <div class="progress-bar" style="width: 0%"></div>
@@ -149,10 +157,10 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 
-{% include 'includes/_all_javascripts.html' %}
-{% include 'includes/_form_javascripts.html' %}
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/form/javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url}}/{{clientId}}/{{sessionId}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/ganti_password.js?id={{data.id}}"></script>
-<script src="{{prefix_url}}/{{clientId}}/{{sessionId}}/{{app_version}}/setting.js?id={{data.id}}"></script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script src="{{prefix_url_js}}/ganti_password.js"></script>
+<script src="{{prefix_url_js}}/setting.js"></script>
 {% endblock javascripts %}
