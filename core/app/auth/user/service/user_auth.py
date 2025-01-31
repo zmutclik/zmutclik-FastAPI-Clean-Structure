@@ -58,6 +58,17 @@ class UserAuthService:
         )
         return access_token
 
+    async def refresh_create(self, user: User, client_id: str, session_id: str) -> str:
+        access_token = token_create(
+            data={
+                "sub": user.username,
+                "client": client_id,
+                "session": session_id,
+            },
+            expires_delta=timedelta(minutes=config.REFRESH_EXPIRED),
+        )
+        return access_token
+
     async def generate_cache_user(self, user: User) -> None:
         user_schema = UserSchema.model_validate(user.__dict__)
         with open(".db/cache/user/{}.json".format(user.username), "w") as outfile:
@@ -69,12 +80,12 @@ class UserAuthService:
         is_privilege_system = False
         for item in list_privilege:
             PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(item.privilege_id)
-            if item.privilege_id==1:
+            if item.privilege_id == 1:
                 is_privilege_system = True
             if PrivilegeMenus:
                 for item in PrivilegeMenus:
                     list_filter_menu_id.append(item.menu_id)
-                    
+
         if is_privilege_system:
             list_filter_menu_id = None
 

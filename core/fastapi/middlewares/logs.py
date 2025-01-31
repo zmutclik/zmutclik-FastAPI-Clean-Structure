@@ -1,8 +1,7 @@
+import traceback
 from fastapi import Request, Response
 from core.app.logs.service import LogsService
-import traceback
 
-import traceback
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -33,17 +32,19 @@ class LogsMiddleware:
             nonlocal response_body, response_status, response_headers
             if message["type"] == "http.response.start":
                 response_status = message["status"]
-                response_headers = [(k.decode(), v.decode()) for k, v in message["headers"]]
+                response_headers.extend([(k.decode(), v.decode()) for k, v in message["headers"]])
+
             elif message["type"] == "http.response.body":
                 response_body += message.get("body", b"")
 
         try:
             await self.app(scope, receive, send_wrapper)
-
-            # Konversi response body ke string jika bukan bytes
             response_content = response_body if isinstance(response_body, bytes) else str(response_body).encode()
 
-            response = Response(content=response_content, status_code=response_status, headers=dict(response_headers))
+            response = Response(content=response_content, status_code=response_status)
+            for k, v in response_headers:
+                response.raw_headers.append((k.encode("latin-1"), v.encode("latin-1")))
+
         except Exception as e:
             from core.app.logs.schema import LogErrorSchema
 

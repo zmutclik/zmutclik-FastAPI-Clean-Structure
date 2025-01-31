@@ -1,5 +1,5 @@
 from typing import Union
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 
 from jose import JWTError, jwt
 from core import config
@@ -8,8 +8,8 @@ from core.exceptions import InactiveUserScopeException
 
 def token_create(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now() + expires_delta
+    if expires_delta is not None:
+        expire = datetime.now(timezone.utc) + expires_delta
         to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,

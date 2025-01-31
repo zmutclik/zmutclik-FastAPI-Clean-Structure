@@ -66,7 +66,44 @@
 {% include 'core/html/includes/core/javascripts.html' %}
 {% include 'core/html/includes/index/javascripts.html' %}
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, withCredentials: true });
+    api.interceptors.request.use(config => {
+        const accessToken = localStorage.getItem("access_token");
+        if (accessToken) {
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+        return config;
+    }, error => Promise.reject(error));
+    api.interceptors.response.use(
+        response => response,  // Kalau response sukses, langsung return
+        async error => {
+            const originalRequest = error.config;  // Simpan request yang gagal
+
+            // Jika response error karena token expired (401)
+            if (error.response.status === 401 && !originalRequest._retry) {
+                originalRequest._retry = true;  // Hindari infinite loop
+
+                try {
+                    // Panggil endpoint refresh token ke backend
+                    const refreshResponse = await axios.post("http://localhost:8000/refresh", {}, { withCredentials: true });
+
+                    // Simpan token baru di localStorage
+                    localStorage.setItem("access_token", refreshResponse.data.access_token);
+
+                    // Set ulang Authorization header dengan token baru
+                    originalRequest.headers["Authorization"] = `Bearer ${refreshResponse.data.access_token}`;
+
+                    // Coba ulang request yang gagal dengan token baru
+                    return api(originalRequest);
+                } catch (refreshError) {
+                    console.error("Refresh token gagal, user harus login ulang:", refreshError);
+                }
+            }
+
+            return Promise.reject(error);
+        }
+    );
+</script>
 <script src="{{prefix_url_js}}/index.js"></script>
 
 {% endblock javascripts %}

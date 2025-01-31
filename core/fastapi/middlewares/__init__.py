@@ -4,6 +4,7 @@ from .sqlalchemy_core import SQLAlchemyCoreMiddleware
 from .sqlalchemy_auth import SQLAlchemyAuthMiddleware
 from .sqlalchemy_menu import SQLAlchemyMenuMiddleware
 from .logs import LogsMiddleware
+from .redirect import RedirectMiddleware
 
 __all__ = [
     "AuthenticationMiddleware",
@@ -13,4 +14,5 @@ __all__ = [
     "SQLAlchemyMenuMiddleware",
     "SQLAlchemyAuthMiddleware",
     "LogsMiddleware",
+    "RedirectMiddleware",
 ]

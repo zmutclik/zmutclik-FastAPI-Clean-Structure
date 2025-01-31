@@ -14,6 +14,7 @@ from core.fastapi.middlewares import (
     SQLAlchemyAuthMiddleware,
     SQLAlchemyCoreMiddleware,
     SQLAlchemyMenuMiddleware,
+    RedirectMiddleware,
 )
 from core.exceptions import CustomException
 from core.di import init_di
@@ -49,6 +50,7 @@ def init_listeners(app: FastAPI) -> None:
             content={"error_code": exc.error_code, "message": exc.message},
         )
 
+
 def on_auth_error(request: Request, exc: Exception):
     status_code, error_code, message = 401, None, str(exc)
     if isinstance(exc, CustomException):
@@ -73,6 +75,7 @@ def init_middleware(app: FastAPI) -> None:
         backend=AuthBackend(),
         on_error=on_auth_error,
     )
+    app.add_middleware(RedirectMiddleware)
 
 
 def create_app() -> FastAPI:

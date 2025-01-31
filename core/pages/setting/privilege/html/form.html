@@ -109,7 +109,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url_post}}{% if data_privilege %}/{{data_privilege.id}}{% endif %}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}{% if data_privilege %}/{{data_privilege.id}}{% endif %}', timeout: 2000, withCredentials: true });</script>
 <script src="{{prefix_url_js}}/form.js{% if data_privilege %}?privilege_id={{data_privilege.id}}{% endif %}"></script>
 
 {% endblock javascripts %}

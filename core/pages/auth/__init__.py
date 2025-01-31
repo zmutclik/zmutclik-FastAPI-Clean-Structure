@@ -5,6 +5,7 @@ from .logout import logout_router
 from .timeout import timeout_router
 from .register import register_router
 from .profile import profile_router
+from .refresh import refresh_router
 
 from core import config
 
@@ -24,6 +25,7 @@ pages_auth.include_router(logout_router)
 pages_auth.include_router(timeout_router)
 pages_auth.include_router(register_router)
 pages_auth.include_router(profile_router)
+pages_auth.include_router(refresh_router)
 
 
 #######################################################################################################################
@@ -33,6 +35,10 @@ from fastapi import status
 from core.exceptions import RequiresLoginException
 from core.exceptions import CustomException
 from fastapi.exceptions import RequestValidationError
+from core.fastapi.middlewares import RedirectMiddleware
+
+
+pages_auth.add_middleware(RedirectMiddleware)
 
 
 @pages_auth.exception_handler(RequiresLoginException)

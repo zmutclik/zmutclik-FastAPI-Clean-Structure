@@ -1,5 +1,6 @@
 import os
 from time import sleep
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any
 from fastapi import APIRouter, Request, Response, HTTPException, Depends, status
 from fastapi.responses import HTMLResponse
@@ -33,20 +34,28 @@ async def page_auth_login_js(next: str, req: page_req):
 
 
 @router.post("/{PathCheck}", status_code=201)
-async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Response):
-    user_query = UserQueryService()
-    data_get = await user_query.get_user_by(email=dataIn.email)
+async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Response):  #
+    data_get = await UserQueryService().get_user_by(email=dataIn.email)
     if not data_get:
         raise UserNotFoundException
     if data_get.disabled:
         raise UserNotActiveException
 
-    if not await user_query.verify_password(data_get, dataIn.password):
+    if not await UserQueryService().verify_password(data_get, dataIn.password):
         raise PasswordDoesNotMatchException
 
     access_token = await UserAuthService().token_create(data_get)
-    res.set_cookie(key=config.COOKIES_KEY, value=access_token)
+    refresh_token = await UserAuthService().refresh_create(data_get, req.user.client_id, req.user.session_id)
+
+    access_token_time = datetime.now(timezone.utc) + timedelta(minutes=config.COOKIES_EXPIRED)
+    access_token_str = access_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+    refresh_token_time = datetime.now(timezone.utc) + timedelta(minutes=config.REFRESH_EXPIRED)
+    refresh_token_str = refresh_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+
+    res.set_cookie(key=config.COOKIES_KEY, value=access_token, httponly=True, expires=access_token_str)
+    res.set_cookie(key=config.REFRESH_KEY, value=refresh_token, httponly=True, expires=refresh_token_str)
 
     await UserAuthService().generate_cache_user(data_get)
     await UserAuthService().generate_cache_menu(data_get)
-    # sleep(1)
+
+    sleep(1)

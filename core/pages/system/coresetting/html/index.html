@@ -87,16 +87,16 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="cookies_key" class="form-label">Cookies Key</label>
-                                    <input type="text" class="form-control" name="cookies_key" value="{{data_coresystem.cookies_key}}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="client_key" class="form-label">ClientID Key</label>
-                                    <input type="text" class="form-control" name="client_key" value="{{data_coresystem.client_key}}" required>
+                                    <label for="prefix_session" class="form-label">Prefix Session</label>
+                                    <input type="text" class="form-control" name="prefix_session" value="{{data_coresystem.prefix_session}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="token/client/refresh_token" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="cookies_exp" class="form-label">Cookies Expired</label>
                                     <input type="number" class="form-control" name="cookies_exp" value="{{data_coresystem.cookies_exp}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="refresh_exp" class="form-label">Refresh Expired</label>
+                                    <input type="number" class="form-control" name="refresh_exp" value="{{data_coresystem.refresh_exp}}" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="environment" class="form-label">Environment</label>
@@ -109,8 +109,8 @@
                                 <div class="mb-3">
                                     <label for="debug" class="form-label">Debug</label>
                                     <select class="form-select" aria-label="Default select" name="debug" required>
-                                        <option value="1" {% if data_coresystem.debug=="True" %} selected {% endif %}>Aktif</option>
-                                        <option value="0" {% if data_coresystem.debug=="False" %} selected {% endif %}>Tidak Aktif</option>
+                                        <option value="1" {% if data_coresystem.debug %} selected {% endif %}>Aktif</option>
+                                        <option value="0" {% if not data_coresystem.debug %} selected {% endif %}>Tidak Aktif</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
@@ -175,9 +175,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_id.min.js" integrity="sha512-Orvt00GKq6XzBWqbltE094YknH2BN78wpQqLT/P3Jx3nhaBmEbd7JzVDJ2qLTu8J8SuMoACKoIxk851FS5ZIUA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script>const api_cross = axios.create({ baseURL: '{{prefix_url_crossorigin}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
-<script>const api_versi = axios.create({ baseURL: '{{prefix_url_changelog}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, withCredentials: true });</script>
+<script>const api_cross = axios.create({ baseURL: '{{prefix_url_crossorigin}}', timeout: 2000, withCredentials: true });</script>
+<script>const api_versi = axios.create({ baseURL: '{{prefix_url_changelog}}', timeout: 2000, withCredentials: true });</script>
+<script src="{{prefix_url_js}}/index.js"></script>
 <script src="{{prefix_url_js}}/form.js"></script>
 <script src="{{prefix_url_changelog}}/index.js"></script>
 <script src="{{prefix_url_changelog}}/form.js"></script>

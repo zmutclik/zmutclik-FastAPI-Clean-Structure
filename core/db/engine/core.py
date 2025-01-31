@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from core.config import DBCORE_FILE
 from ._func import check_exits, check_sizes
 
+
 def coredb_create_all():
     check_exits(DBCORE_FILE)
     if check_sizes(DBCORE_FILE):
@@ -24,11 +25,11 @@ def coredb_create_all():
                             "app_desc": "This is a very fancy project, with auto docs for the API and everything.",
                             "app_host": "127.0.0.1",
                             "app_port": "8016",
-                            "client_key": "fastapi-clean-structure_client",
                             "jwt_scret_key": "fastapi",
                             "jwt_algorithm": "HS512",
-                            "cookies_key": "fastapi-clean-structure_token",
+                            "prefix_session": "fastapi-clean-structure_",
                             "cookies_exp": 30,
+                            "refresh_exp": 60 * 8,
                             "debug": True,
                         }
                     )
@@ -60,4 +61,5 @@ def coredb_create_all():
                 db.add(CrossOrigin(**{"link": "http://localhost", "created_user": "SeMuT-CiLiK"}))
                 db.add(CrossOrigin(**{"link": "http://127.0.0.1", "created_user": "SeMuT-CiLiK"}))
                 db.add(CrossOrigin(**{"link": "http://127.0.0.1:8001", "created_user": "SeMuT-CiLiK"}))
+                db.add(CrossOrigin(**{"link": "http://127.0.0.1:8016", "created_user": "SeMuT-CiLiK"}))
                 db.commit()

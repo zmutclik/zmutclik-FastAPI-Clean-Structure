@@ -6,24 +6,20 @@ $(document).ready(function () {
 
     oTable = $('#table_').DataTable({
         serverSide: true,
-        ajax: {
-            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
-            "data": function (d) {
-                d.search.bulantahun = moment($('#time_start').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
-                d.search.time_start = moment($('#time_start').val(), "DD MMM YYYY HH:mm").unix();
-                d.search.time_end = moment($('#time_end').val(), "DD MMM YYYY HH:mm").unix();
-                d.search.ipaddress = $('#ipaddress').val();
-                d.search.routername = $('#routername').val();
-                d.search.clientid = $('#clientid').val();
-                d.search.username = $('#username').val();
-                d.search.channel = $('#channel').val();
-                d.search.method = $('#method').val();
-                d.search.status = $('#status').val();
-                d.search.path = $('#querypath').val();
-                d.search.referer = $('#queryreferer').val();
-                return JSON.stringify(d);
-            }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
-
+        "ajax": function (data, callback, settings) {
+            data.search.bulantahun = moment($('#time_start').val(), "DD MMM YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
+            data.search.time_start = moment($('#time_start').val(), "DD MMM YYYY HH:mm").unix();
+            data.search.time_end = moment($('#time_end').val(), "DD MMM YYYY HH:mm").unix();
+            data.search.ipaddress = $('#ipaddress').val();
+            data.search.routername = $('#routername').val();
+            data.search.clientid = $('#clientid').val();
+            data.search.username = $('#username').val();
+            data.search.channel = $('#channel').val();
+            data.search.method = $('#method').val();
+            data.search.status = $('#status').val();
+            data.search.path = $('#querypath').val();
+            data.search.referer = $('#queryreferer').val();
+            api.post('/datatables', data).then(response => { callback(response.data); })
         },
         "paging": true,
         "lengthChange": false,

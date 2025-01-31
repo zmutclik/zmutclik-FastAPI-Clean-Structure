@@ -3,11 +3,8 @@ var oTableCors;
 $(document).ready(function () {
     oTableCors = $('#table_cors').DataTable({
         serverSide: true,
-        ajax: {
-            "url": '{{prefix_url_post}}/datatables', "contentType": "application/json", "type": "POST",
-            "data": function (d) {
-                return JSON.stringify(d);
-            }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
+        "ajax": function (data, callback, settings) {
+            api_cross.post('/datatables', data).then(response => { callback(response.data); })
         },
         "paging": false,
         "lengthChange": false,

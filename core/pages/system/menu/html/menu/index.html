@@ -157,7 +157,7 @@
 
 <!-- ------------------- -->
 </script>
-<script>const api = axios.create({ baseURL: '{{prefix_url_post}}/{{menutype_id}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}/{{menutype_id}}', timeout: 2000, withCredentials: true });</script>
 <script src="{{prefix_url_js}}/{{menutype_id}}/index.js"></script>
 
 {% endblock javascripts %}

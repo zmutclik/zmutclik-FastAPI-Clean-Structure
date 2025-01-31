@@ -14,7 +14,7 @@ $(document).ready(function () {
                 d.search.path = $('#querypath').val();
                 d.search.params = $('#queryparams').val();
                 return JSON.stringify(d);
-            }, 'beforeSend': function (request) { request.setRequestHeader("Authorization", api.defaults.headers['Authorization']); }
+            }, "xhrFields": { withCredentials: true }
 
         },
         "paging": false,

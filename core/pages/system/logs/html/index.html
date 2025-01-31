@@ -217,7 +217,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
 <!-- ------------------- -->
-<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, headers: { 'Authorization': 'Bearer ' + Cookies.get('{{TOKEN_KEY}}') } });</script>
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, withCredentials: true });</script>
 <script src="{{prefix_url_js}}/index.js"></script>
 
 {% endblock javascripts %}

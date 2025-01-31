@@ -5,7 +5,7 @@ from fastapi import Request
 from fastapi.openapi.models import APIKey, APIKeyIn
 from fastapi.security.base import SecurityBase
 
-from core.exceptions import CustomException, UnauthorizedException, RequiresLoginException
+from core.exceptions import CustomException, UnauthorizedException
 
 
 class PermissionDependency(SecurityBase):

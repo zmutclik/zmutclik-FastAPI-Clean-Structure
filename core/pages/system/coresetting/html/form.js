@@ -23,11 +23,11 @@ $(document).ready(function () {
                 "app_desc": $("#form_setting input[name='app_desc']").val(),
                 "app_host": $("#form_setting input[name='app_host']").val(),
                 "app_port": $("#form_setting input[name='app_port']").val(),
-                "client_key": $("#form_setting input[name='client_key']").val(),
+                "prefix_session": $("#form_setting input[name='prefix_session']").val(),
                 "jwt_scret_key": $("#form_setting input[name='jwt_scret_key']").val(),
                 "jwt_algorithm": $("#form_setting select[name='jwt_algorithm']").val(),
-                "cookies_key": $("#form_setting input[name='cookies_key']").val(),
                 "cookies_exp": $("#form_setting input[name='cookies_exp']").val(),
+                "refresh_exp": $("#form_setting input[name='refresh_exp']").val(),
                 "environment": $("#form_setting select[name='environment']").val(),
                 "debug": $("#form_setting select[name='debug']").val(),
             })

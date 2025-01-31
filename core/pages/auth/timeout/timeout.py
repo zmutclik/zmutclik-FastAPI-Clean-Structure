@@ -14,6 +14,7 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 @router.get("/{username}", status_code=201)
 def page_auth_timeout(response: Response, request: page_req):
     response.delete_cookie(key=config.COOKIES_KEY)
+    response.delete_cookie(key=config.REFRESH_KEY)
 
     # SessionRepository().disable(req.state.sessionId)
     # thread = threading.Thread(target=SessionRepository().migrasi())
