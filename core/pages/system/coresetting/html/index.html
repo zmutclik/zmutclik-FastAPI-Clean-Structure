@@ -38,6 +38,9 @@
                             <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-setting" type="button" role="tab" aria-controls="nav-setting" aria-selected="true">System Setting</button>
                         </li>
                         <li class="nav-item">
+                            <button class="nav-link" id="nav-auth-tab" data-bs-toggle="tab" data-bs-target="#nav-auth" type="button" role="tab" aria-controls="nav-auth" aria-selected="true">Auth</button>
+                        </li>
+                        <li class="nav-item">
                             <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-changelog" type="button" role="tab" aria-controls="nav-changelog" aria-selected="false">ChangLog</button>
                         </li>
                         <li class="nav-item">
@@ -66,39 +69,6 @@
                                     <input type="number" class="form-control" name="app_port" value="{{data_coresystem.app_port}}" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="jwt_scret_key" class="form-label">JWT Secret</label>
-                                    <input type="text" class="form-control" name="jwt_scret_key" value="{{data_coresystem.jwt_scret_key}}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="jwt_algorithm" class="form-label">JWT Algorithm</label>
-                                    <select class="form-select" aria-label="Default select" name="jwt_algorithm" required>
-                                        <option value="HS256" {% if data_coresystem.jwt_algorithm=="HS256" %} selected {% endif %}>HS256</option>
-                                        <option value="HS384" {% if data_coresystem.jwt_algorithm=="HS384" %} selected {% endif %}>HS384</option>
-                                        <option value="HS512" {% if data_coresystem.jwt_algorithm=="HS512" %} selected {% endif %}>HS512</option>
-                                        <option value="RS256" {% if data_coresystem.jwt_algorithm=="RS256" %} selected {% endif %}>RS256</option>
-                                        <option value="RS384" {% if data_coresystem.jwt_algorithm=="RS384" %} selected {% endif %}>RS384</option>
-                                        <option value="RS512" {% if data_coresystem.jwt_algorithm=="RS512" %} selected {% endif %}>RS512</option>
-                                        <option value="ES256" {% if data_coresystem.jwt_algorithm=="ES256" %} selected {% endif %}>ES256</option>
-                                        <option value="ES384" {% if data_coresystem.jwt_algorithm=="ES384" %} selected {% endif %}>ES384</option>
-                                        <option value="ES512" {% if data_coresystem.jwt_algorithm=="ES512" %} selected {% endif %}>ES512</option>
-                                        <option value="PS256" {% if data_coresystem.jwt_algorithm=="PS256" %} selected {% endif %}>PS256</option>
-                                        <option value="PS384" {% if data_coresystem.jwt_algorithm=="PS384" %} selected {% endif %}>PS384</option>
-                                        <option value="PS512" {% if data_coresystem.jwt_algorithm=="PS512" %} selected {% endif %}>PS512</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="prefix_session" class="form-label">Prefix Session</label>
-                                    <input type="text" class="form-control" name="prefix_session" value="{{data_coresystem.prefix_session}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="token/client/refresh_token" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="cookies_exp" class="form-label">Cookies Expired</label>
-                                    <input type="number" class="form-control" name="cookies_exp" value="{{data_coresystem.cookies_exp}}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="refresh_exp" class="form-label">Refresh Expired</label>
-                                    <input type="number" class="form-control" name="refresh_exp" value="{{data_coresystem.refresh_exp}}" required>
-                                </div>
-                                <div class="mb-3">
                                     <label for="environment" class="form-label">Environment</label>
                                     <select class="form-select" aria-label="Default select" name="environment" required>
                                         <option value="local" {% if data_coresystem.debug=="local" %} selected {% endif %}>LocalHost</option>
@@ -118,6 +88,48 @@
                                 </div>
                             </form>
                             <!-- /#nav-setting -->
+                        </div>
+                        <div class="tab-pane fade" id="nav-auth" role="tabpanel" aria-labelledby="nav-auth-tab" tabindex="0">
+                            <form id="form_auth">
+                                <div class="mb-3">
+                                    <label for="jwt_scret_key" class="form-label">JWT Secret</label>
+                                    <input type="text" class="form-control" name="jwt_scret_key" value="{{data_authsystem.jwt_scret_key}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="jwt_algorithm" class="form-label">JWT Algorithm</label>
+                                    <select class="form-select" aria-label="Default select" name="jwt_algorithm" required>
+                                        <option value="HS256" {% if data_authsystem.jwt_algorithm=="HS256" %} selected {% endif %}>HS256</option>
+                                        <option value="HS384" {% if data_authsystem.jwt_algorithm=="HS384" %} selected {% endif %}>HS384</option>
+                                        <option value="HS512" {% if data_authsystem.jwt_algorithm=="HS512" %} selected {% endif %}>HS512</option>
+                                        <option value="RS256" {% if data_authsystem.jwt_algorithm=="RS256" %} selected {% endif %}>RS256</option>
+                                        <option value="RS384" {% if data_authsystem.jwt_algorithm=="RS384" %} selected {% endif %}>RS384</option>
+                                        <option value="RS512" {% if data_authsystem.jwt_algorithm=="RS512" %} selected {% endif %}>RS512</option>
+                                        <option value="ES256" {% if data_authsystem.jwt_algorithm=="ES256" %} selected {% endif %}>ES256</option>
+                                        <option value="ES384" {% if data_authsystem.jwt_algorithm=="ES384" %} selected {% endif %}>ES384</option>
+                                        <option value="ES512" {% if data_authsystem.jwt_algorithm=="ES512" %} selected {% endif %}>ES512</option>
+                                        <option value="PS256" {% if data_authsystem.jwt_algorithm=="PS256" %} selected {% endif %}>PS256</option>
+                                        <option value="PS384" {% if data_authsystem.jwt_algorithm=="PS384" %} selected {% endif %}>PS384</option>
+                                        <option value="PS512" {% if data_authsystem.jwt_algorithm=="PS512" %} selected {% endif %}>PS512</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cookies_prefix" class="form-label">Cookies Prefix</label>
+                                    <input type="text" class="form-control" name="cookies_prefix" value="{{data_authsystem.cookies_prefix}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="token/client/refresh_token" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cookies_exp" class="form-label">Cookies Expired</label>
+                                    <input type="number" class="form-control" name="cookies_exp" value="{{data_authsystem.cookies_exp}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="refresh_exp" class="form-label">Refresh Expired</label>
+                                    <input type="number" class="form-control" name="refresh_exp" value="{{data_authsystem.refresh_exp}}" required>
+                                </div>
+                                <div class="mb-3 mt-5 float-end">
+                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                </div>
+                            </form>
+
+                            <!-- /#nav-auth -->
                         </div>
                         <div class="tab-pane fade" id="nav-changelog" role="tabpanel" aria-labelledby="nav-changelog-tab" tabindex="0">
                             <div class="row">

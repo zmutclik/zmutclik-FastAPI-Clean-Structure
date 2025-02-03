@@ -5,7 +5,6 @@ from fastapi.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from core import config
-from core.fastapi.dependencies import Logging
 from core.fastapi.middlewares import (
     AuthBackend,
     AuthenticationMiddleware,
@@ -32,7 +31,7 @@ def init_routers(app: FastAPI) -> None:
 
 
 def init_cors(app: FastAPI) -> None:
-    print("allow_origins = ", config.ALLOW_ORIGINS)
+    print("\033[32mINFO\033[0m:    ", "allow_origins:", config.ALLOW_ORIGINS)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=config.ALLOW_ORIGINS,

@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from core.pages.response import PageResponse, EnumJS
 
 from core.app.system.coresystem.service import CoreSYSTEMService
+from core.app.system.authconfig.service import AuthConfigService
 from core.app.system.coresystem.schema import CoreSYSTEMSchema
 
 router = APIRouter(prefix="/coresetting")
@@ -18,6 +19,7 @@ async def page_system_coresetting(req: page_req):
     page.addContext("prefix_url_crossorigin", "/page/sys/crossorigin/" + req.user.client_id + "." + req.user.session_id)
     page.addContext("prefix_url_changelog", "/page/sys/changelog/" + req.user.client_id + "." + req.user.session_id)
     page.addContext("data_coresystem", await CoreSYSTEMService().get_coresystem())
+    page.addContext("data_authsystem", await AuthConfigService().get_authconfig())
     return page.response(req, "/html/index.html")
 
 

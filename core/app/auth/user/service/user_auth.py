@@ -12,7 +12,7 @@ from ....menu.menu.service import MenuQueryService
 from ....menu.menutype.service import MenuTypeQueryService
 from ..schema import UserSchema
 from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
-from core import config
+from core import config_auth
 from core.fastapi.service import token_create
 
 
@@ -52,9 +52,13 @@ class UserAuthService:
                 "sub": user.username,
                 "roles": roles,
                 "permissions": scopes,
-                "jti": "".join(random.choices(string.ascii_letters + string.digits, k=random.randint(3, 6))),
+                "jti": "".join(
+                    random.choices(
+                        string.ascii_letters + string.digits, k=random.randint(3, 6)
+                    )
+                ),
             },
-            expires_delta=timedelta(minutes=config.COOKIES_EXPIRED),
+            expires_delta=timedelta(minutes=config_auth.COOKIES_EXPIRED),
         )
         return access_token
 
@@ -65,7 +69,7 @@ class UserAuthService:
                 "client": client_id,
                 "session": session_id,
             },
-            expires_delta=timedelta(minutes=config.REFRESH_EXPIRED),
+            expires_delta=timedelta(minutes=config_auth.REFRESH_EXPIRED),
         )
         return access_token
 
@@ -79,7 +83,9 @@ class UserAuthService:
         list_filter_menu_id = []
         is_privilege_system = False
         for item in list_privilege:
-            PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(item.privilege_id)
+            PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(
+                item.privilege_id
+            )
             if item.privilege_id == 1:
                 is_privilege_system = True
             if PrivilegeMenus:
@@ -90,7 +96,11 @@ class UserAuthService:
             list_filter_menu_id = None
 
         for item in await MenuTypeQueryService().get_menutypes():
-            menus = await MenuQueryService().generate_menus(item.id, 0, list_filter_menu_id)
+            menus = await MenuQueryService().generate_menus(
+                item.id, 0, list_filter_menu_id
+            )
             menus_json = json.dumps([menu.model_dump() for menu in menus], indent=4)
-            with open(".db/cache/menu/{}_{}.json".format(user.username, item.menutype), "w") as outfile:
+            with open(
+                ".db/cache/menu/{}_{}.json".format(user.username, item.menutype), "w"
+            ) as outfile:
                 outfile.write(menus_json)

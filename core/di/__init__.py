@@ -9,6 +9,7 @@ from core.app.auth.scope.repository import ScopeRepo, ScopeSQLRepo
 from core.app.system.sysrepo.repository import SysRepoRepo, SysRepoSQLRepo
 from core.app.auth.user.repository import UserRepo, UserSQLRepo, UserPrivilegeRepo, UserPrivilegeSQLRepo, UserScopeRepo, UserScopeSQLRepo
 from core.app.system.coresystem.repository import CoreSYSTEMRepo, CoreSYSTEMSQLRepo
+from core.app.system.authconfig.repository import AuthConfigRepo, AuthConfigSQLRepo
 
 
 def init_di():
@@ -26,4 +27,5 @@ def init_di():
     provider.bind(UserPrivilegeRepo, UserPrivilegeSQLRepo)
     provider.bind(UserScopeRepo, UserScopeSQLRepo)
     provider.bind(CoreSYSTEMRepo, CoreSYSTEMSQLRepo)
+    provider.bind(AuthConfigRepo, AuthConfigSQLRepo)
     configure(provider=provider)

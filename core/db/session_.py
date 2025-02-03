@@ -24,7 +24,7 @@ def reset_session_context(context: Token) -> None:
 
 
 try:
-    async_engine = create_async_engine(config.DBAPPS_URL)  # , echo=True)
+    async_engine = create_async_engine(config.REPOSITORY["DBAPPS_URL_DEFAULT"])  # , echo=True)
 except ArgumentError as err:
     print(f"Error: APPLIKASI GAGAL START KARENA INISIASI CORE DATABASE -> RESTART APPLIKASI")
     sys.exit(1)

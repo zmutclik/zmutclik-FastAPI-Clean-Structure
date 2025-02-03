@@ -6,7 +6,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
-from core.app.system.coresystem.domain import CoreSYSTEM
+from ..domain import CoreSYSTEM
 from core.db import session_core as session
 from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
 

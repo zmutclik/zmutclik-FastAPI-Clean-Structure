@@ -7,7 +7,7 @@ from starlette.middleware.authentication import (
 from starlette.requests import HTTPConnection
 from core.exceptions import TokenExpiredException
 
-from core import config
+from core import config_auth
 from ..schemas import CurrentUser
 
 
@@ -21,9 +21,9 @@ class AuthBackend(AuthenticationBackend):
     async def authenticate(self, conn: HTTPConnection) -> Tuple[bool, Optional[CurrentUser]]:
         current_user = CurrentUser()
         authorization_bearer_: str = conn.headers.get("Authorization")
-        authorization_cookies: str = get_specific_cookie(conn, config.COOKIES_KEY)
-        authorization_refresh: str = get_specific_cookie(conn, config.REFRESH_KEY)
-        current_user.client_id = get_specific_cookie(conn, config.CLIENT_KEY)
+        authorization_cookies: str = get_specific_cookie(conn, config_auth.COOKIES_KEY)
+        authorization_refresh: str = get_specific_cookie(conn, config_auth.REFRESH_KEY)
+        current_user.client_id = get_specific_cookie(conn, config_auth.CLIENT_KEY)
 
         if "api" in conn.scope["path"] and "api." not in conn.scope["path"]:
             current_user.channel = "api"
@@ -63,8 +63,8 @@ class AuthBackend(AuthenticationBackend):
         try:
             payload = jwt.decode(
                 credentials,
-                config.JWT_SECRET_KEY,
-                algorithms=[config.JWT_ALGORITHM],
+                config_auth.JWT_SECRET_KEY,
+                algorithms=[config_auth.JWT_ALGORITHM],
                 options={"verify_exp": True},
             )
             user_roles = payload.get("roles", [])

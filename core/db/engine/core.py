@@ -13,6 +13,7 @@ def coredb_create_all():
         from core.app.system.crossorigin.domain import CrossOrigin
         from core.app.system.sysrepo.domain import SysRepo
         from core.app.system.coresystem.domain import CoreSYSTEM
+        from core.app.system.authconfig.domain import AuthConfig
 
         Base.metadata.create_all(bind=dbcore_engine)
         with dbcore_engine.begin() as connection:
@@ -24,13 +25,20 @@ def coredb_create_all():
                             "app_name": "FastAPI cleanStructure",
                             "app_desc": "This is a very fancy project, with auto docs for the API and everything.",
                             "app_host": "127.0.0.1",
-                            "app_port": "8016",
+                            "app_port": 8016,
+                            "debug": True,
+                        }
+                    )
+                )
+                db.add(
+                    AuthConfig(
+                        **{
                             "jwt_scret_key": "fastapi",
                             "jwt_algorithm": "HS512",
-                            "prefix_session": "fastapi-clean-structure_",
+                            "cookies_prefix": "fastapi-clean-structure_",
+                            "cookies_https": False,
                             "cookies_exp": 30,
                             "refresh_exp": 60 * 8,
-                            "debug": True,
                         }
                     )
                 )

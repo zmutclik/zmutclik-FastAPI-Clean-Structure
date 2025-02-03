@@ -2,7 +2,7 @@ import os
 from time import sleep
 from typing import Annotated
 from fastapi import APIRouter, Response, Depends
-from core.config import config
+from core.config import config_auth
 from core.exceptions import RequiresLoginException
 from core.pages.response import PageResponse
 
@@ -13,8 +13,8 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 @router.get("/{username}", status_code=201)
 def page_auth_timeout(response: Response, request: page_req):
-    response.delete_cookie(key=config.COOKIES_KEY)
-    response.delete_cookie(key=config.REFRESH_KEY)
+    response.delete_cookie(key=config_auth.COOKIES_KEY)
+    response.delete_cookie(key=config_auth.REFRESH_KEY)
 
     # SessionRepository().disable(req.state.sessionId)
     # thread = threading.Thread(target=SessionRepository().migrasi())

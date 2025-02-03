@@ -4,5 +4,5 @@ from pydantic import BaseModel, Field
 
 
 class CLASSNAMESchema(BaseModel):
-    id: int = Field(None, description="ID")
-    VARNAME: str = Field(None, description="VARNAME")
+    id: int 
+    VARNAME: str 

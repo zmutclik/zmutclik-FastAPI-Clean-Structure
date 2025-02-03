@@ -4,7 +4,7 @@ from enum import Enum
 from datetime import datetime
 from fastapi import Request, HTTPException, Depends, Response
 from fastapi.templating import Jinja2Templates
-from core import config
+from core import config, config_auth
 from core.app.auth.user.service import UserQueryService
 
 from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
@@ -81,11 +81,11 @@ class PageResponse:
         self.addContext("prefix_url", self.prefix_url)
         self.addContext("prefix_url_js", self.prefix_url + "/" + client_id + "." + session_id + "." + config.APP_VERSION)
         self.addContext("prefix_url_post", self.prefix_url + "/" + client_id + "." + session_id)
-        self.addContext("TOKEN_KEY", config.COOKIES_KEY)
+        self.addContext("TOKEN_KEY", config_auth.COOKIES_KEY)
         self.addContext("segment", request.scope["route"].name)
         # self.addContext("userloggedin", request.user)
         # self.addData("sidemenu", self.sidemenu)
-        self.addContext("TOKEN_EXPIRED", (config.COOKIES_EXPIRED * 60 * 1000) - 2000)
+        self.addContext("TOKEN_EXPIRED", (config_auth.COOKIES_EXPIRED * 60 * 1000) - 2000)
 
     def media_type(self, path: str):
         if path.find(".js") > 0:

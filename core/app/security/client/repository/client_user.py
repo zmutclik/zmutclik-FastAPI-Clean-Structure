@@ -1,0 +1,27 @@
+from typing import Optional, List, Union
+from datetime import datetime
+
+from abc import ABCMeta, abstractmethod
+from sqlalchemy import or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
+
+from ..domain import ClientUser
+from core.db import session_security as session
+from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
+
+
+class ClientUserRepo:
+    async def get_clientuser(self, db: AsyncSession, client_id: int, user: str) -> Optional[ClientUser]:
+        result = await db.execute(select(ClientUser).where(ClientUser.client_id == client_id, ClientUser.user == user))
+        return result.scalars().first()
+
+    async def save_clientuser(self, db: AsyncSession, clientuser: ClientUser) -> ClientUser:
+        try:
+            db.add(clientuser)
+            await db.commit()
+            await db.refresh(clientuser)
+            return clientuser
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise DatabaseSavingException(f"Error saving clientuser: {str(e)}")

@@ -61,9 +61,9 @@ class LogsMiddleware:
             )
 
             if config.DEBUG:
-                print(traceerror.error_type, " : ", traceerror.error_message)
-                print(f"📂 File: {traceerror.file_name}, line {traceerror.line_number}, in {traceerror.function_name}")
-                # print(traceerror["error_traceback"])
+                print(f"\033[31mERROR\033[0m:    \033[31m{traceerror.error_type}\033[0m: {traceerror.error_message}")
+                print(f"\033[31mERROR\033[0m:    File: {traceerror.file_name}, line {traceerror.line_number}, in {traceerror.function_name}")
+                print(traceerror["error_traceback"])
             response = Response(content="Internal Server Error", status_code=500)
 
         logs.finish(request=request, response=response, traceerror=traceerror)

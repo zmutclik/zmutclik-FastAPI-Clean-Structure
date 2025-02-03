@@ -2,7 +2,7 @@ from typing import Union
 from datetime import timedelta, datetime, timezone
 
 from jose import JWTError, jwt
-from core import config
+from core import config_auth
 from core.exceptions import InactiveUserScopeException
 
 
@@ -13,8 +13,8 @@ def token_create(data: dict, expires_delta: Union[timedelta, None] = None):
         to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
-        config.JWT_SECRET_KEY,
-        algorithm=config.JWT_ALGORITHM,
+        config_auth.JWT_SECRET_KEY,
+        algorithm=config_auth.JWT_ALGORITHM,
     )
     return encoded_jwt
 
