@@ -43,15 +43,23 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
     except jwt.ExpiredSignatureError:
         return redirect_to_login(response)
 
+    ipaddress = request.client.host
+    try:
+        if request.headers.get("X-Real-IP") is not None:
+            ipaddress = request.headers.get("X-Real-IP")
+    except:
+        pass
+
     data_client = await ClientService().get_client_id(user_client_id)
     data_session = await SessionService().get_session_id(user_session_id)
     if data_client is None or data_session is None:
         return redirect_to_login(response)
-    if not await ClientService().update_clientuser(client_id=data_client.id, user=user_username, LastPage=backRouter):
+    if not await ClientService().update_clientuser(client_id=data_client.id, LastLogin=datetime.now(timezone.utc), user=user_username, LastPage=backRouter, Lastipaddress=ipaddress):
         return redirect_to_login(response)
+    await SessionService().update_session(data_session.id, datetime.now(timezone.utc), LastPage=backRouter, Lastipaddress=ipaddress)
 
     data_get = await UserQueryService().get_user_by(username=user_username)
-    access_token, session_id = await UserAuthService().token_create(data_get, user_client_id, user_session_id)
+    access_token, session_id = await UserAuthService().token_create(data_get, user_client_id, ipaddress, user_session_id)
     access_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.COOKIES_EXPIRED)
     access_token_str = access_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
     response.set_cookie(

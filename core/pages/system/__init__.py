@@ -5,6 +5,7 @@ from .scope import scope_router
 from .repository import repository_router
 from .logs import logs_router
 from .coresetting import coresystem_router
+from .session import session_router
 from core import config
 
 #######################################################################################################################
@@ -23,6 +24,7 @@ pages_sys.include_router(scope_router)
 pages_sys.include_router(repository_router)
 pages_sys.include_router(logs_router)
 pages_sys.include_router(coresystem_router)
+pages_sys.include_router(session_router)
 
 
 #######################################################################################################################
@@ -70,8 +72,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content=content,
     )
 
+
 @pages_sys.get("/")
 async def page_system_check_error():
     raise ValueError("Ini error yang harusnya terlihat!")
+
 
 __all__ = ["pages_sys"]

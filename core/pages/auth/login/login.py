@@ -59,7 +59,14 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
     if not await UserQueryService().verify_password(data_get, dataIn.password):
         raise PasswordDoesNotMatchException
 
-    access_token, req.user.session_id = await UserAuthService().token_create(data_get, req.user.client_id)
+    ipaddress = req.client.host
+    try:
+        if req.headers.get("X-Real-IP") is not None:
+            ipaddress = req.headers.get("X-Real-IP")
+    except:
+        pass
+
+    access_token, req.user.session_id = await UserAuthService().token_create(data_get, req.user.client_id, ipaddress)
     refresh_token = await UserAuthService().refresh_create(data_get, req.user.client_id, req.user.session_id)
 
     access_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.COOKIES_EXPIRED)

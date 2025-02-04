@@ -1,5 +1,5 @@
 from pythondi import inject
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 import json
 
 from ..domain import User, UserPrivilege, UserScope
@@ -33,15 +33,15 @@ class UserAuthService:
         self.privilege_menu_repo = privilege_menu_repo
         self.scope_repo = scope_repo
 
-    async def token_create(self, user: User, client_id: str, session_id: str = None):
+    async def token_create(self, user: User, client_id: str, ipaddress: str, session_id: str = None):
         roles = []
         scopes = []
         roles_by_id = await self.user_privilege_repo.get_userprivileges(user.id)
         scope_by_id = await self.user_scope_repo.get_userscopes(user.id)
 
         if session_id is None:
-            session_end = datetime.now() + timedelta(minutes=config_auth.REFRESH_EXPIRED)
-            session_id = await SessionService().create_session(client_id=client_id, user=user.username, session_end=session_end)
+            session_end = datetime.now(timezone.utc) + timedelta(minutes=config_auth.REFRESH_EXPIRED)
+            session_id = await SessionService().create_session(client_id=client_id, user=user.username, session_end=session_end, ipaddress=ipaddress)
 
         for item in roles_by_id:
             dataget = await self.privilege_repo.get_privilege(item.privilege_id)

@@ -61,6 +61,7 @@ class ClientService:
         user: str,
         LastLogin: datetime = None,
         LastPage: str = None,
+        Lastipaddress: str = None,
     ) -> bool:
         async with async_engine.begin() as connection:
             async with AsyncSession(bind=connection) as db:
@@ -72,6 +73,8 @@ class ClientService:
                     updates["LastLogin"] = LastLogin
                 if LastPage is not None:
                     updates["LastPage"] = LastPage
+                if Lastipaddress is not None:
+                    updates["Lastipaddress"] = Lastipaddress
                 await ClientUserRepo().update_clientuser(db, data_get, **updates)
                 return True
 
@@ -80,13 +83,15 @@ class ClientService:
         from core.utils.datatables import DataTable
         from core.db import session_security
 
-        query = select(Client, Client.client_id.label("DT_RowId"))
-        datatable: DataTable = DataTable(
-            request_params=params,
-            table=query,
-            column_names=["DT_RowId", "id", "client_id", "platform", "browser"],
-            engine=session_security,
-            # callbacks=callbacks,
-        )
-        await datatable.generate()
-        return datatable.output_result()
+        async with async_engine.begin() as connection:
+            async with AsyncSession(bind=connection) as db:
+                query = select(Client, Client.client_id.label("DT_RowId"))
+                datatable: DataTable = DataTable(
+                    request_params=params,
+                    table=query,
+                    column_names=["DT_RowId", "id", "client_id", "platform", "browser"],
+                    engine=db,
+                    # callbacks=callbacks,
+                )
+                await datatable.generate()
+                return datatable.output_result()

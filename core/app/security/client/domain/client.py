@@ -36,6 +36,7 @@ class ClientUser(Base):
     user = Column(String(128), nullable=False, index=True)
     LastLogin = Column(DateTime, nullable=True)
     LastPage = Column(String(256), nullable=True)
+    Lastipaddress = Column(String(50), index=True)
 
     CLIENT = relationship("Client", back_populates="USERS")
 
