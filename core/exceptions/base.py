@@ -45,3 +45,9 @@ class DuplicateValueException(CustomException):
     code = HTTPStatus.UNPROCESSABLE_ENTITY
     error_code = HTTPStatus.UNPROCESSABLE_ENTITY
     message = HTTPStatus.UNPROCESSABLE_ENTITY.description
+    
+
+class SessionClientNotFoundException(CustomException):
+    code = HTTPStatus.UNPROCESSABLE_ENTITY
+    error_code = HTTPStatus.UNPROCESSABLE_ENTITY
+    message = "Session Client ID Not Found"

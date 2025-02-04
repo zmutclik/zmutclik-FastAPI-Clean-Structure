@@ -25,3 +25,14 @@ class ClientUserRepo:
         except SQLAlchemyError as e:
             await db.rollback()
             raise DatabaseSavingException(f"Error saving clientuser: {str(e)}")
+
+    async def update_clientuser(self, db: AsyncSession, clientuser: ClientUser, **kwargs) -> None:
+        try:
+            for key, value in kwargs.items():
+                if hasattr(clientuser, key) and value is not None:
+                    setattr(clientuser, key, value)
+            await db.commit()
+            await db.refresh(clientuser)
+        except SQLAlchemyError as e:
+            await db.rollback()
+            raise DatabaseUpdatingException(f"Error updating clientuser: {str(e)}")

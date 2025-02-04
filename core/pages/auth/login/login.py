@@ -8,7 +8,13 @@ from core import config_auth
 from core.pages.response import PageResponse
 from core.app.auth.user.service import UserQueryService, UserAuthService
 from core.app.security.client.service import ClientService
-from core.app.auth.user.exceptions import UserNotFoundException, UserNotActiveException, PasswordDoesNotMatchException
+from core.app.security.session.service import SessionService
+from core.app.auth.user.exceptions import (
+    UserNotFoundException,
+    UserNotActiveException,
+    PasswordDoesNotMatchException,
+)
+from core.exceptions import SessionClientNotFoundException
 from core.pages.auth.login.request import LoginRequest
 
 router = APIRouter(prefix="/login")
@@ -34,6 +40,14 @@ async def page_auth_login_js(next: str, req: page_req):
     return page.response(req, "/html/login.js")
 
 
+@router.get("/clear/client_id")
+async def page_auth_clear_client_id(response: Response, request: page_req):
+    response.delete_cookie(key=config_auth.CLIENT_KEY)
+    response.status_code = 302  # Bisa diganti 301 atau 307 sesuai kebutuhan
+    response.headers["Location"] = f"/auth/login"
+    return response
+
+
 @router.post("/{PathCheck}", status_code=201)
 async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Response):  #
     data_get = await UserQueryService().get_user_by(email=dataIn.email)
@@ -45,7 +59,7 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
     if not await UserQueryService().verify_password(data_get, dataIn.password):
         raise PasswordDoesNotMatchException
 
-    access_token = await UserAuthService().token_create(data_get)
+    access_token, req.user.session_id = await UserAuthService().token_create(data_get, req.user.client_id)
     refresh_token = await UserAuthService().refresh_create(data_get, req.user.client_id, req.user.session_id)
 
     access_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.COOKIES_EXPIRED)
@@ -53,14 +67,22 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
     refresh_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.REFRESH_EXPIRED)
     refresh_token_str = refresh_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
 
-    res.set_cookie(key=config_auth.COOKIES_KEY, value=access_token, httponly=True, expires=access_token_str)
-    res.set_cookie(key=config_auth.REFRESH_KEY, value=refresh_token, httponly=True, expires=refresh_token_str)
+    if not await ClientService().add_user(req.user.client_id, data_get.username):
+        raise SessionClientNotFoundException
+
+    res.set_cookie(
+        key=config_auth.COOKIES_KEY,
+        value=access_token,
+        httponly=True,
+        expires=access_token_str,
+    )
+    res.set_cookie(
+        key=config_auth.REFRESH_KEY,
+        value=refresh_token,
+        httponly=True,
+        expires=refresh_token_str,
+    )
 
     await UserAuthService().generate_cache_user(data_get)
     await UserAuthService().generate_cache_menu(data_get)
-
-    print("client_id = ", req.user.client_id)
-    print("username = ", data_get.username)
-    await ClientService().add_user(req.user.client_id, data_get.username)
-
     sleep(1)

@@ -9,5 +9,6 @@ def securitydb_create_all():
         from core.config import dbsecurity_engine
         from ..base import BaseSecuriry as Base
         from core.app.security.client.domain import Client, ClientUser
+        from core.app.security.session.domain import Session
 
         Base.metadata.create_all(bind=dbsecurity_engine)

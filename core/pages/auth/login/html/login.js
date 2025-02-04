@@ -54,6 +54,8 @@ $(document).ready(function () {
                             }).then((result) => {
                                 if (error.response.data.error_code in [10000, 10001, 10002])
                                     window.location.reload(true);
+                                if (error.response.data.error_code == 422)
+                                    window.location.href = "/auth/login/clear/client_id";
                             });
                     }
                 })

@@ -1,3 +1,3 @@
-from .token import token_create
+from .token import token_jwt
 
-__all__ = ["token_create"]
+__all__ = ["token_jwt"]

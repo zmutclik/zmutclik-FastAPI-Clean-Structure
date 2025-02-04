@@ -6,7 +6,7 @@ from core import config_auth
 from core.exceptions import InactiveUserScopeException
 
 
-def token_create(data: dict, expires_delta: Union[timedelta, None] = None):
+def token_jwt(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta is not None:
         expire = datetime.now(timezone.utc) + expires_delta

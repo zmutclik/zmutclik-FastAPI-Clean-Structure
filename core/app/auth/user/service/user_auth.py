@@ -1,7 +1,5 @@
 from pythondi import inject
-from datetime import timedelta
-import random
-import string
+from datetime import timedelta, datetime
 import json
 
 from ..domain import User, UserPrivilege, UserScope
@@ -10,10 +8,11 @@ from ...privilege.repository import PrivilegeRepo, PrivilegeMenusRepo
 from ...scope.repository import ScopeRepo
 from ....menu.menu.service import MenuQueryService
 from ....menu.menutype.service import MenuTypeQueryService
+from ....security.session.service import SessionService
 from ..schema import UserSchema
 from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 from core import config_auth
-from core.fastapi.service import token_create
+from core.fastapi.service import token_jwt
 
 
 class UserAuthService:
@@ -34,11 +33,15 @@ class UserAuthService:
         self.privilege_menu_repo = privilege_menu_repo
         self.scope_repo = scope_repo
 
-    async def token_create(self, user: User) -> str:
+    async def token_create(self, user: User, client_id: str, session_id: str = None):
         roles = []
         scopes = []
         roles_by_id = await self.user_privilege_repo.get_userprivileges(user.id)
         scope_by_id = await self.user_scope_repo.get_userscopes(user.id)
+
+        if session_id is None:
+            session_end = datetime.now() + timedelta(minutes=config_auth.REFRESH_EXPIRED)
+            session_id = await SessionService().create_session(client_id=client_id, user=user.username, session_end=session_end)
 
         for item in roles_by_id:
             dataget = await self.privilege_repo.get_privilege(item.privilege_id)
@@ -47,23 +50,19 @@ class UserAuthService:
             dataget = await self.scope_repo.get_scope(item.scope_id)
             scopes.append(dataget.scope)
 
-        access_token = token_create(
+        access_token = token_jwt(
             data={
                 "sub": user.username,
                 "roles": roles,
                 "permissions": scopes,
-                "jti": "".join(
-                    random.choices(
-                        string.ascii_letters + string.digits, k=random.randint(3, 6)
-                    )
-                ),
+                "jti": session_id,
             },
             expires_delta=timedelta(minutes=config_auth.COOKIES_EXPIRED),
         )
-        return access_token
+        return access_token, session_id
 
     async def refresh_create(self, user: User, client_id: str, session_id: str) -> str:
-        access_token = token_create(
+        access_token = token_jwt(
             data={
                 "sub": user.username,
                 "client": client_id,
@@ -83,9 +82,7 @@ class UserAuthService:
         list_filter_menu_id = []
         is_privilege_system = False
         for item in list_privilege:
-            PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(
-                item.privilege_id
-            )
+            PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(item.privilege_id)
             if item.privilege_id == 1:
                 is_privilege_system = True
             if PrivilegeMenus:
@@ -96,11 +93,7 @@ class UserAuthService:
             list_filter_menu_id = None
 
         for item in await MenuTypeQueryService().get_menutypes():
-            menus = await MenuQueryService().generate_menus(
-                item.id, 0, list_filter_menu_id
-            )
+            menus = await MenuQueryService().generate_menus(item.id, 0, list_filter_menu_id)
             menus_json = json.dumps([menu.model_dump() for menu in menus], indent=4)
-            with open(
-                ".db/cache/menu/{}_{}.json".format(user.username, item.menutype), "w"
-            ) as outfile:
+            with open(".db/cache/menu/{}_{}.json".format(user.username, item.menutype), "w") as outfile:
                 outfile.write(menus_json)

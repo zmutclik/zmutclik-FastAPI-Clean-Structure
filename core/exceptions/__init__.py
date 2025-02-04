@@ -6,6 +6,7 @@ from .base import (
     UnprocessableEntity,
     DuplicateValueException,
     UnauthorizedException,
+    SessionClientNotFoundException,
 )
 from .token import DecodeTokenException, ExpiredTokenException, InactiveUserScopeException
 from .database import DatabaseDeletingException, DatabaseSavingException, DatabaseUpdatingException
@@ -28,4 +29,5 @@ __all__ = [
     "DatabaseUpdatingException",
     "RequiresLoginException",
     "TokenExpiredException",
+    "SessionClientNotFoundException",
 ]
