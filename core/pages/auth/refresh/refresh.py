@@ -70,6 +70,7 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
         value=access_token,
         httponly=True,
         expires=access_token_str,
+        secure=config_auth.COOKIES_HTTPS,
     )
 
     if request.method == "GET":

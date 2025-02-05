@@ -37,8 +37,9 @@ def coredb_create_all():
                             "jwt_algorithm": "HS512",
                             "cookies_prefix": "fastapi-clean-structure_",
                             "cookies_https": False,
-                            "cookies_exp": 30,
+                            "cookies_exp": 15,
                             "refresh_exp": 60 * 8,
+                            "timeout_exp": 30,
                         }
                     )
                 )

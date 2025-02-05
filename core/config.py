@@ -60,8 +60,9 @@ authconfigdefault = {
     "jwt_algorithm": "HS512",
     "cookies_prefix": "fastapi-clean-structure_",
     "cookies_https": False,
-    "cookies_exp": 30,
+    "cookies_exp": 15,
     "refresh_exp": 60 * 8,
+    "timeout_exp": 30,
 }
 
 if os.path.exists(DBCORE_FILE):
@@ -101,9 +102,10 @@ class ConfigAuth(BaseModel):
     JWT_SECRET_KEY: str = authconfigdefault["jwt_scret_key"]
     JWT_ALGORITHM: str = authconfigdefault["jwt_algorithm"]
     COOKIES_PREFIX: str = authconfigdefault["cookies_prefix"]
-    COOKIES_HTTPS: str = authconfigdefault["cookies_https"]
+    COOKIES_HTTPS: bool = authconfigdefault["cookies_https"]
     COOKIES_EXPIRED: int = authconfigdefault["cookies_exp"]
     REFRESH_EXPIRED: int = authconfigdefault["refresh_exp"]
+    TIMEOUT_EXPIRED: int = authconfigdefault["timeout_exp"]
     CLIENT_KEY: str = authconfigdefault["cookies_prefix"] + "client"
     COOKIES_KEY: str = authconfigdefault["cookies_prefix"] + "token"
     REFRESH_KEY: str = authconfigdefault["cookies_prefix"] + "refresh"

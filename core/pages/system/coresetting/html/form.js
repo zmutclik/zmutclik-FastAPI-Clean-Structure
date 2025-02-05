@@ -63,6 +63,7 @@ $(document).ready(function () {
                 "cookies_https": $("#form_auth select[name='cookies_https']").val(),
                 "cookies_exp": $("#form_auth input[name='cookies_exp']").val(),
                 "refresh_exp": $("#form_auth input[name='refresh_exp']").val(),
+                "timeout_exp": $("#form_auth input[name='timeout_exp']").val(),
             })
                 .then(function (response) {
                     Swal.fire("Tersimpan!", "", "success")

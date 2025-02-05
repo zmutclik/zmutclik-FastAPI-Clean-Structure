@@ -85,7 +85,7 @@ class PageResponse:
         self.addContext("segment", request.scope["route"].name)
         # self.addContext("userloggedin", request.user)
         # self.addData("sidemenu", self.sidemenu)
-        self.addContext("TOKEN_EXPIRED", (config_auth.COOKIES_EXPIRED * 60 * 1000) - 2000)
+        self.addContext("TIMEOUT_EXPIRED", (config_auth.TIMEOUT_EXPIRED * 60 * 1000) - 2000)
 
     def media_type(self, path: str):
         if path.find(".js") > 0:

@@ -30,6 +30,8 @@ class AuthConfigService:
             updates["cookies_exp"] = dataIn.cookies_exp
         if data_get.refresh_exp != dataIn.refresh_exp:
             updates["refresh_exp"] = dataIn.refresh_exp
+        if data_get.timeout_exp != dataIn.timeout_exp:
+            updates["timeout_exp"] = dataIn.timeout_exp
 
         data_updated = await self.authconfig_repo.update(data_get, **updates)
         return data_updated

@@ -10,4 +10,5 @@ class AuthConfigSchema(BaseModel):
     cookies_https: bool 
     cookies_exp: int 
     refresh_exp: int 
+    timeout_exp: int 
     

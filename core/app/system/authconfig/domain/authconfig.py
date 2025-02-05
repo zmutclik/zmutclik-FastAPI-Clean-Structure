@@ -18,4 +18,5 @@ class AuthConfig(Base):
     cookies_https = Column(Boolean)
     cookies_exp = Column(Integer)
     refresh_exp = Column(Integer)
+    timeout_exp = Column(Integer)
  

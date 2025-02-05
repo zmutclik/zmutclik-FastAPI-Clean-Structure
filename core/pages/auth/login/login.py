@@ -86,12 +86,15 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
         value=access_token,
         httponly=True,
         expires=access_token_str,
+        secure=config_auth.COOKIES_HTTPS,
     )
     res.set_cookie(
         key=config_auth.REFRESH_KEY,
         value=refresh_token,
         httponly=True,
         expires=refresh_token_str,
+        secure=config_auth.COOKIES_HTTPS,
+        path="/auth/refresh",
     )
 
     await UserAuthService().generate_cache_user(data_get)
