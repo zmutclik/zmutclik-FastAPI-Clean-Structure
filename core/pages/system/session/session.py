@@ -48,7 +48,7 @@ async def kill_session(id: int, req: page_req):
     if data_get is None:
         raise ForbiddenException
 
-    await SessionService().update_session(data_get.id, active=False)
+    await SessionService().update_session(data_get.session_id, active=False)
 
 
 @router.delete("/{PathCheck}/client/{client_id}", status_code=202, dependencies=page.depend_d())

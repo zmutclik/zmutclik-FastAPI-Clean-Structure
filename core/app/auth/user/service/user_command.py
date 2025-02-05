@@ -1,10 +1,10 @@
 from typing import Union
 from pythondi import inject
 
+from core.exceptions import NotFoundException
 from ..domain import User, UserPrivilege, UserScope
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from ..schema import UserSchema
-from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 
 
 class UserCommandService:
@@ -31,8 +31,6 @@ class UserCommandService:
         privileges: list[int] = [1],
         scopes: list[int] = [1],
     ) -> UserSchema:
-        if await self.user_repo.get_user_by(username, email, nohp):
-            raise DuplicateEmailOrNicknameOrNoHPException
 
         data_create = User.create(
             created_user=created_user,
@@ -47,9 +45,7 @@ class UserCommandService:
 
         for item in privileges:
             user_privilege = UserPrivilege.create(data_saved.id, item)
-            await self.user_privilege_repo.save_userprivilege(
-                user_privilege=user_privilege
-            )
+            await self.user_privilege_repo.save_userprivilege(user_privilege=user_privilege)
 
         await self.user_privilege_repo.commit_userprivilege()
 
@@ -61,12 +57,10 @@ class UserCommandService:
 
         return data_saved
 
-    async def update_user_password(
-        self, user_id: int, password1: str, password2: str
-    ) -> UserSchema:
+    async def update_user_password(self, user_id: int, password1: str, password2: str) -> UserSchema:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise UserNotFoundException
+            raise NotFoundException("user not found")
         data_updated = data_get.change_password(password1, password2)
         return data_updated
 
@@ -83,7 +77,7 @@ class UserCommandService:
     ) -> UserSchema:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise UserNotFoundException
+            raise NotFoundException("user not found")
 
         updates = {}
         if full_name is not None:
@@ -103,9 +97,7 @@ class UserCommandService:
             await self.user_privilege_repo.delete_userprivileges(user_id=user_id)
             for item in privileges:
                 user_privilege = UserPrivilege.create(user_id, item)
-                await self.user_privilege_repo.save_userprivilege(
-                    user_privilege=user_privilege
-                )
+                await self.user_privilege_repo.save_userprivilege(user_privilege=user_privilege)
             await self.user_privilege_repo.commit_userprivilege()
 
         if scopes != []:
@@ -120,6 +112,6 @@ class UserCommandService:
     async def delete_user(self, user_id: int, username: str) -> None:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise UserNotFoundException
+            raise NotFoundException("user not found")
 
         await self.user_repo.delete_user(data_get, username)

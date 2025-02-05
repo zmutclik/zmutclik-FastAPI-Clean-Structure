@@ -3,6 +3,7 @@ from datetime import timedelta, datetime, timezone
 import json
 
 from ..domain import User, UserPrivilege, UserScope
+from ....security.session.domain import Session
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from ...privilege.repository import PrivilegeRepo, PrivilegeMenusRepo
 from ...scope.repository import ScopeRepo
@@ -10,9 +11,8 @@ from ....menu.menu.service import MenuQueryService
 from ....menu.menutype.service import MenuTypeQueryService
 from ....security.session.service import SessionService
 from ..schema import UserSchema
-from ..exceptions import DuplicateEmailOrNicknameOrNoHPException, UserNotFoundException
 from core import config_auth
-from core.fastapi.service import token_jwt
+from core.fastapi.helper import token_jwt
 
 
 class UserAuthService:
@@ -33,15 +33,20 @@ class UserAuthService:
         self.privilege_menu_repo = privilege_menu_repo
         self.scope_repo = scope_repo
 
-    async def token_create(self, user: User, client_id: str, ipaddress: str, session_id: str = None):
+    async def token_create(self, user: User, client_id: str, ipaddress: str, data_session: Session = None):
         roles = []
         scopes = []
         roles_by_id = await self.user_privilege_repo.get_userprivileges(user.id)
         scope_by_id = await self.user_scope_repo.get_userscopes(user.id)
 
-        if session_id is None:
+        if data_session is None: ### create new session
             session_end = datetime.now(timezone.utc) + timedelta(minutes=config_auth.REFRESH_EXPIRED)
-            session_id = await SessionService().create_session(client_id=client_id, user=user.username, session_end=session_end, ipaddress=ipaddress)
+            data_session = await SessionService().create_session(
+                client_id=client_id,
+                user=user.username,
+                session_end=session_end,
+                ipaddress=ipaddress,
+            )
 
         for item in roles_by_id:
             dataget = await self.privilege_repo.get_privilege(item.privilege_id)
@@ -55,11 +60,11 @@ class UserAuthService:
                 "sub": user.username,
                 "roles": roles,
                 "permissions": scopes,
-                "jti": session_id,
+                "jti": data_session.session_id,
             },
             expires_delta=timedelta(minutes=config_auth.COOKIES_EXPIRED),
         )
-        return access_token, session_id
+        return access_token, data_session
 
     async def refresh_create(self, user: User, client_id: str, session_id: str) -> str:
         access_token = token_jwt(

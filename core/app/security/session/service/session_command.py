@@ -1,7 +1,7 @@
 from typing import Union, Any
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timezone
 
 from ..domain import Session
 from ..repository import SessionRepo
@@ -11,16 +11,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class SessionService:
     async def __generate_new_session(self, db: AsyncSession) -> str:
-        newsession = "".join(
-            random.choices(string.ascii_letters + string.digits, k=random.randint(3, 6))
-        )
+        newsession = "".join(random.choices(string.ascii_letters + string.digits, k=random.randint(3, 6)))
         if await SessionRepo().get_session_id(db, newsession) is not None:
             await self.__generate_new_session()
         return newsession
 
-    async def create_session(
-        self, client_id: str, user: str, ipaddress: str, session_end: datetime
-    ) -> None:
+    async def create_session(self, client_id: str, user: str, ipaddress: str, session_end: datetime) -> Session:
         async with async_engine.begin() as connection:
             async with AsyncSession(bind=connection) as db:
                 newsession = await self.__generate_new_session(db)
@@ -31,8 +27,7 @@ class SessionService:
                     session_end=session_end,
                     ipaddress=ipaddress,
                 )
-                await SessionRepo().save_session(db, data_create)
-                return newsession
+                return await SessionRepo().save_session(db, data_create)
 
     async def get_session(self, session_id: int):
         async with async_engine.begin() as connection:
@@ -46,28 +41,25 @@ class SessionService:
 
     async def update_session(
         self,
-        session_id: int,
-        session_update: datetime = None,
+        session_id: str,
         LastPage: str = None,
         Lastipaddress: str = None,
         active: bool = None,
-    ) -> bool:
+    ) -> Session:
         async with async_engine.begin() as connection:
             async with AsyncSession(bind=connection) as db:
-                data_get = await SessionRepo().get_session(db, session_id)
+                data_get = await SessionRepo().get_session_id(db, session_id)
                 if data_get is None:
                     return False
-                updates = {}
-                if session_update is not None:
-                    updates["session_update"] = session_update
+                updates = {"session_update": datetime.now(timezone.utc)}
                 if LastPage is not None:
                     updates["LastPage"] = LastPage
                 if Lastipaddress is not None:
                     updates["Lastipaddress"] = Lastipaddress
                 if active is not None:
                     updates["active"] = active
-                await SessionRepo().update_session(db, data_get, **updates)
-                return True
+                    
+                return await SessionRepo().update_session(db, data_get, **updates)
 
     async def datatable_session(self, params: dict[str, Any]):
         from sqlalchemy import or_, select, case, literal, func
@@ -81,7 +73,7 @@ class SessionService:
                     Session.id.label("DT_RowId"),
                     func.now().label("now"),
                     case(
-                        ((Session.session_end >= func.now()) & (Session.active==True), True),
+                        ((Session.session_end >= func.now()) & (Session.active == True), True),
                         else_=False,
                     ).label("active_status"),
                 ).order_by(Session.id.desc())

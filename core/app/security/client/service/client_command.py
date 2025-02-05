@@ -2,7 +2,7 @@ from typing import Union, Optional, Any
 from pythondi import inject
 import random
 import string
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import Request
 from user_agents import parse
 
@@ -35,20 +35,15 @@ class ClientService:
                 await ClientRepo().save_client(db, data_create)
                 return newclient
 
-    async def add_user(self, client_id: str, user: str) -> bool:
+    async def add_user(self, client_id: int, user: str) -> None:
         async with async_engine.begin() as connection:
             async with AsyncSession(bind=connection) as db:
-                data_client = await ClientRepo().get_client_id(db, client_id)
-                if data_client is None:
-                    return False
-                data_get = await ClientUserRepo().get_clientuser(db, data_client.id, user)
+                data_get = await ClientUserRepo().get_clientuser(db, client_id, user)
                 if data_get is None:
-                    data_create = ClientUser().create(client_id=data_client.id, user=user)
+                    data_create = ClientUser().create(client_id=client_id, user=user)
                     await ClientUserRepo().save_clientuser(db, data_create)
-                    return True
                 else:
-                    await ClientUserRepo().update_clientuser(db, data_get, LastLogin=datetime.now())
-                    return True
+                    await ClientUserRepo().update_clientuser(db, data_get, LastLogin=datetime.now(timezone.utc))
 
     async def get_client_id(self, client_id: str):
         async with async_engine.begin() as connection:
@@ -59,24 +54,21 @@ class ClientService:
         self,
         client_id: int,
         user: str,
-        LastLogin: datetime = None,
         LastPage: str = None,
         Lastipaddress: str = None,
-    ) -> bool:
+    ):
         async with async_engine.begin() as connection:
             async with AsyncSession(bind=connection) as db:
                 data_get = await ClientUserRepo().get_clientuser(db, client_id, user)
                 if data_get is None:
                     return False
-                updates = {}
-                if LastLogin is not None:
-                    updates["LastLogin"] = LastLogin
+                updates = {"LastLogin": datetime.now(timezone.utc)}
                 if LastPage is not None:
                     updates["LastPage"] = LastPage
                 if Lastipaddress is not None:
                     updates["Lastipaddress"] = Lastipaddress
-                await ClientUserRepo().update_clientuser(db, data_get, **updates)
-                return True
+
+                return await ClientUserRepo().update_clientuser(db, data_get, **updates)
 
     async def update_client(
         self,

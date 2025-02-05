@@ -1,18 +1,15 @@
 import os
-from enum import Enum
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from core.pages.response import PageResponse, EnumJS
 
-from core.app.auth.user.exceptions import DuplicateEmailOrNicknameOrNoHPException
 from core.app.auth.user.service import UserQueryService, UserCommandService
 from core.app.auth.privilege.service import PrivilegeQueryService
 from core.app.auth.scope.service import ScopeQueryService
 
 from .request import AkunRequest
 from .response import AkunResponse
-from fastapi.exceptions import RequestValidationError
 
 router = APIRouter(prefix="/akun")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/settings" + router.prefix, depend_roles=["admin"])
@@ -61,12 +58,14 @@ async def page_settings_akun_datatables(params: dict[str, Any], req: page_req) -
 
 @router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w(), deprecated=True)
 async def page_settings_akun_create(dataIn: AkunRequest, req: page_req):
-    data_get = await UserQueryService().get_user_by(username=dataIn.username, email=dataIn.email, nohp=dataIn.nohp)
-    if data_get is not None:
-        raise DuplicateEmailOrNicknameOrNoHPException
+    await UserQueryService().validate_user(dataIn.username, dataIn.email, dataIn.nohp)
 
     data_created = await UserCommandService().create_user(
-        created_user="", username=dataIn.username, email=dataIn.email, full_name=dataIn.full_name, nohp=dataIn.nohp
+        created_user="",
+        username=dataIn.username,
+        email=dataIn.email,
+        full_name=dataIn.full_name,
+        nohp=dataIn.nohp,
     )
     return data_created
 
@@ -75,23 +74,8 @@ async def page_settings_akun_create(dataIn: AkunRequest, req: page_req):
 async def page_settings_akun_update(user_id: int, dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user(user_id)
 
-    if dataIn.username != data_get.username:
-        data_filter = await UserQueryService().get_user_by(username=dataIn.username)
-        if data_filter is not None:
-            errors = [{"loc": ["body", "username"], "msg": "duplicate username is use", "type": "value_error.duplicate"}]
-            raise RequestValidationError(errors)
-
-    if dataIn.email != data_get.email:
-        data_filter = await UserQueryService().get_user_by(email=dataIn.email)
-        if data_filter is not None:
-            errors = [{"loc": ["body", "email"], "msg": "duplicate email is use", "type": "value_error.duplicate"}]
-            raise RequestValidationError(errors)
-
-    if dataIn.nohp != data_get.nohp:
-        data_filter = await UserQueryService().get_user_by(nohp=dataIn.nohp)
-        if data_filter is not None:
-            errors = [{"loc": ["body", "nohp"], "msg": "duplicate nohp is use", "type": "value_error.duplicate"}]
-            raise RequestValidationError(errors)
+    if dataIn.username != data_get.username or dataIn.email != data_get.email or dataIn.nohp != data_get.nohp:
+        await UserQueryService().validate_user(dataIn.username, dataIn.email, dataIn.nohp)
 
     data_updated = await UserCommandService().update_user(
         user_id=user_id,

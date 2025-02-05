@@ -34,20 +34,7 @@ async def post_register(dataIn: RegisterRequest, req: page_req):
         errors = [{"loc": ["body", "password"], "msg": "password tidak sama", "type": "value_error.duplicate"}]
         raise RequestValidationError(errors)
 
-    data_filter = await UserQueryService().get_user_by(username=dataIn.username)
-    if data_filter is not None:
-        errors = [{"loc": ["body", "username"], "msg": "duplicate username is use", "type": "value_error.duplicate"}]
-        raise RequestValidationError(errors)
-
-    data_filter = await UserQueryService().get_user_by(email=dataIn.email)
-    if data_filter is not None:
-        errors = [{"loc": ["body", "email"], "msg": "duplicate email is use", "type": "value_error.duplicate"}]
-        raise RequestValidationError(errors)
-
-    data_filter = await UserQueryService().get_user_by(nohp=dataIn.nohp)
-    if data_filter is not None:
-        errors = [{"loc": ["body", "nohp"], "msg": "duplicate nohp is use", "type": "value_error.duplicate"}]
-        raise RequestValidationError(errors)
+    await UserQueryService().validate_user(dataIn.username, dataIn.email, dataIn.nohp)
 
     data_created = await UserCommandService().create_user(
         created_user="form_register",
@@ -70,8 +57,7 @@ def telegram_bot_sendtext(username, email, id):
 <code>email : {}</code>
     """
     message = message.format(config.APP_NAME, username, email, id)
-    rtoken = requests.get("https://pastebin.com/raw/EekQSJGY")
-    bot_token = rtoken.content.decode()
+    bot_token = config.REPOSITORY["TOKEN_TELEGRAM"]
     bot_chatID = "28186920"
     url_param_1 = "sendMessage"
     url_param_2 = ""

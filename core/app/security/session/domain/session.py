@@ -1,21 +1,7 @@
 import os
 from datetime import datetime
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Date,
-    Time,
-    TIMESTAMP,
-    DateTime,
-    func,
-    case,
-    Float,
-    text,
-)
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text
 from sqlalchemy.orm import column_property, relationship, deferred, Session
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property

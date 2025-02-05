@@ -2,17 +2,14 @@ from core.exceptions import CustomException
 
 
 class DatabaseSavingException(CustomException):
-    code = 400
-    error_code = 10101
+    code = 501
     message = "database error saving"
 
 
 class DatabaseUpdatingException(CustomException):
-    code = 400
-    error_code = 10102
+    code = 501
     message = "database error updating"
 
 class DatabaseDeletingException(CustomException):
-    code = 400
-    error_code = 10103
+    code = 501
     message = "database error deleting"

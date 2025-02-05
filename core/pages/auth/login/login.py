@@ -1,20 +1,15 @@
 import os
 from time import sleep
-from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any
-from fastapi import APIRouter, Request, Response, HTTPException, Depends, status
+from fastapi import APIRouter,  Response, Depends
 from fastapi.responses import HTMLResponse
 from core import config_auth
+from core.fastapi.helper import get_ipaddress, set_refresh_cookies, set_token_cookies
 from core.pages.response import PageResponse
 from core.app.auth.user.service import UserQueryService, UserAuthService
 from core.app.security.client.service import ClientService
-from core.app.security.session.service import SessionService
-from core.app.auth.user.exceptions import (
-    UserNotFoundException,
-    UserNotActiveException,
-    PasswordDoesNotMatchException,
-)
-from core.exceptions import SessionClientNotFoundException
+from fastapi.exceptions import RequestValidationError
+from core.exceptions import NotFoundException
 from core.pages.auth.login.request import LoginRequest
 
 router = APIRouter(prefix="/login")
@@ -50,53 +45,37 @@ async def page_auth_clear_client_id(response: Response, request: page_req):
 
 @router.post("/{PathCheck}", status_code=201)
 async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Response):  #
-    data_get = await UserQueryService().get_user_by(email=dataIn.email)
-    if not data_get:
-        raise UserNotFoundException
-    if data_get.disabled:
-        raise UserNotActiveException
-
-    if not await UserQueryService().verify_password(data_get, dataIn.password):
-        raise PasswordDoesNotMatchException
-
-    ipaddress = req.client.host
-    try:
-        if req.headers.get("X-Real-IP") is not None:
-            ipaddress = req.headers.get("X-Real-IP")
-    except:
-        pass
-
+    #### Cek Client ID
     data_client = await ClientService().get_client_id(req.user.client_id)
     if data_client is None:
-        raise SessionClientNotFoundException
+        raise NotFoundException("Client tidak terdaftar")
+    if data_client.disabled:
+        errors = [
+            {"loc": ["body", "email"], "msg": f'client "{req.user.client_id}" di disable', "type": ""},
+            {"loc": ["body", "password"], "msg": f'client "{req.user.client_id}" di disable', "type": ""},
+        ]
+        raise RequestValidationError(errors)
 
-    access_token, req.user.session_id = await UserAuthService().token_create(data_get, req.user.client_id, ipaddress)
-    refresh_token = await UserAuthService().refresh_create(data_get, req.user.client_id, req.user.session_id)
+    #### Cek User
+    data_user = await UserQueryService().get_user_by(email=dataIn.email)
+    if not data_user:
+        raise RequestValidationError([{"loc": ["body", "email"], "msg": f"email {dataIn.email} tidak terdaftar", "type": ""}])
+    if data_user.disabled:
+        raise RequestValidationError([{"loc": ["body", "email"], "msg": f"akun telah di disabled", "type": ""}])
 
-    access_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.COOKIES_EXPIRED)
-    access_token_str = access_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-    refresh_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.REFRESH_EXPIRED)
-    refresh_token_str = refresh_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
+    verify_password = await UserQueryService().verify_password(data_user, dataIn.password)
+    if not verify_password:
+        raise RequestValidationError([{"loc": ["body", "password"], "msg": f"password tidak sama", "type": ""}])
 
-    if not await ClientService().add_user(req.user.client_id, data_get.username):
-        raise SessionClientNotFoundException
+    ### Create Session
+    ipaddress, ipproxy = get_ipaddress(req)
 
-    res.set_cookie(
-        key=config_auth.COOKIES_KEY,
-        value=access_token,
-        httponly=True,
-        expires=access_token_str,
-        secure=config_auth.COOKIES_HTTPS,
-    )
-    res.set_cookie(
-        key=config_auth.REFRESH_KEY,
-        value=refresh_token,
-        httponly=True,
-        expires=refresh_token_str,
-        secure=config_auth.COOKIES_HTTPS,
-        path="/auth/refresh",
-    )
+    access_token, data_session = await UserAuthService().token_create(data_user, req.user.client_id, ipaddress)
+    refresh_token = await UserAuthService().refresh_create(data_user, req.user.client_id, data_session.session_id)
 
-    await UserAuthService().generate_cache_user(data_get)
-    await UserAuthService().generate_cache_menu(data_get)
+    res = set_token_cookies(res, access_token)
+    res = set_refresh_cookies(res, refresh_token)
+
+    await UserAuthService().generate_cache_user(data_user)
+    await UserAuthService().generate_cache_menu(data_user)
     sleep(1)

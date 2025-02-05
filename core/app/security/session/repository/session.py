@@ -32,13 +32,14 @@ class SessionRepo:
             await db.rollback()
             raise DatabaseSavingException(f"Error saving session: {str(e)}")
 
-    async def update_session(self, db: AsyncSession, data_session: Session, **kwargs) -> None:
+    async def update_session(self, db: AsyncSession, data_session: Session, **kwargs) -> Session:
         try:
             for key, value in kwargs.items():
                 if hasattr(data_session, key) and value is not None:
                     setattr(data_session, key, value)
             await db.commit()
             await db.refresh(data_session)
+            return data_session
         except SQLAlchemyError as e:
             await db.rollback()
             raise DatabaseUpdatingException(f"Error updating session: {str(e)}")

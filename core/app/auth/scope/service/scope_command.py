@@ -1,10 +1,10 @@
 from typing import Union
 from pythondi import inject
 
+from core.exceptions import NotFoundException, DuplicateValueException
 from ..domain import Scope
 from ..repository import ScopeRepo
 from ..schema import ScopeSchema
-from ..exceptions import ScopeNotFoundException, ScopeDuplicateException
 
 
 class ScopeCommandService:
@@ -14,7 +14,7 @@ class ScopeCommandService:
 
     async def create_scope(self, creted_user: str, scope: str, desc: str) -> ScopeSchema:
         if await self.scope_repo.get_scope_by(scope):
-            raise ScopeDuplicateException
+            raise DuplicateValueException("duplicate scope name")
         data_create = Scope.create(creted_user=creted_user, scope=scope, desc=desc)
         data_saved = await self.scope_repo.save_scope(scope=data_create)
         return data_saved
@@ -22,9 +22,9 @@ class ScopeCommandService:
     async def update_scope(self, scope_id: int, scope: Union[str, None], desc: Union[str, None]) -> ScopeSchema:
         data_get = await self.scope_repo.get_scope(scope_id)
         if not data_get:
-            raise ScopeNotFoundException
+            raise NotFoundException("scope not found")
         if await self.scope_repo.get_scope_by(scope):
-            raise ScopeDuplicateException
+            raise DuplicateValueException("duplicate scope name")
 
         updates = {}
         if scope:
@@ -38,6 +38,6 @@ class ScopeCommandService:
     async def delete_scope(self, scope_id: int, username: str) -> None:
         data_get = await self.scope_repo.get_scope(scope_id)
         if not data_get:
-            raise ScopeNotFoundException
+            raise NotFoundException("scope not found")
 
         await self.scope_repo.delete_scope(data_get, username)

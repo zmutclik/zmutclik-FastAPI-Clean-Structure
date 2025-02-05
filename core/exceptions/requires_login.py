@@ -1,10 +1,10 @@
+from starlette.responses import RedirectResponse
+from fastapi import HTTPException
+
+
 class RequiresLoginException(Exception):
     def __init__(self, nextRouter: str = "/auth/login"):
         self.nextRouter = nextRouter
-
-
-from starlette.responses import RedirectResponse
-from fastapi import HTTPException
 
 
 class TokenExpiredException(HTTPException):

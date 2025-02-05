@@ -1,8 +1,8 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
+from core.exceptions import NotFoundException
 from ..domain import Scope
-from ..exceptions import ScopeNotFoundException
 from ..repository import ScopeRepo
 from ..schema import ScopeSchema
 
@@ -15,7 +15,7 @@ class ScopeQueryService:
     async def get_scope(self, scope_id: int) -> Optional[ScopeSchema]:
         data_get = await self.scope_repo.get_scope(scope_id)
         if not data_get:
-            raise ScopeNotFoundException
+            raise NotFoundException("scope not found")
         return data_get
 
     async def get_scope_by(self, scope: str) -> Optional[ScopeSchema]:

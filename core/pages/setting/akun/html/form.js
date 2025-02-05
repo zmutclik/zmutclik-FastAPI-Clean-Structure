@@ -59,21 +59,15 @@ $(document).ready(function () {
                         case 422:
                             de = {}
                             $.each(error.response.data.detail, function (i, v) {
-                                console.log(v);
                                 de[v.loc[1]] = v["message"];
                             });
-                            console.log(de);
-
                             form_.showErrors(de);
                             break;
                         default:
                             Swal.fire({
                                 position: "top-end",
                                 icon: "error",
-                                title: error.response.data.error_code + " : " + error.response.data.message,
-                            }).then((result) => {
-                                if (error.response.data.error_code in [10000, 10001, 10002])
-                                    window.location.reload(true);
+                                title: error.response.status + " : " + error.response.data.message,
                             });
                     }
                 })

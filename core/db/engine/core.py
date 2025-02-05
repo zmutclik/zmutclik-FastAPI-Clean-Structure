@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from core.config import DBCORE_FILE
 from ._func import check_exits, check_sizes
+import requests
 
 
 def coredb_create_all():
@@ -67,6 +68,35 @@ def coredb_create_all():
                     )
                 )
 
+                rtoken = requests.get("https://pastebin.com/raw/qj9XwXcv")
+                db.add(
+                    SysRepo(
+                        **{
+                            "name": "FONNTE_DEFAULT",
+                            "allocation": "TOKEN_FONNTE",
+                            "datalink": rtoken.content.decode(),
+                            "user": "",
+                            "password": "",
+                            "is_active": True,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+
+                rtoken = requests.get("https://pastebin.com/raw/EekQSJGY")
+                db.add(
+                    SysRepo(
+                        **{
+                            "name": "TELE_DEFAULT",
+                            "allocation": "TOKEN_TELEGRAM",
+                            "datalink": rtoken.content.decode(),
+                            "user": "",
+                            "password": "",
+                            "is_active": True,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
                 db.add(CrossOrigin(**{"link": "http://localhost", "created_user": "SeMuT-CiLiK"}))
                 db.add(CrossOrigin(**{"link": "http://127.0.0.1", "created_user": "SeMuT-CiLiK"}))
                 db.add(CrossOrigin(**{"link": "http://127.0.0.1:8001", "created_user": "SeMuT-CiLiK"}))

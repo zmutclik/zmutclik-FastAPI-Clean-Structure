@@ -1,10 +1,10 @@
 from typing import Union
 from pythondi import inject
 
+from core.exceptions import NotFoundException, DuplicateValueException
 from ..domain import Privilege, PrivilegeMenus
 from ..repository import PrivilegeRepo, PrivilegeMenusRepo
 from ..schema import PrivilegeSchema
-from ..exceptions import PrivilegeNotFoundException, PrivilegeDuplicateException
 
 
 class PrivilegeCommandService:
@@ -15,7 +15,8 @@ class PrivilegeCommandService:
 
     async def create_privilege(self, created_user: str, privilege: str, desc: str, menutype_id: int, menus: list[int] = [1]) -> PrivilegeSchema:
         if await self.privilege_repo.get_privilege_by(privilege):
-            raise PrivilegeDuplicateException
+            raise DuplicateValueException("Privilege already exists")
+        
         date_create = Privilege.create(created_user=created_user, privilege=privilege, desc=desc)
         data_saved = await self.privilege_repo.save_privilege(privilege=date_create)
 
@@ -35,7 +36,7 @@ class PrivilegeCommandService:
     ) -> PrivilegeSchema:
         data_get = await self.privilege_repo.get_privilege(privilege_id)
         if not data_get:
-            raise PrivilegeNotFoundException
+            raise NotFoundException("Privilege not found")
 
         updates = {}
         if privilege is not None and privilege != data_get.privilege:
@@ -55,6 +56,6 @@ class PrivilegeCommandService:
     async def delete_privilege(self, privilege_id: int, username: str) -> None:
         data_get = await self.privilege_repo.get_privilege(privilege_id)
         if not data_get:
-            raise PrivilegeNotFoundException
+            raise NotFoundException("Privilege not found")
 
         await self.privilege_repo.delete_privilege(data_get, username)

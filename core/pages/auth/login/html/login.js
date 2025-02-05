@@ -1,22 +1,7 @@
-var formLogin = $("#formLogin").validate({
-    rules: {
-        email: { required: true },
-        password: { required: true },
-    },
-    errorElement: 'div',
-    errorPlacement: function (error, element) {
-        error.addClass('invalid-feedback');
-        element.next().after(error);
-    },
-    highlight: function (element, errorClass, validClass) {
-        $(element).addClass('is-invalid');
-    },
-    unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid');
-    },
-});
+var formLogin = $("#formLogin").validate({ rules: { email: { required: !0 }, password: { required: !0 } }, errorElement: "div", errorPlacement: function (i, e) { i.addClass("invalid-feedback"), e.next().after(i) }, highlight: function (i, e, r) { $(i).addClass("is-invalid") }, unhighlight: function (i, e, r) { $(i).removeClass("is-invalid") } });
 
 $(document).ready(function () {
+    $('#formLogin input[name=email]').focus();
     $("#formLogin").on("submit", function () {
         if (formLogin.valid()) {
             $('#formLogin input,#formLogin button').blur();
@@ -34,28 +19,27 @@ $(document).ready(function () {
                 })
                 .catch(function (error) {
                     switch (error.response.data.error_code) {
-                        case 21002:
-                            formLogin.showErrors({ "email": error.response.data.message });
-                            $('#formLogin input[name=email]').focus();
+                        case 422:
+                            de = {}
+                            $.each(error.response.data.detail, function (i, v) {
+                                de[v.loc[1]] = v["message"];
+                            });
+                            formLogin.showErrors(de);
                             break;
-                        case 21003:
-                            formLogin.showErrors({ "email": error.response.data.message });
-                            $('#formLogin input[name=email]').focus();
-                            break;
-                        case 21000:
-                            formLogin.showErrors({ "password": error.response.data.message });
-                            $('#formLogin input[name=password]').focus();
+                        case 404:
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "error",
+                                title: error.response.status + " : " + error.response.data.message,
+                            }).then((result) => {
+                                window.location.href = "/auth/login/clear/client_id";
+                            });
                             break;
                         default:
                             Swal.fire({
                                 position: "top-end",
                                 icon: "error",
-                                title: error.response.data.error_code + " : " + error.response.data.message,
-                            }).then((result) => {
-                                if (error.response.data.error_code in [10000, 10001, 10002])
-                                    window.location.reload(true);
-                                if (error.response.data.error_code == 422)
-                                    window.location.href = "/auth/login/clear/client_id";
+                                title: error.response.status + " : " + error.response.data.message,
                             });
                     }
                 })

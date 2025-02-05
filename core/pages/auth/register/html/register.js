@@ -88,11 +88,8 @@ $(document).ready(function () {
                             case 422:
                                 de = {}
                                 $.each(error.response.data.detail, function (i, v) {
-                                    console.log(v);
                                     de[v.loc[1]] = v["message"];
                                 });
-                                console.log(de);
-
                                 form_.showErrors(de);
                                 break;
                             default:

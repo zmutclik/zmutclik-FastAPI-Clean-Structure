@@ -1,14 +1,12 @@
 import os
-from time import sleep
-from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import APIRouter, Response, Depends, Request
-from core.config import config_auth
-from fastapi.responses import RedirectResponse
+from core.fastapi.helper import set_token_cookies, decode_refresh
 from core.pages.response import PageResponse
 from core.app.security.client.service import ClientService
 from core.app.security.session.service import SessionService
 import jwt
+from core.fastapi.helper import get_ipaddress
 from core.app.auth.user.service import UserQueryService, UserAuthService
 from ..logout.logout import page_auth_logout
 
@@ -20,58 +18,34 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 @router.api_route("", status_code=201, methods=["GET", "POST"])
 async def page_auth_refresh(backRouter: str, response: Response, request: page_req):
-    refresh_token = request.cookies.get(config_auth.REFRESH_KEY)
-    try:
-        payload = jwt.decode(
-            refresh_token,
-            config_auth.JWT_SECRET_KEY,
-            algorithms=[config_auth.JWT_ALGORITHM],
-            options={"verify_exp": True},
-        )
-        user_username = payload.get("sub")
-        user_session_id = payload.get("session")
-        user_client_id = payload.get("client")
-    except jwt.exceptions.PyJWTError:
+    #### Cek Client ID
+    data_client = await ClientService().get_client_id(request.user.client_id)
+    if data_client is None:
         return page_auth_logout(response, request)
-    except jwt.ExpiredSignatureError:
+    if data_client.disabled:
         return page_auth_logout(response, request)
 
-    ipaddress = request.client.host
-    try:
-        if request.headers.get("X-Real-IP") is not None:
-            ipaddress = request.headers.get("X-Real-IP")
-    except:
-        pass
+    refresh_token = decode_refresh(request)
 
-    data_client = await ClientService().get_client_id(user_client_id)
-    data_session = await SessionService().get_session_id(user_session_id)
+    ipaddress, ipproxy = get_ipaddress(request)
 
-    if data_client is None or data_session is None:
-        return page_auth_logout(response, request)
-
-    update_client = await ClientService().update_clientuser(
+    data_client = await ClientService().update_clientuser(
         client_id=data_client.id,
-        LastLogin=datetime.now(timezone.utc),
-        user=user_username,
+        user=refresh_token.username,
         LastPage=backRouter,
         Lastipaddress=ipaddress,
     )
-    if not update_client:
+    if data_client is None:
         return page_auth_logout(response, request)
 
-    await SessionService().update_session(data_session.id, datetime.now(timezone.utc), LastPage=backRouter, Lastipaddress=ipaddress)
+    data_session = await SessionService().update_session(refresh_token.session_id, LastPage=backRouter, Lastipaddress=ipaddress)
+    if data_session is None:
+        return page_auth_logout(response, request)
 
-    data_get = await UserQueryService().get_user_by(username=user_username)
-    access_token, session_id = await UserAuthService().token_create(data_get, user_client_id, ipaddress, user_session_id)
-    access_token_time = datetime.now(timezone.utc) + timedelta(minutes=config_auth.COOKIES_EXPIRED)
-    access_token_str = access_token_time.strftime("%a, %d-%b-%Y %H:%M:%S GMT")
-    response.set_cookie(
-        key=config_auth.COOKIES_KEY,
-        value=access_token,
-        httponly=True,
-        expires=access_token_str,
-        secure=config_auth.COOKIES_HTTPS,
-    )
+    data_user = await UserQueryService().get_user_by(username=refresh_token.username)
+    access_token, data_session = await UserAuthService().token_create(data_user, refresh_token.client_id, ipaddress, data_session)
+
+    response = set_token_cookies(response, access_token)
 
     if request.method == "GET":
         response.status_code = 302  # Bisa diganti 301 atau 307 sesuai kebutuhan
