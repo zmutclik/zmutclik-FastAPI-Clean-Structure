@@ -77,4 +77,8 @@ $(document).ready(function () {
             }
         });
     });
+
+    $("#nav-sesi-tab").click(function () {
+        oTable_session.ajax.reload();
+    });
 });

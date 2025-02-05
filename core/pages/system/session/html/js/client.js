@@ -63,12 +63,16 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 api.delete("client/" + nm)
                     .then(function () {
-                        Swal.fire("Terhapus!", "", "success")
+                        Swal.fire("Ter " + disablet + "!", "", "success")
                             .then(() => {
                                 oTable_client.ajax.reload();
                             });
                     })
             }
         });
+    });
+
+    $("#nav-client-tab").click(function () {
+        oTable_client.ajax.reload();
     });
 });
