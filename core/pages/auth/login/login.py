@@ -66,6 +66,10 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
     except:
         pass
 
+    data_client = await ClientService().get_client_id(req.user.client_id)
+    if data_client is None:
+        raise SessionClientNotFoundException
+
     access_token, req.user.session_id = await UserAuthService().token_create(data_get, req.user.client_id, ipaddress)
     refresh_token = await UserAuthService().refresh_create(data_get, req.user.client_id, req.user.session_id)
 

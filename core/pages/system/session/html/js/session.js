@@ -4,7 +4,7 @@ $(document).ready(function () {
     oTable_session = $('#table_session').DataTable({
         serverSide: true,
         "ajax": function (data, callback, settings) {
-            api.post('/datatables', data).then(response => { callback(response.data); })
+            api.post('/datatables/session', data).then(response => { callback(response.data); })
         },
         "paging": true,
         "lengthChange": false,
@@ -67,7 +67,7 @@ $(document).ready(function () {
             confirmButtonText: "Ya KILL",
         }).then((result) => {
             if (result.isConfirmed) {
-                api.delete(idU)
+                api.delete("session/" + idU)
                     .then(function () {
                         Swal.fire("Terhapus!", "", "success")
                             .then(() => {

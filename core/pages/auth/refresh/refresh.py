@@ -10,19 +10,12 @@ from core.app.security.client.service import ClientService
 from core.app.security.session.service import SessionService
 import jwt
 from core.app.auth.user.service import UserQueryService, UserAuthService
+from ..logout.logout import page_auth_logout
 
 router = APIRouter(prefix="/refresh", tags=["AUTH / REFRESH"])
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
 page.prefix_url = "/auth" + router.prefix
 page_req = Annotated[PageResponse, Depends(page.request)]
-
-
-def redirect_to_login(response: Response):
-    response.delete_cookie(key=config_auth.COOKIES_KEY)
-    response.delete_cookie(key=config_auth.REFRESH_KEY)
-    response.status_code = 302  # Bisa diganti 301 atau 307 sesuai kebutuhan
-    response.headers["Location"] = f"/auth/login"
-    return response
 
 
 @router.api_route("", status_code=201, methods=["GET", "POST"])
@@ -39,9 +32,9 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
         user_session_id = payload.get("session")
         user_client_id = payload.get("client")
     except jwt.exceptions.PyJWTError:
-        return redirect_to_login(response)
+        return page_auth_logout(response, request)
     except jwt.ExpiredSignatureError:
-        return redirect_to_login(response)
+        return page_auth_logout(response, request)
 
     ipaddress = request.client.host
     try:
@@ -52,10 +45,20 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
 
     data_client = await ClientService().get_client_id(user_client_id)
     data_session = await SessionService().get_session_id(user_session_id)
+
     if data_client is None or data_session is None:
-        return redirect_to_login(response)
-    if not await ClientService().update_clientuser(client_id=data_client.id, LastLogin=datetime.now(timezone.utc), user=user_username, LastPage=backRouter, Lastipaddress=ipaddress):
-        return redirect_to_login(response)
+        return page_auth_logout(response, request)
+
+    update_client = await ClientService().update_clientuser(
+        client_id=data_client.id,
+        LastLogin=datetime.now(timezone.utc),
+        user=user_username,
+        LastPage=backRouter,
+        Lastipaddress=ipaddress,
+    )
+    if not update_client:
+        return page_auth_logout(response, request)
+
     await SessionService().update_session(data_session.id, datetime.now(timezone.utc), LastPage=backRouter, Lastipaddress=ipaddress)
 
     data_get = await UserQueryService().get_user_by(username=user_username)

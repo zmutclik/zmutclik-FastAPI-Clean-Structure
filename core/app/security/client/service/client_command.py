@@ -78,18 +78,45 @@ class ClientService:
                 await ClientUserRepo().update_clientuser(db, data_get, **updates)
                 return True
 
+    async def update_client(
+        self,
+        client_id: int,
+        disabled: bool = None,
+    ) -> bool:
+        async with async_engine.begin() as connection:
+            async with AsyncSession(bind=connection) as db:
+                data_get = await ClientRepo().get_client(db, client_id)
+                if data_get is None:
+                    return False
+                updates = {}
+                if disabled is not None:
+                    updates["disabled"] = disabled
+                await ClientRepo().update_client(db, data_get, **updates)
+                return True
+
     async def datatable_client(self, params: dict[str, Any]):
-        from sqlalchemy import or_, select
+        from sqlalchemy import or_, select, func
         from core.utils.datatables import DataTable
         from core.db import session_security
 
         async with async_engine.begin() as connection:
             async with AsyncSession(bind=connection) as db:
-                query = select(Client, Client.client_id.label("DT_RowId"))
+                query = (
+                    select(
+                        Client,
+                        Client.client_id.label("DT_RowId"),
+                        func.max(ClientUser.LastLogin).label("LastLogin"),
+                        func.group_concat(ClientUser.user, ", ").label("users"),
+                        Client.disabled,
+                    )
+                    .join(Client.USERS)
+                    .group_by(Client.id)
+                    .order_by(func.max(ClientUser.LastLogin).desc())
+                )
                 datatable: DataTable = DataTable(
                     request_params=params,
                     table=query,
-                    column_names=["DT_RowId", "id", "client_id", "platform", "browser"],
+                    column_names=["DT_RowId", "id", "client_id", "platform", "browser", "users", "LastLogin", "disabled"],
                     engine=db,
                     # callbacks=callbacks,
                 )

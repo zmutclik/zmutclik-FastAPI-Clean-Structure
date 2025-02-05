@@ -21,20 +21,40 @@ async def page_system_session(req: page_req):
     return page.response(req, "/html/index.html")
 
 
-@router.get("/{PathCheck}/{pathFile}", response_class=HTMLResponse, dependencies=page.depend_r())
-async def page_system_session_js(req: page_req, pathFile: EnumJS):
-    return page.response(req, "/html/" + pathFile)
+@router.get("/{PathCheck}/session.js", response_class=HTMLResponse, dependencies=page.depend_r())
+async def page_system_session_js(req: page_req):
+    return page.response(req, "/html/js/session.js")
+
+
+@router.get("/{PathCheck}/client.js", response_class=HTMLResponse, dependencies=page.depend_r())
+async def page_system_session_js(req: page_req):
+    return page.response(req, "/html/js/client.js")
 
 
 #######################################################################################################################
-@router.post("/{PathCheck}/datatables", status_code=202, dependencies=page.depend_r())
+@router.post("/{PathCheck}/datatables/session", status_code=202, dependencies=page.depend_r())
 async def page_system_session_datatables(params: dict[str, Any], req: page_req) -> dict[str, Any]:
     return await SessionService().datatable_session(params=params)
 
-@router.delete("/{PathCheck}/{id:int}", status_code=202, dependencies=page.depend_d())
+
+@router.post("/{PathCheck}/datatables/client", status_code=202, dependencies=page.depend_r())
+async def page_system_session_datatables(params: dict[str, Any], req: page_req) -> dict[str, Any]:
+    return await ClientService().datatable_client(params=params)
+
+
+@router.delete("/{PathCheck}/session/{id:int}", status_code=202, dependencies=page.depend_d())
 async def kill_session(id: int, req: page_req):
     data_get = await SessionService().get_session(id)
     if data_get is None:
         raise ForbiddenException
 
     await SessionService().update_session(data_get.id, active=False)
+
+
+@router.delete("/{PathCheck}/client/{client_id}", status_code=202, dependencies=page.depend_d())
+async def disable_enable_client(client_id: str, req: page_req):
+    data_get = await ClientService().get_client_id(client_id)
+    if data_get is None:
+        raise ForbiddenException
+
+    await ClientService().update_client(data_get.id, disabled=not data_get.disabled)

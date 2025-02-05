@@ -16,6 +16,7 @@ class Client(Base):
     client_id = Column(String(64), unique=True)
     platform = Column(String(100), index=True)
     browser = Column(String(100), index=True)
+    disabled = Column(Boolean, default=False)
 
     USERS = relationship("ClientUser", back_populates="CLIENT")
 
