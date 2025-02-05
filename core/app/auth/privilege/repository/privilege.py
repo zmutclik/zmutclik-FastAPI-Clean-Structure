@@ -3,7 +3,6 @@ from datetime import datetime
 
 from abc import ABCMeta, abstractmethod
 from sqlalchemy import or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from ..domain import Privilege

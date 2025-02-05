@@ -1,9 +1,9 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from core.exceptions import NotFoundException
 from ..domain import Privilege
 from ..repository import PrivilegeRepo, PrivilegeMenusRepo
+from ..exceptions import PrivilegeNotFoundException
 from ..schema import PrivilegeSchema, PrivilegeMenuSchema
 
 
@@ -20,7 +20,7 @@ class PrivilegeQueryService:
     async def get_privilege(self, privilege_id: int) -> Optional[PrivilegeSchema]:
         data_get = await self.privilege_repo.get_privilege(privilege_id)
         if not data_get:
-            raise NotFoundException("Privilege not found")
+            raise PrivilegeNotFoundException
         return data_get
 
     async def get_privilege_by(self, privilege: str) -> Optional[PrivilegeSchema]:

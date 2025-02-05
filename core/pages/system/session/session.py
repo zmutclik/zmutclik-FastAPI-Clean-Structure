@@ -2,14 +2,12 @@ import os
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
-from core.pages.response import PageResponse, EnumJS
+from core.pages.response import PageResponse
 
-from core.exceptions import ForbiddenException
-from core.app.logs.service import LogsQueryService
 from core.app.security.client.service import ClientService
 from core.app.security.session.service import SessionService
+from core.app.security.session.exceptions import SessionNotFoundException
 
-from fastapi.exceptions import RequestValidationError
 
 router = APIRouter(prefix="/session")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/sys" + router.prefix, depend_roles=["system"])
@@ -46,7 +44,7 @@ async def page_system_session_datatables(params: dict[str, Any], req: page_req) 
 async def kill_session(id: int, req: page_req):
     data_get = await SessionService().get_session(id)
     if data_get is None:
-        raise ForbiddenException
+        raise SessionNotFoundException
 
     await SessionService().update_session(data_get.session_id, active=False)
 
@@ -55,6 +53,6 @@ async def kill_session(id: int, req: page_req):
 async def disable_enable_client(client_id: str, req: page_req):
     data_get = await ClientService().get_client_id(client_id)
     if data_get is None:
-        raise ForbiddenException
+        raise SessionNotFoundException
 
     await ClientService().update_client(data_get.id, disabled=not data_get.disabled)

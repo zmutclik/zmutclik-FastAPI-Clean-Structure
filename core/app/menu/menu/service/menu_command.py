@@ -4,7 +4,7 @@ from pythondi import inject
 from ..domain import Menu
 from ..repository import MenuRepo
 from ..schema import MenuSchema
-from ..exceptions import MenuNotFoundException, MenuDuplicateException
+from ..exceptions import MenuNotFoundException
 
 
 class MenuCommandService:

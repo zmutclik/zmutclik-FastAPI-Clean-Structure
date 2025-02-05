@@ -2,9 +2,9 @@ from typing import Union
 from pythondi import inject
 
 from ..domain import MenuType
+from ..exceptions import MenuTypeNotFoundException, MenuTypeDuplicateException
 from ..repository import MenuTypeRepo
 from ..schema import MenuTypeSchema
-from ..exceptions import MenuTypeNotFoundException, MenuTypeDuplicateException
 
 
 class MenuTypeCommandService:

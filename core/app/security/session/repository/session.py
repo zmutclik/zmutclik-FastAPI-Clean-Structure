@@ -7,11 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from ..domain import Session
-from core.exceptions import (
-    DatabaseSavingException,
-    DatabaseUpdatingException,
-    DatabaseDeletingException,
-)
+from core.exceptions import DatabaseSavingException, DatabaseUpdatingException
 
 
 class SessionRepo:

@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
 from core.pages.response import PageResponse
 
-from core.exceptions import NotFoundException
 from core.app.auth.user.service import UserQueryService, UserCommandService
+from core.app.auth.user.exceptions import UserNotFoundException
 
 from .request import SettingProfileRequest, GantiPasswordRequest
 from fastapi.exceptions import RequestValidationError
@@ -50,7 +50,7 @@ async def page_auth_profile_js_setting(req: page_req):
 async def page_auth_profile_save_ganti_password(dataIn: GantiPasswordRequest, req: page_req):
     data_get = await UserQueryService().get_user_by(req.user.username)
     if data_get is None:
-        raise NotFoundException("User not found")
+        raise UserNotFoundException
 
     if not await UserQueryService().verify_password(user=data_get, plain_password=dataIn.password_lama):
         errors = [{"loc": ["body", "password_lama"], "msg": "password lama gagal dicocokkan", "type": "value_error.duplicate"}]
@@ -67,7 +67,7 @@ async def page_auth_profile_save_ganti_password(dataIn: GantiPasswordRequest, re
 async def page_auth_profile_save_setting(dataIn: SettingProfileRequest, req: page_req):
     data_get = await UserQueryService().get_user_by(req.user.username)
     if data_get is None:
-        raise NotFoundException("User not found")
+        raise UserNotFoundException
 
     if dataIn.email != data_get.email:
         data_filter = await UserQueryService().get_user_by(email=dataIn.email)

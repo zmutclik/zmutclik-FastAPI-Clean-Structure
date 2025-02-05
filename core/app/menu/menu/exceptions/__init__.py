@@ -1,3 +1,3 @@
-from .menu import MenuDuplicateException, MenuNotFoundException 
+from .menu import  MenuNotFoundException 
  
-__all__ = ["MenuDuplicateException", "MenuNotFoundException"] 
+__all__ = ["MenuNotFoundException"] 

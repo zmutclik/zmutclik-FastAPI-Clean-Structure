@@ -1,8 +1,5 @@
 from sqlalchemy import Boolean, Column, ForeignKey, BigInteger, Integer, Unicode, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text
 from sqlalchemy.orm import column_property, relationship, deferred, Session
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
-from passlib.context import CryptContext
 
 from core.db.base import BaseAuth as Base
 
@@ -16,14 +13,6 @@ class UserScope(Base):
 
     USER = relationship("User", back_populates="SCOPE")
     SCOPE = relationship("Scope", back_populates="USERSCOPE")
-
-    # @hybrid_property
-    # def group(self) -> str:
-    #     return self.SCOPE.scope
-
-    # @hybrid_property
-    # def desc(self) -> str:
-    #     return self.SCOPE.desc
 
     @classmethod
     def create(

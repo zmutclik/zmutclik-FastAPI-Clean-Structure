@@ -2,9 +2,9 @@ from typing import Optional, Any
 from pythondi import inject
 
 from ..domain import MenuType
+from ..exceptions import MenuTypeNotFoundException
 from ..repository import MenuTypeRepo
 from ..schema import MenuTypeSchema
-from ..exceptions import MenuTypeNotFoundException
 
 
 class MenuTypeQueryService:

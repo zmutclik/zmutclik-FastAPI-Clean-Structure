@@ -1,8 +1,8 @@
 from typing import Union, Optional, Any
 from pythondi import inject
 
-from core.exceptions import NotFoundException
 from ..domain import User
+from ..exceptions import UserNotFoundException
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from ..schema import UserSchema
 from fastapi.exceptions import RequestValidationError
@@ -23,7 +23,7 @@ class UserQueryService:
     async def get_user(self, user_id: str) -> Optional[UserSchema]:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise NotFoundException("User not found")
+            raise UserNotFoundException
         return data_get
 
     async def get_user_privileges(self, user_id: str):

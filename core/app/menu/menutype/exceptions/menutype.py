@@ -1,13 +1,9 @@
-from core.exceptions import CustomException 
+from core.exceptions import DuplicateValueException, NotFoundException 
  
  
-class MenuTypeDuplicateException(CustomException): 
-    code = 400 
-    error_code = 24000 
+class MenuTypeDuplicateException(DuplicateValueException): 
     message = "duplicate menutype name" 
  
  
-class MenuTypeNotFoundException(CustomException): 
-    code = 404 
-    error_code = 24001 
+class MenuTypeNotFoundException(NotFoundException): 
     message = "menutype not found" 

@@ -2,17 +2,21 @@ from pythondi import inject
 from datetime import timedelta, datetime, timezone
 import json
 
-from ..domain import User, UserPrivilege, UserScope
-from ....security.session.domain import Session
-from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
-from ...privilege.repository import PrivilegeRepo, PrivilegeMenusRepo
-from ...scope.repository import ScopeRepo
-from ....menu.menu.service import MenuQueryService
-from ....menu.menutype.service import MenuTypeQueryService
-from ....security.session.service import SessionService
-from ..schema import UserSchema
 from core import config_auth
 from core.fastapi.helper import token_jwt
+
+from ....security.session.domain import Session
+from ....security.session.service import SessionService
+
+from ...scope.repository import ScopeRepo
+from ...privilege.repository import PrivilegeRepo, PrivilegeMenusRepo
+
+from ....menu.menu.service import MenuQueryService
+from ....menu.menutype.service import MenuTypeQueryService
+
+from ..domain import User
+from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
+from ..schema import UserSchema
 
 
 class UserAuthService:

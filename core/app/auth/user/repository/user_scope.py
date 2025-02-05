@@ -1,13 +1,10 @@
 from typing import Optional, List, Union
-from datetime import datetime
-
 from abc import ABCMeta, abstractmethod
 from sqlalchemy import or_, select, delete
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
 from core.db import session_auth as session
-from core.exceptions import DatabaseSavingException, DatabaseUpdatingException, DatabaseDeletingException
+from core.exceptions import DatabaseSavingException, DatabaseDeletingException
 
 from ..domain import UserScope
 
@@ -77,25 +74,25 @@ class UserScopeSQLRepo(UserScopeRepo):
             return user_scope
         except SQLAlchemyError as e:
             await session.rollback()
-            raise DatabaseSavingException(f"Error saving user: {str(e)}")
+            raise DatabaseSavingException(f"Error saving userscope: {str(e)}")
 
     async def delete_userscope(self, user_scope: UserScope) -> None:
         try:
             await session.delete(user_scope)
         except SQLAlchemyError as e:
             await session.rollback()
-            raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
+            raise DatabaseDeletingException(f"Error deleting userscope: {str(e)}")
 
     async def delete_userscopes(self, user_id: int) -> None:
         try:
             await session.execute(delete(UserScope).where(UserScope.user_id == user_id))
         except SQLAlchemyError as e:
             await session.rollback()
-            raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
+            raise DatabaseDeletingException(f"Error deleting userscope: {str(e)}")
 
     async def commit_userscope(self) -> None:
         try:
             await session.commit()
         except SQLAlchemyError as e:
             await session.rollback()
-            raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
+            raise DatabaseDeletingException(f"Error commit userscope: {str(e)}")

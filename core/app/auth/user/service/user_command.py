@@ -1,8 +1,8 @@
 from typing import Union
 from pythondi import inject
 
-from core.exceptions import NotFoundException
 from ..domain import User, UserPrivilege, UserScope
+from ..exceptions import UserNotFoundException
 from ..repository import UserRepo, UserPrivilegeRepo, UserScopeRepo
 from ..schema import UserSchema
 
@@ -60,7 +60,7 @@ class UserCommandService:
     async def update_user_password(self, user_id: int, password1: str, password2: str) -> UserSchema:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise NotFoundException("user not found")
+            raise UserNotFoundException
         data_updated = data_get.change_password(password1, password2)
         return data_updated
 
@@ -77,7 +77,7 @@ class UserCommandService:
     ) -> UserSchema:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise NotFoundException("user not found")
+            raise UserNotFoundException
 
         updates = {}
         if full_name is not None:
@@ -112,6 +112,6 @@ class UserCommandService:
     async def delete_user(self, user_id: int, username: str) -> None:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
-            raise NotFoundException("user not found")
+            raise UserNotFoundException
 
         await self.user_repo.delete_user(data_get, username)
