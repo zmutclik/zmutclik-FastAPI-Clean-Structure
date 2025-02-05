@@ -8,6 +8,7 @@ from core.pages.response import PageResponse, EnumJS
 from core.app.system.coresystem.service import CoreSYSTEMService
 from core.app.system.authconfig.service import AuthConfigService
 from core.app.system.coresystem.schema import CoreSYSTEMSchema
+from core.app.system.authconfig.schema import AuthConfigSchema
 
 router = APIRouter(prefix="/coresetting")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/sys" + router.prefix, depend_roles=["system"])
@@ -29,7 +30,13 @@ async def page_system_coresetting_js(req: page_req, pathFile: EnumJS):
 
 
 #######################################################################################################################
-@router.post("/{PathCheck}", status_code=201, response_model=CoreSYSTEMSchema, dependencies=page.depend_w())
+@router.post("/{PathCheck}/core", status_code=201, response_model=CoreSYSTEMSchema, dependencies=page.depend_w())
 async def page_system_coresetting_update(dataIn: CoreSYSTEMSchema, req: page_req):
     data_updated = await CoreSYSTEMService().update_coresystem(dataIn)
+    return data_updated
+
+
+@router.post("/{PathCheck}/auth", status_code=201, response_model=AuthConfigSchema, dependencies=page.depend_w())
+async def page_system_auth_update(dataIn: AuthConfigSchema, req: page_req):
+    data_updated = await AuthConfigService().update_authconfig(dataIn)
     return data_updated

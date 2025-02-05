@@ -117,6 +117,13 @@
                                     <input type="text" class="form-control" name="cookies_prefix" value="{{data_authsystem.cookies_prefix}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="token/client/refresh_token" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="cookies_https" class="form-label">Cookies HTTPS</label>
+                                    <select class="form-select" aria-label="Default select" name="cookies_https" required>
+                                        <option value="1" {% if data_authsystem.cookies_https %} selected {% endif %}>Aktif</option>
+                                        <option value="0" {% if not data_authsystem.cookies_https %} selected {% endif %}>Tidak Aktif</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label for="cookies_exp" class="form-label">Cookies Expired</label>
                                     <input type="number" class="form-control" name="cookies_exp" value="{{data_authsystem.cookies_exp}}" required>
                                 </div>

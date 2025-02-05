@@ -28,16 +28,6 @@ class CoreSYSTEMService:
             updates["app_host"] = dataIn.app_host
         if data_get.app_port != dataIn.app_port:
             updates["app_port"] = dataIn.app_port
-        if data_get.prefix_session != dataIn.prefix_session:
-            updates["prefix_session"] = dataIn.prefix_session
-        if data_get.jwt_scret_key != dataIn.jwt_scret_key:
-            updates["jwt_scret_key"] = dataIn.jwt_scret_key
-        if data_get.jwt_algorithm != dataIn.jwt_algorithm:
-            updates["jwt_algorithm"] = dataIn.jwt_algorithm
-        if data_get.cookies_exp != dataIn.cookies_exp:
-            updates["cookies_exp"] = dataIn.cookies_exp
-        if data_get.refresh_exp != dataIn.refresh_exp:
-            updates["refresh_exp"] = dataIn.refresh_exp
         if data_get.debug != dataIn.debug:
             updates["debug"] = dataIn.debug
 
