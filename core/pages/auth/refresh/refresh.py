@@ -20,9 +20,9 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
     #### Cek Client ID
     data_client = await ClientService().get_client_id(request.user.client_id)
     if data_client is None:
-        return page_auth_logout(response, request)
+        return await page_auth_logout(response, request)
     if data_client.disabled:
-        return page_auth_logout(response, request)
+        return await page_auth_logout(response, request)
 
     refresh_token = decode_refresh(request)
 
@@ -35,11 +35,11 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
         Lastipaddress=ipaddress,
     )
     if data_client is None:
-        return page_auth_logout(response, request)
+        return await page_auth_logout(response, request)
 
     data_session = await SessionService().update_session(refresh_token.session_id, LastPage=backRouter, Lastipaddress=ipaddress)
     if data_session is None:
-        return page_auth_logout(response, request)
+        return await page_auth_logout(response, request)
 
     data_user = await UserQueryService().get_user_by(username=refresh_token.username)
     access_token, data_session = await UserAuthService().token_create(data_user, refresh_token.client_id, ipaddress, data_session)

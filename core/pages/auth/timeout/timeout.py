@@ -13,5 +13,5 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("/{username}", status_code=201)
-def page_auth_timeout(response: Response, request: page_req):
-    return page_auth_logout(response, request)
+async def page_auth_timeout(response: Response, request: page_req):
+    return await page_auth_logout(response, request)
