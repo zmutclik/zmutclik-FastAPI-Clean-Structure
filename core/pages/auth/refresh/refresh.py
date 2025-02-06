@@ -16,7 +16,6 @@ page.prefix_url = "/auth" + router.prefix
 page_req = Annotated[PageResponse, Depends(page.request)]
 
 
-@router.api_route("", status_code=201, methods=["GET", "POST"])
 async def page_auth_refresh(backRouter: str, response: Response, request: page_req):
     #### Cek Client ID
     data_client = await ClientService().get_client_id(request.user.client_id)
@@ -53,3 +52,13 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
         response.status_code = 307  # Bisa diganti 301 atau 307 sesuai kebutuhan
     response.headers["Location"] = backRouter
     return response
+
+
+@router.get("")
+async def page_auth_refresh_get(backRouter: str, response: Response, request: page_req):
+    return await page_auth_refresh(backRouter, response, request)
+
+
+@router.post("")
+async def page_auth_refresh_post(backRouter: str, response: Response, request: page_req):
+    return await page_auth_refresh(backRouter, response, request)
