@@ -38,8 +38,6 @@ class SysRepoCommandService:
         data_get = await self.sysrepo_repo.get_sysrepo(sysrepo_id)
         if not data_get:
             raise SysRepoNotFoundException
-        if await self.sysrepo_repo.get_sysrepo_by(allocation=data_get.allocation, name=name):
-            raise SysRepoDuplicateException
 
         updates = {}
         if name:

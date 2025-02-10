@@ -176,12 +176,27 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
+                            "text": "Message",
+                            "segment": "message",
+                            "href": "/page/sys/message",
+                            "icon": "fas fa-envelope-open-text",
+                            "icon_color": "",
+                            "sort": 6,
+                            "menutype_id": 1,
+                            "parent_id": 3,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
                             "text": "Logs",
                             "segment": "logs",
                             "href": "/page/sys/logs",
                             "icon": "fas fa-map-marked-alt",
                             "icon_color": "",
-                            "sort": 6,
+                            "sort": 7,
                             "menutype_id": 1,
                             "parent_id": 3,
                             "created_user": "SeMuT-CiLiK",

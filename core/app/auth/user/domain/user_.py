@@ -25,7 +25,7 @@ class User(Base, TimestampLogMixin):
     nohp = Column(String(32), unique=True)
     full_name = Column(String(255))
     hashed_password = Column(String(255), nullable=True)
-    disabled = Column(Boolean, default=False)
+    disabled = Column(Boolean, default=True)
 
     PRIVILEGE = relationship("UserPrivilege", back_populates="USER")
     SCOPE = relationship("UserScope", back_populates="USER")

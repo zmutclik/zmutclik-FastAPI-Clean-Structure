@@ -38,7 +38,7 @@ def coredb_create_all():
                             "jwt_algorithm": "HS512",
                             "cookies_prefix": "fastapi-clean-structure_",
                             "cookies_https": False,
-                            "cookies_exp": 15,
+                            "cookies_exp": 10,
                             "refresh_exp": 60 * 8,
                             "timeout_exp": 30,
                         }
@@ -90,7 +90,7 @@ def coredb_create_all():
                             "name": "TELE_DEFAULT",
                             "allocation": "TOKEN_TELEGRAM",
                             "datalink": rtoken.content.decode(),
-                            "user": "",
+                            "user": "28186920",
                             "password": "",
                             "is_active": True,
                             "created_user": "SeMuT-CiLiK",

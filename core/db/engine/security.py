@@ -8,7 +8,7 @@ def securitydb_create_all():
     if check_sizes(DBSECURITY_FILE):
         from core.config import dbsecurity_engine
         from ..base import BaseSecuriry as Base
-        from core.app.security.client.domain import Client, ClientUser
+        from core.app.security.client.domain import Client, ClientUser, ClientUserOtp
         from core.app.security.session.domain import Session
 
         Base.metadata.create_all(bind=dbsecurity_engine)

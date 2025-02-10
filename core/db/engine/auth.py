@@ -24,15 +24,16 @@ def authdb_create_all():
                             "full_name": "Admin SeMuT",
                             "hashed_password": "$2b$12$ofIPPqnjPf54SzEvctr3DOzNqyjZQqDaA3GraVDvBobo/UfjtGqQm",
                             "created_user": "SeMuT-CiLiK",
+                            "disabled": False,
                         }
                     )
                 )
                 db.add(Scope(**{"scope": "read", "desc": "", "created_user": "SeMuT-CiLiK"}))
                 db.add(Scope(**{"scope": "write", "desc": "", "created_user": "SeMuT-CiLiK"}))
                 db.add(Scope(**{"scope": "delete", "desc": "", "created_user": "SeMuT-CiLiK"}))
-                db.add(Privilege(**{"privilege": "system", "desc": "Privilage Khusus Administrator Core System", "created_user": "SeMuT-CiLiK"}))
-                db.add(Privilege(**{"privilege": "admin", "desc": "Privilage Khusus Administrator Applikasi", "created_user": "SeMuT-CiLiK"}))
                 db.add(Privilege(**{"privilege": "user", "desc": "Privilage Standart Users", "created_user": "SeMuT-CiLiK"}))
+                db.add(Privilege(**{"privilege": "admin", "desc": "Privilage Khusus Administrator Applikasi", "created_user": "SeMuT-CiLiK"}))
+                db.add(Privilege(**{"privilege": "system", "desc": "Privilage Khusus Administrator Core System", "created_user": "SeMuT-CiLiK"}))
                 db.add(UserPrivilege(**{"user_id": 1, "privilege_id": 1}))
                 db.add(UserPrivilege(**{"user_id": 1, "privilege_id": 2}))
                 db.add(UserPrivilege(**{"user_id": 1, "privilege_id": 3}))

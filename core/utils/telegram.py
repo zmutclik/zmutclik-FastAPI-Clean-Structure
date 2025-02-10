@@ -4,14 +4,14 @@ from core.app.message.service import MessageService
 
 list_message = {
     "register_alert": """<b>AKUN SUKSES TERDAFTAR</b>
-<code>app   : {}</code>
-<code>user  : {}</code>
-<code>email : {}</code>
+<code>app   : {app}</code>
+<code>user  : {user}</code>
+<code>email : {email}</code>
     """
 }
 
 
-async def telegram_bot_sendtext(message_key, data):
+async def telegram_bot_sendtext(message_key, data: dict):
     message = list_message[message_key].format(**data)
     token_telegram = config.REPOSITORY["TOKEN_TELEGRAM"]
     bot_token = token_telegram.datalink

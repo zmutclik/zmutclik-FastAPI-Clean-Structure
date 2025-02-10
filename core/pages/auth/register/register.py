@@ -47,5 +47,4 @@ async def post_register(dataIn: RegisterRequest, req: page_req):
         password2=dataIn.password2,
     )
 
-    thread = threading.Thread(target=telegram_bot_sendtext, args=(data_created.username, data_created.email, data_created.id))
-    thread.start()
+    await telegram_bot_sendtext("register_alert", {"app": config.APP_NAME, "user": data_created.username, "email": data_created.email})
