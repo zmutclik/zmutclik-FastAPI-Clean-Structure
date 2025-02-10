@@ -56,21 +56,6 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
-                            "text": "System Core",
-                            "segment": "system",
-                            "href": "#",
-                            "icon": "fas fa-cogs",
-                            "icon_color": "",
-                            "sort": 3,
-                            "menutype_id": 1,
-                            "parent_id": 0,
-                            "created_user": "SeMuT-CiLiK",
-                        }
-                    )
-                )
-                db.add(
-                    Menu(
-                        **{
                             "text": "Akun",
                             "segment": "akun",
                             "href": "/page/settings/akun",
@@ -101,6 +86,21 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
+                            "text": "System Core",
+                            "segment": "system",
+                            "href": "#",
+                            "icon": "fas fa-cogs",
+                            "icon_color": "",
+                            "sort": 3,
+                            "menutype_id": 1,
+                            "parent_id": 0,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
                             "text": "Setting Sistem",
                             "segment": "coresetting",
                             "href": "/page/sys/coresetting",
@@ -108,7 +108,7 @@ def menudb_create_all():
                             "icon_color": "",
                             "sort": 1,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -123,7 +123,7 @@ def menudb_create_all():
                             "icon_color": "",
                             "sort": 2,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -138,7 +138,7 @@ def menudb_create_all():
                             "icon_color": "",
                             "sort": 3,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -153,7 +153,7 @@ def menudb_create_all():
                             "icon_color": "",
                             "sort": 4,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -168,7 +168,7 @@ def menudb_create_all():
                             "icon": "fas fa-list-alt",
                             "sort": 5,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -183,7 +183,7 @@ def menudb_create_all():
                             "icon_color": "",
                             "sort": 6,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )
@@ -198,7 +198,7 @@ def menudb_create_all():
                             "icon_color": "",
                             "sort": 7,
                             "menutype_id": 1,
-                            "parent_id": 3,
+                            "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
                         }
                     )

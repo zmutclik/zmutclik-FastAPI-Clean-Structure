@@ -27,8 +27,11 @@ class PrivilegeQueryService:
         data_get = await self.privilege_repo.get_privilege(privilege)
         return data_get
 
-    async def get_privileges(self) -> list[PrivilegeSchema]:
-        return await self.privilege_repo.get_privileges()
+    async def get_privileges(self, is_privilege_sys: bool = False) -> list[PrivilegeSchema]:
+        if is_privilege_sys:
+            return await self.privilege_repo.get_privileges_sys()
+        else:
+            return await self.privilege_repo.get_privileges()
 
     async def get_privilege_menus(self, privilege_id: int) -> list[PrivilegeMenuSchema]:
         return await self.privilege_menu_repo.get_privilege_menus(privilege_id=privilege_id)
@@ -38,7 +41,7 @@ class PrivilegeQueryService:
         from core.utils.datatables import DataTable
         from core.db import session_auth
 
-        query = select(Privilege, Privilege.id.label("DT_RowId")).where(Privilege.deleted_at == None)
+        query = select(Privilege, Privilege.id.label("DT_RowId")).where(Privilege.deleted_at == None, Privilege.id != 3)
         datatable: DataTable = DataTable(
             request_params=params,
             table=query,

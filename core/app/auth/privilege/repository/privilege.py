@@ -23,6 +23,10 @@ class PrivilegeRepo:
         pass
 
     @abstractmethod
+    async def get_privileges_sys(self) -> list[Privilege]:
+        pass
+
+    @abstractmethod
     async def get_privileges(self) -> list[Privilege]:
         pass
 
@@ -47,8 +51,12 @@ class PrivilegeSQLRepo(PrivilegeRepo):
         result = await session.execute(select(Privilege).where(Privilege.privilege == privilege, Privilege.deleted_at == None))
         return result.scalars().first()
 
-    async def get_privileges(self) -> list[Privilege]:
+    async def get_privileges_sys(self) -> list[Privilege]:
         result = await session.execute(select(Privilege).where(Privilege.deleted_at == None).order_by(Privilege.privilege))
+        return result.scalars().all()
+
+    async def get_privileges(self) -> list[Privilege]:
+        result = await session.execute(select(Privilege).where(Privilege.deleted_at == None, Privilege.id != 3).order_by(Privilege.privilege))
         return result.scalars().all()
 
     async def save_privilege(self, privilege: Privilege) -> Privilege:

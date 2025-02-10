@@ -26,11 +26,14 @@ class UserQueryService:
             raise UserNotFoundException
         return data_get
 
-    async def get_user_privileges(self, user_id: str):
+    async def get_user_privileges(self, user_id: int):
         data_get = await self.user_privilege_repo.get_userprivileges(user_id)
         return data_get
 
-    async def get_user_scopes(self, user_id: str):
+    async def get_user_privilege(self, user_id: int, privilege_id: int):
+        return await self.user_privilege_repo.get_userprivilege_by(user_id, privilege_id)
+
+    async def get_user_scopes(self, user_id: int):
         data_get = await self.user_scope_repo.get_userscopes(user_id)
         return data_get
 

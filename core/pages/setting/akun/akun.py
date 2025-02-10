@@ -23,13 +23,19 @@ async def page_settings_akun(req: page_req):
 
 @router.get("/{PathCheck}/add", response_class=HTMLResponse, dependencies=page.depend_w())
 async def page_settings_akun_form_add(req: page_req):
-    page.addContext("data_privileges", await PrivilegeQueryService().get_privileges())
+    user__ = await UserQueryService().get_user_by(username=req.user.username)
+    userp_ = await UserQueryService().get_user_privilege(user__.id, 3)
+
+    page.addContext("data_privileges", await PrivilegeQueryService().get_privileges(userp_ is not None))
     page.addContext("data_scopes", await ScopeQueryService().get_scopes())
     return page.response(req, "/html/form.html")
 
 
 @router.get("/{PathCheck}/{user_id:int}", response_class=HTMLResponse, dependencies=page.depend_w())
 async def page_settings_akun_form_edit(user_id: int, req: page_req):
+    user__ = await UserQueryService().get_user_by(username=req.user.username)
+    userp_ = await UserQueryService().get_user_privilege(user__.id, 3)
+
     data_user_privileges = []
     for item in await UserQueryService().get_user_privileges(user_id):
         data_user_privileges.append(item.privilege_id)
@@ -37,7 +43,7 @@ async def page_settings_akun_form_edit(user_id: int, req: page_req):
     for item in await UserQueryService().get_user_scopes(user_id):
         data_user_scopes.append(item.scope_id)
 
-    page.addContext("data_privileges", await PrivilegeQueryService().get_privileges())
+    page.addContext("data_privileges", await PrivilegeQueryService().get_privileges(userp_ is not None))
     page.addContext("data_user_privileges", data_user_privileges)
     page.addContext("data_scopes", await ScopeQueryService().get_scopes())
     page.addContext("data_user_scopes", data_user_scopes)

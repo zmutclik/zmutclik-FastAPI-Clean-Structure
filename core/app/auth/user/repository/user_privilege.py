@@ -48,10 +48,8 @@ class UserPrivilegeSQLRepo(UserPrivilegeRepo):
     async def get_userprivilege_by(self, user_id: int, privilege_id: int) -> Optional[UserPrivilege]:
         result = await session.execute(
             select(UserPrivilege).where(
-                or_(
-                    UserPrivilege.user_id == user_id,
-                    UserPrivilege.privilege_id == privilege_id,
-                )
+                UserPrivilege.user_id == user_id,
+                UserPrivilege.privilege_id == privilege_id,
             )
         )
         return result.scalars().first()

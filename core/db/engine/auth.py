@@ -9,7 +9,7 @@ def authdb_create_all():
         from core.config import dbauth_engine
         from ..base import BaseAuth as Base
         from core.app.auth.user.domain import User, UserPrivilege, UserScope
-        from core.app.auth.privilege.domain import Privilege
+        from core.app.auth.privilege.domain import Privilege, PrivilegeMenus
         from core.app.auth.scope.domain import Scope
 
         Base.metadata.create_all(bind=dbauth_engine)
@@ -40,4 +40,11 @@ def authdb_create_all():
                 db.add(UserScope(**{"user_id": 1, "scope_id": 1}))
                 db.add(UserScope(**{"user_id": 1, "scope_id": 2}))
                 db.add(UserScope(**{"user_id": 1, "scope_id": 3}))
+                db.add(PrivilegeMenus(**{"privilege_id": 1, "menutype_id": 1, "menu_id": 1}))
+                db.add(PrivilegeMenus(**{"privilege_id": 2, "menutype_id": 1, "menu_id": 1}))
+                db.add(PrivilegeMenus(**{"privilege_id": 2, "menutype_id": 1, "menu_id": 2}))
+                db.add(PrivilegeMenus(**{"privilege_id": 2, "menutype_id": 1, "menu_id": 3}))
+                db.add(PrivilegeMenus(**{"privilege_id": 2, "menutype_id": 1, "menu_id": 4}))
+                db.add(PrivilegeMenus(**{"privilege_id": 2, "menutype_id": 1, "menu_id": 13}))
+                db.add(PrivilegeMenus(**{"privilege_id": 2, "menutype_id": 1, "menu_id": 14}))
                 db.commit()

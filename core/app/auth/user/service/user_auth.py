@@ -92,7 +92,7 @@ class UserAuthService:
         is_privilege_system = False
         for item in list_privilege:
             PrivilegeMenus = await self.privilege_menu_repo.get_privilege_menus(item.privilege_id)
-            if item.privilege_id == 1:
+            if item.privilege_id == 3:
                 is_privilege_system = True
             if PrivilegeMenus:
                 for item in PrivilegeMenus:
