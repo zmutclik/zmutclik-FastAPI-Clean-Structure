@@ -3,7 +3,7 @@ from fastapi import HTTPException
 
 
 class RequiresLoginException(Exception):
-    def __init__(self, nextRouter: str = "/auth/login"):
+    def __init__(self, nextRouter: str = "/auth/loggedin"):
         self.nextRouter = nextRouter
 
 

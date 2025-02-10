@@ -6,6 +6,7 @@ from .repository import repository_router
 from .logs import logs_router
 from .coresetting import coresystem_router
 from .session import session_router
+from .message import message_router
 from core import config
 
 #######################################################################################################################
@@ -25,6 +26,7 @@ pages_sys.include_router(repository_router)
 pages_sys.include_router(logs_router)
 pages_sys.include_router(coresystem_router)
 pages_sys.include_router(session_router)
+pages_sys.include_router(message_router)
 
 
 #######################################################################################################################

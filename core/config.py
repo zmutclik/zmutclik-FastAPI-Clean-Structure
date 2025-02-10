@@ -1,4 +1,5 @@
 import os
+from typing import Optional, Dict
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, Table, MetaData, select
@@ -18,6 +19,12 @@ dbmenu_engine = create_engine(DBMENU_ENGINE.replace("+aiosqlite", ""))
 DBSECURITY_FILE = ".db/system/security.db"
 DBSECURITY_ENGINE = "sqlite+aiosqlite:///" + DBSECURITY_FILE
 dbsecurity_engine = create_engine(DBSECURITY_ENGINE.replace("+aiosqlite", ""))
+
+
+class RepositoryModel(BaseModel):
+    datalink: str
+    name: Optional[str] = None
+    user: Optional[str] = None
 
 
 #######################################################################################################################
@@ -79,7 +86,11 @@ if os.path.exists(DBCORE_FILE):
                     .order_by(repo_table.c.id.desc())
                 )
                 for item in db.execute(stmt).fetchall():
-                    repository[item.allocation] = item.datalink.format(user=item.user or "", password=item.password or "")
+                    repository[item.allocation] = RepositoryModel(
+                        datalink=item.datalink.format(user=item.user or "", password=item.password or ""),
+                        user=item.user,
+                        name=item.name,
+                    )
 
                 stmt = select(vers_table).order_by(vers_table.c.id.desc()).limit(1)
                 item = db.execute(stmt).fetchone()
@@ -119,7 +130,7 @@ class Config(BaseModel):
     DEBUG: bool = configdefault["debug"]
     APP_HOST: str = configdefault["app_host"]
     APP_PORT: int = configdefault["app_port"]
-    REPOSITORY: dict = repository
+    REPOSITORY: Dict[str, RepositoryModel] = repository
     ALLOW_ORIGINS: list[str] = allow_origins
 
 

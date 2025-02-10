@@ -16,6 +16,10 @@ class ClientUserRepo:
         result = await db.execute(select(ClientUser).where(ClientUser.client_id == client_id, ClientUser.user == user))
         return result.scalars().first()
 
+    async def get_clientusers(self, db: AsyncSession, client_id: int) -> Optional[ClientUser]:
+        result = await db.execute(select(ClientUser).where(ClientUser.client_id == client_id).order_by(ClientUser.user))
+        return result.scalars().all()
+
     async def save_clientuser(self, db: AsyncSession, clientuser: ClientUser) -> ClientUser:
         try:
             db.add(clientuser)

@@ -80,7 +80,7 @@ $(document).ready(function () {
                             showConfirmButton: false,
                             timer: 2000
                         }).then(() => {
-                            window.location.href = '/auth/login';
+                            window.location.href = '/auth/loggedin';
                         });
                     })
                     .catch(function (error) {

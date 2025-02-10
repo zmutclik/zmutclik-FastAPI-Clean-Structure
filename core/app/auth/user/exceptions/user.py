@@ -2,11 +2,11 @@ from core.exceptions import DuplicateValueException, NotFoundException, BadReque
  
  
 class UserDuplicateValueException(DuplicateValueException): 
-    message = "duplicate scope name" 
+    message = "duplicate akun name" 
  
  
 class UserNotFoundException(NotFoundException): 
-    message = "scope not found" 
+    message = "akun not found" 
     
 class PasswordNotMatchException(BadRequestException): 
     message = "password does not match" 

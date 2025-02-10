@@ -9,6 +9,7 @@ if os.path.exists(DBCORE_FILE):
         from .session_menu import session_menu
         from .session_logs import session_logs
         from .session_security import session_security
+        from .session_message import session_message
         from .session_ import session
 
         __all__ = [
@@ -18,4 +19,5 @@ if os.path.exists(DBCORE_FILE):
             "session_logs",
             "session_menu",
             "session_security",
+            "session_message",
         ]

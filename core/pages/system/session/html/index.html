@@ -44,6 +44,7 @@
                                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                     <button class="nav-link active" id="nav-sesi-tab" data-bs-toggle="tab" data-bs-target="#nav-sesi" type="button" role="tab" aria-controls="nav-sesi" aria-selected="true">Sessions</button>
                                     <button class="nav-link" id="nav-client-tab" data-bs-toggle="tab" data-bs-target="#nav-client" type="button" role="tab" aria-controls="nav-client" aria-selected="false">Clients</button>
+                                    <button class="nav-link" id="nav-otp-tab" data-bs-toggle="tab" data-bs-target="#nav-otp" type="button" role="tab" aria-controls="nav-otp" aria-selected="false">Otp</button>
                                 </div>
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
@@ -53,6 +54,10 @@
                                 </div>
                                 <div class="tab-pane fade" id="nav-client" role="tabpanel" aria-labelledby="nav-client-tab" tabindex="0">
                                     <table id="table_client" class="table table-bordered table-striped">
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="nav-otp" role="tabpanel" aria-labelledby="nav-otp-tab" tabindex="0">
+                                    <table id="table_otp" class="table table-bordered table-striped">
                                     </table>
                                 </div>
                             </div>
@@ -83,5 +88,6 @@
 <script>const api = axios.create({ baseURL: '{{prefix_url_post}}', timeout: 2000, withCredentials: true });</script>
 <script src="{{prefix_url_js}}/session.js"></script>
 <script src="{{prefix_url_js}}/client.js"></script>
+<script src="{{prefix_url_js}}/otp.js"></script>
 
 {% endblock javascripts %}

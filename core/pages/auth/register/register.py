@@ -10,6 +10,7 @@ from core.pages.auth.register.request import RegisterRequest
 from fastapi.exceptions import RequestValidationError
 from core import config
 from core.pages.response import PageResponse
+from core.utils import telegram_bot_sendtext
 
 router = APIRouter(prefix="/register")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
@@ -48,21 +49,3 @@ async def post_register(dataIn: RegisterRequest, req: page_req):
 
     thread = threading.Thread(target=telegram_bot_sendtext, args=(data_created.username, data_created.email, data_created.id))
     thread.start()
-
-
-def telegram_bot_sendtext(username, email, id):
-    message = """<b>AKUN SUKSES TERDAFTAR</b>
-<code>app   : {}</code>
-<code>user  : {}</code>
-<code>email : {}</code>
-    """
-    message = message.format(config.APP_NAME, username, email, id)
-    bot_token = config.REPOSITORY["TOKEN_TELEGRAM"]
-    bot_chatID = "28186920"
-    url_param_1 = "sendMessage"
-    url_param_2 = ""
-    url_param_3 = ""
-    send_url = "https://api.telegram.org/bot{}/{}?chat_id={}&parse_mode=html{}&text={}{}"
-    send_text = send_url.format(bot_token, url_param_1, bot_chatID, url_param_2, message, url_param_3)
-    response = requests.get(send_text)
-    return response.json()

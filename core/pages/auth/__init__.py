@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 
 from .login import login_router
+from .loggedin import loggedin_router
 from .logout import logout_router
 from .timeout import timeout_router
 from .register import register_router
@@ -21,6 +22,7 @@ pages_auth = FastAPI(
 
 ### Sub FastAPI ###
 pages_auth.include_router(login_router)
+pages_auth.include_router(loggedin_router)
 pages_auth.include_router(logout_router)
 pages_auth.include_router(timeout_router)
 pages_auth.include_router(register_router)

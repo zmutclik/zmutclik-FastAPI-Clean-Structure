@@ -1,4 +1,5 @@
-import os
+from datetime import datetime
+import random
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text
 from sqlalchemy.orm import column_property, relationship, deferred, Session
@@ -19,6 +20,7 @@ class Client(Base):
     disabled = Column(Boolean, default=False)
 
     USERS = relationship("ClientUser", back_populates="CLIENT")
+    OTP = relationship("ClientUserOtp", back_populates="CLIENT")
 
     @classmethod
     def create(cls, client_id: str, platform: str, browser: str) -> "Client":
@@ -46,4 +48,40 @@ class ClientUser(Base):
         return cls(
             client_id=client_id,
             user=user,
+        )
+
+
+def generate_adjacent_same_digits():
+    repeated_digit = str(random.randint(0, 9))
+    other_digits = random.sample([str(i) for i in range(10) if str(i) != repeated_digit], 2)
+    positions = [0, 1, 2]
+    pos = random.choice(positions)
+    digits = other_digits[:pos] + [repeated_digit, repeated_digit] + other_digits[pos:]
+    data = int("".join(digits))
+    if len(str(data)) != 4:
+        return generate_adjacent_same_digits()
+    return data
+
+
+class ClientUserOtp(Base):
+    __tablename__ = "client_user_otp"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    client_id = Column(Integer, ForeignKey("client.id"))
+    user = Column(String(128), nullable=False, index=True)
+    otp = Column(Integer, nullable=False)
+    loggedin = Column(DateTime, nullable=True)
+    session_start = Column(DateTime, default=func.now())
+    session_end = Column(DateTime)
+    active = Column(Boolean, default=True)
+
+    CLIENT = relationship("Client", back_populates="OTP")
+
+    @classmethod
+    def create(cls, client_id: int, user: str, session_end: datetime) -> "ClientUserOtp":
+        return cls(
+            client_id=client_id,
+            user=user,
+            session_end=session_end,
+            otp=generate_adjacent_same_digits(),
         )

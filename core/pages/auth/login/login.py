@@ -1,14 +1,15 @@
 import os
 from time import sleep
 from typing import Annotated, Any
-from fastapi import APIRouter,  Response, Depends
+from fastapi import APIRouter, Response, Depends
 from fastapi.responses import HTMLResponse
 from core import config_auth
 from core.fastapi.helper import get_ipaddress, set_refresh_cookies, set_token_cookies
 from core.pages.response import PageResponse
 from core.app.auth.user.service import UserQueryService, UserAuthService
 from core.app.auth.user.exceptions import UserNotFoundException
-from core.app.security.client.service import ClientService
+from core.app.security.client.service import ClientService, ClientUserService
+from core.app.security.client.exceptions import ClientNotFoundException
 from fastapi.exceptions import RequestValidationError
 from core.pages.auth.login.request import LoginRequest
 
@@ -48,7 +49,7 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
     #### Cek Client ID
     data_client = await ClientService().get_client_id(req.user.client_id)
     if data_client is None:
-        raise UserNotFoundException
+        raise ClientNotFoundException
     if data_client.disabled:
         errors = [
             {"loc": ["body", "email"], "msg": f'client "{data_client.client_id}" di disable', "type": ""},
@@ -72,12 +73,11 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
 
     access_token, data_session = await UserAuthService().token_create(data_user, data_client.client_id, ipaddress)
     refresh_token = await UserAuthService().refresh_create(data_user, data_client.client_id, data_session.session_id)
-    
 
     res = set_token_cookies(res, access_token)
     res = set_refresh_cookies(res, refresh_token)
 
-    await ClientService().add_user(data_client.id, data_user.username)
+    await ClientUserService().add_clientuser(data_client.id, data_user.username)
     await UserAuthService().generate_cache_user(data_user)
     await UserAuthService().generate_cache_menu(data_user)
     sleep(1)

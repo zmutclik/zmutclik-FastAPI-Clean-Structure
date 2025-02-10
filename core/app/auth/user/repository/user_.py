@@ -20,7 +20,7 @@ class UserRepo:
         pass
 
     @abstractmethod
-    async def get_user_by(self, username: Union[str, None], email: Union[str, None], nohp: Union[str, None]) -> Optional[User]:
+    async def get_user_by(self, username: Union[str, None] = None, email: Union[str, None] = None, nohp: Union[str, None] = None) -> Optional[User]:
         pass
 
     @abstractmethod

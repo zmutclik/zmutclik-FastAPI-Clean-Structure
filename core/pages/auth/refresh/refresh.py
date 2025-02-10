@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Response, Depends, Request
 from core.fastapi.helper import set_token_cookies, decode_refresh
 from core.pages.response import PageResponse
-from core.app.security.client.service import ClientService
+from core.app.security.client.service import ClientService, ClientUserService
 from core.app.security.session.service import SessionService
 import jwt
 from core.fastapi.helper import get_ipaddress
@@ -28,14 +28,12 @@ async def page_auth_refresh(backRouter: str, response: Response, request: page_r
 
     ipaddress, ipproxy = get_ipaddress(request)
 
-    data_client = await ClientService().update_clientuser(
-        client_id=data_client.id,
-        user=refresh_token.username,
-        LastPage=backRouter,
-        Lastipaddress=ipaddress,
-    )
-    if data_client is None:
+    data_clientuser = await ClientUserService().get_clientuser(data_client.id, refresh_token.username)
+
+    if data_clientuser is None:
         return await page_auth_logout(response, request)
+
+    await ClientUserService().update_clientuser(client_id=data_client.id, user=refresh_token.username, LastPage=backRouter, Lastipaddress=ipaddress)
 
     data_session = await SessionService().update_session(refresh_token.session_id, LastPage=backRouter, Lastipaddress=ipaddress)
     if data_session is None:

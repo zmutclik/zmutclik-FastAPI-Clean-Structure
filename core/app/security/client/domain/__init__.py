@@ -1,3 +1,3 @@
-from .client import Client, ClientUser
+from .client import Client, ClientUser, ClientUserOtp
 
-__all__ = ["Client", "ClientUser"]
+__all__ = ["Client", "ClientUser", "ClientUserOtp"]
