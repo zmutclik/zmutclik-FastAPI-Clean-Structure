@@ -39,6 +39,7 @@ class ClientUserOTPRepo:
                     setattr(clientuserotp, key, value)
             await db.commit()
             await db.refresh(clientuserotp)
+            return clientuserotp
         except SQLAlchemyError as e:
             await db.rollback()
             raise DatabaseUpdatingException(f"Error updating clientuserotp: {str(e)}")

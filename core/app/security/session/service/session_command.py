@@ -39,10 +39,16 @@ class SessionService:
             async with AsyncSession(bind=connection) as db:
                 return await SessionRepo().get_session_id(db, session_id)
 
+    async def deavtive_session(self, client_id: str):
+        async with async_engine.begin() as connection:
+            async with AsyncSession(bind=connection) as db:
+                data_get = await SessionRepo().get_sessions(db, client_id)
+                for data in data_get:
+                    await self.update_session(session_id=data.session_id, active=False)
+
     async def update_session(
         self,
         session_id: str,
-        LastPage: str = None,
         Lastipaddress: str = None,
         active: bool = None,
     ) -> Session:
@@ -52,13 +58,11 @@ class SessionService:
                 if data_get is None:
                     return False
                 updates = {"session_update": datetime.now(timezone.utc)}
-                if LastPage is not None:
-                    updates["LastPage"] = LastPage
                 if Lastipaddress is not None:
                     updates["Lastipaddress"] = Lastipaddress
                 if active is not None:
                     updates["active"] = active
-                    
+
                 return await SessionRepo().update_session(db, data_get, **updates)
 
     async def datatable_session(self, params: dict[str, Any]):
@@ -90,7 +94,6 @@ class SessionService:
                         "session_update",
                         "session_end",
                         "Lastipaddress",
-                        "LastPage",
                         "now",
                         "active",
                         "active_status",

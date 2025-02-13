@@ -25,29 +25,28 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def page_auth_loggedin(response: Response, request: page_req, next: str = None):
+async def page_auth_loggedin(response: Response, request: page_req, redirect_uri: str = None):
     data_clientusers = await ClientUserService().get_clientusers(request.user.client_id)
     if data_clientusers is None:
-        return await page_auth_logout(response, request)
+        return await page_auth_logout(response, request, "/auth/login")
     data_users = []
     for data in data_clientusers:
         data_user = await UserQueryService().get_user_by(username=data.user)
         if data_user is not None:
             data_users.append(data_user)
-
     if data_users == []:
-        return await page_auth_logout(response, request)
+        return await page_auth_logout(response, request, "/auth/login")
 
-    page.addContext("nextpage", next)
+    page.addContext("redirect_uri", redirect_uri)
     page.addContext("data_users", data_users)
     return page.response(request, "/html/index.html")
 
 
 @router.get("/{PathCheck}.js")
-async def page_auth_loggedin_js(next: str, req: page_req):
-    if next is None or next == "None":
-        next = "/page/dashboard"
-    page.addContext("nextpage", next)
+async def page_auth_loggedin_js(redirect_uri: str, req: page_req):
+    if redirect_uri is None or redirect_uri == "None":
+        redirect_uri = "/page/dashboard"
+    page.addContext("redirect_uri", redirect_uri)
     return page.response(req, "/html/index.js")
 
 
@@ -87,7 +86,7 @@ async def page_auth_loggedin_login(dataIn: OtpLoginRequest, req: page_req, res: 
         ### Create Session
         ipaddress, ipproxy = get_ipaddress(req)
 
-        access_token, data_session = await UserAuthService().token_create(data_user, data_client.client_id, ipaddress)
+        access_token, data_session = await UserAuthService().token_create(config_auth.JWT_SECRET_KEY, data_user, data_client.client_id, ipaddress)
         refresh_token = await UserAuthService().refresh_create(data_user, data_client.client_id, data_session.session_id)
 
         res = set_token_cookies(res, access_token)

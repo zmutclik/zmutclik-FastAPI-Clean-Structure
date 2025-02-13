@@ -7,6 +7,7 @@ from .logs import logs_router
 from .coresetting import coresystem_router
 from .session import session_router
 from .message import message_router
+from .clientsso import clientsso_router
 from core import config
 
 #######################################################################################################################
@@ -27,6 +28,7 @@ pages_sys.include_router(logs_router)
 pages_sys.include_router(coresystem_router)
 pages_sys.include_router(session_router)
 pages_sys.include_router(message_router)
+pages_sys.include_router(clientsso_router)
 
 
 #######################################################################################################################
@@ -40,7 +42,7 @@ from fastapi.exceptions import RequestValidationError
 
 @pages_sys.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
-    return RedirectResponse(_.nextRouter)
+    return RedirectResponse(_.redirect_uri)
 
 
 @pages_sys.exception_handler(CustomException)

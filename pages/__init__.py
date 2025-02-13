@@ -34,7 +34,7 @@ from fastapi.exceptions import RequestValidationError
 
 @pages_app.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
-    return RedirectResponse(_.nextRouter)
+    return RedirectResponse(_.redirect_uri)
 
 
 @pages_app.exception_handler(CustomException)

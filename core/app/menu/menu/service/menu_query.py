@@ -31,33 +31,7 @@ class MenuQueryService:
             raise MenuNotFoundException
         return data_get
 
-    # async def datatable_menu(self, menutype_id: int, params: dict[str, Any]):
-    #     query = (
-    #         select(Menu, Menu.id.label("DT_RowId"))
-    #         .where(
-    #             Menu.menutype_id == menutype_id,
-    #             Menu.deleted_at == None,
-    #         )
-    #         .order_by(Menu.sort)
-    #     )
-    #     datatable: DataTable = DataTable(
-    #         request_params=params,
-    #         table=query,
-    #         column_names=[
-    #             "DT_RowId",
-    #             "id",
-    #             "text",
-    #             "segment",
-    #             "href",
-    #             "icon",
-    #             "disabled",
-    #         ],
-    #         engine=async_engine,
-    #         # callbacks=callbacks,
-    #     )
-    #     return datatable.output_result()
-
-    async def generate_menus(self, menutype_id: int, parent_id: int = 0, filter_menu: list[int] = [])->MenuViewSchema:
+    async def generate_menus(self, menutype_id: int, parent_id: int = 0, filter_menu: list[int] = []) -> MenuViewSchema:
         menus_result = []
         data_get = await self.menu_repo.get_menus_by(menutype_id, parent_id)
         for item in data_get:

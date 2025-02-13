@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import random
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Time, TIMESTAMP, DateTime, func, case, Float, text
@@ -48,6 +48,24 @@ class ClientUser(Base):
         return cls(
             client_id=client_id,
             user=user,
+        )
+
+
+class ClientUserResetCode(Base):
+    __tablename__ = "client_user_reset_code"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user = Column(String(128), nullable=False, index=True)
+    code = Column(String(64))
+    session_end = Column(DateTime)
+
+    @classmethod
+    def create(cls, user: str, code: str) -> "ClientUserResetCode":
+        session_end = datetime.now(timezone.utc) + timedelta(minutes=15)
+        return cls(
+            user=user,
+            code=code,
+            session_end=session_end,
         )
 
 

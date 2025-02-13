@@ -1,5 +1,6 @@
 import os
 from time import sleep
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any
 from fastapi import APIRouter, Response, Depends
 from fastapi.responses import HTMLResponse
@@ -10,8 +11,12 @@ from core.app.auth.user.service import UserQueryService, UserAuthService
 from core.app.auth.user.exceptions import UserNotFoundException
 from core.app.security.client.service import ClientService, ClientUserService
 from core.app.security.client.exceptions import ClientNotFoundException
+from core.app.security.clientsso.service import ClientSSOService
+from core.app.security.clientsso.exceptions import ClientSSONotFoundException
+from core.app.security.session.service import SessionService
 from fastapi.exceptions import RequestValidationError
 from core.pages.auth.login.request import LoginRequest
+from ..logout.logout import page_auth_logout
 
 router = APIRouter(prefix="/login")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
@@ -20,19 +25,29 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def page_auth_login(
-    req: page_req,
-    next: str = None,
-):
-    page.addContext("nextpage", next)
+async def page_auth_login(req: page_req, res: Response, redirect_uri: str = None, client_id: str = None):
+    if client_id is not None:
+        data_clientsso = await ClientSSOService().get_clientsso(client_id)
+        if data_clientsso is None or redirect_uri is None:
+            return await page_auth_logout(res, req)
+        if data_clientsso.callback_uri != redirect_uri:
+            return await page_auth_logout(res, req)
+    else:
+        client_id = "-"
+
+    if redirect_uri is None or redirect_uri == "None":
+        redirect_uri = "/page/dashboard"
+
+    page.addContext("redirect_uri", redirect_uri)
+    page.addContext("clientsso_id", client_id)
     return page.response(req, "/html/login.html")
 
 
 @router.get("/{PathCheck}.js")
-async def page_auth_login_js(next: str, req: page_req):
-    if next is None or next == "None":
-        next = "/page/dashboard"
-    page.addContext("nextpage", next)
+async def page_auth_login_js(req: page_req, client_id: str = None):
+    if client_id is None or client_id == "None":
+        client_id = "-"
+    page.addContext("clientsso_id", client_id)
     return page.response(req, "/html/login.js")
 
 
@@ -68,16 +83,37 @@ async def page_auth_login_sign(dataIn: LoginRequest, req: page_req, res: Respons
     if not verify_password:
         raise RequestValidationError([{"loc": ["body", "password"], "msg": f"password tidak sama", "type": ""}])
 
-    ### Create Session
-    ipaddress, ipproxy = get_ipaddress(req)
+    if dataIn.client_id is not None:
+        data_clientsso = await ClientSSOService().get_clientsso(dataIn.client_id)
+        if data_clientsso is None:
+            raise ClientSSONotFoundException
+        redirect_uri = data_clientsso.callback_uri
+        clientsso_id = data_clientsso.clientsso_id
+    else:
+        clientsso_id = config_auth.SSO_CLIENT_ID
+        redirect_uri = "/auth/callback"
 
-    access_token, data_session = await UserAuthService().token_create(data_user, data_client.client_id, ipaddress)
-    refresh_token = await UserAuthService().refresh_create(data_user, data_client.client_id, data_session.session_id)
-
-    res = set_token_cookies(res, access_token)
-    res = set_refresh_cookies(res, refresh_token)
-
-    await ClientUserService().add_clientuser(data_client.id, data_user.username)
-    await UserAuthService().generate_cache_user(data_user)
-    await UserAuthService().generate_cache_menu(data_user)
+    data_clientsso_code = await ClientSSOService().create_clientsso_code(clientsso_id, data_user.id, req.user.client_id)
     sleep(1)
+    return {"redirect_uri": f"{redirect_uri}?code={data_clientsso_code.code}"}  # Redirect to callback
+
+    # else:
+    #     ### Create Session
+    #     ipaddress, ipproxy = get_ipaddress(req)
+    #     session_end = datetime.now(timezone.utc) + timedelta(minutes=config_auth.REFRESH_EXPIRED)
+    #     data_session = await SessionService().create_session(
+    #         client_id=data_client.client_id,
+    #         user=data_user.username,
+    #         session_end=session_end,
+    #         ipaddress=ipaddress,
+    #     )
+    #     access_token = await UserAuthService().token_create(config_auth.JWT_SECRET_KEY, data_user, data_client.client_id, ipaddress)
+    #     refresh_token = await UserAuthService().refresh_create(data_user, data_client.client_id, data_session.session_id)
+
+    #     res = set_token_cookies(res, access_token)
+    #     res = set_refresh_cookies(res, refresh_token)
+
+    #     await ClientUserService().add_clientuser(data_client.id, data_user.username)
+    #     await UserAuthService().generate_cache_user(data_user)
+    #     await UserAuthService().generate_cache_menu(data_user)
+    #     sleep(1)

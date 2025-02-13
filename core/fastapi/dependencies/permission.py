@@ -31,8 +31,8 @@ class RoleDependency(SecurityBase):
 
     async def __call__(self, request: Request):
         try:
-            if request.scope["path"] == self.exception.nextRouter:
-                self.exception.nextRouter = "/page/dashboard"
+            if request.scope["path"] == self.exception.redirect_uri:
+                self.exception.redirect_uri = "/page/dashboard"
         except:
             pass
         if not all(roles in request.user.roles for roles in self.required_roles):
@@ -48,8 +48,8 @@ class ScopeDependency(SecurityBase):
 
     async def __call__(self, request: Request):
         try:
-            if request.scope["path"] == self.exception.nextRouter:
-                self.exception.nextRouter = "/page/dashboard"
+            if request.scope["path"] == self.exception.redirect_uri:
+                self.exception.redirect_uri = "/page/dashboard"
         except:
             pass
         if not all(scopes in request.user.scopes for scopes in self.required_scopes):

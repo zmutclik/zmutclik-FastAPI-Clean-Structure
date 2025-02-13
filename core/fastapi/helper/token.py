@@ -9,25 +9,25 @@ from jwt import ExpiredSignatureError
 from core.app.auth.user.schema import RefreshTokenSchema
 
 
-def token_jwt(data: dict, expires_delta: Union[timedelta, None] = None):
+def token_jwt(jwt_secret: str, data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta is not None:
         expire = datetime.now(timezone.utc) + expires_delta
         to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,
-        config_auth.JWT_SECRET_KEY,
+        jwt_secret,
         algorithm=config_auth.JWT_ALGORITHM,
     )
     return encoded_jwt
 
 
-def decode_refresh(request: Request) -> RefreshTokenSchema:
-    refresh_token = request.cookies.get(config_auth.REFRESH_KEY)
+def decode_refresh(jwt_secret: str, credentials: str) -> RefreshTokenSchema:
+    # refresh_token = request.cookies.get(config_auth.REFRESH_KEY)
     try:
         payload = jwt.decode(
-            refresh_token,
-            config_auth.JWT_SECRET_KEY,
+            credentials,
+            jwt_secret,
             algorithms=[config_auth.JWT_ALGORITHM],
             options={"verify_exp": True},
         )

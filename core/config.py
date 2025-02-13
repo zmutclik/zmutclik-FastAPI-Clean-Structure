@@ -60,9 +60,14 @@ configdefault = {
     "app_desc": "This is a very fancy project, with auto docs for the API and everything.",
     "app_host": "127.0.0.1",
     "app_port": 8016,
+    "host_url": "http://172.0.0.1:8016",
     "debug": True,
 }
 authconfigdefault = {
+    "sso_environment": "self",
+    "sso_login_url": "http://",
+    "sso_token_url": "http://",
+    "sso_client_id": "",
     "jwt_scret_key": "fastapi",
     "jwt_algorithm": "HS512",
     "cookies_prefix": "fastapi-clean-structure_",
@@ -110,6 +115,10 @@ if os.path.exists(DBCORE_FILE):
 
 
 class ConfigAuth(BaseModel):
+    SSO_ENV: str = authconfigdefault["sso_environment"]
+    SSO_LOGIN_URL: str = authconfigdefault["sso_login_url"]
+    SSO_TOKEN_URL: str = authconfigdefault["sso_token_url"]
+    SSO_CLIENT_ID: str = authconfigdefault["sso_client_id"]
     JWT_SECRET_KEY: str = authconfigdefault["jwt_scret_key"]
     JWT_ALGORITHM: str = authconfigdefault["jwt_algorithm"]
     COOKIES_PREFIX: str = authconfigdefault["cookies_prefix"]
@@ -130,6 +139,7 @@ class Config(BaseModel):
     DEBUG: bool = configdefault["debug"]
     APP_HOST: str = configdefault["app_host"]
     APP_PORT: int = configdefault["app_port"]
+    HOST_URL: int = configdefault["host_url"]
     REPOSITORY: Dict[str, RepositoryModel] = repository
     ALLOW_ORIGINS: list[str] = allow_origins
 

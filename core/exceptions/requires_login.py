@@ -3,14 +3,14 @@ from fastapi import HTTPException
 
 
 class RequiresLoginException(Exception):
-    def __init__(self, nextRouter: str = "/auth/loggedin"):
-        self.nextRouter = nextRouter
+    def __init__(self, redirect_uri: str = "/auth/loggedin"):
+        self.redirect_uri = redirect_uri
 
 
 class TokenExpiredException(HTTPException):
-    def __init__(self, back_router: str = ""):
-        self.backRouter = back_router
+    def __init__(self, redirect_uri: str = ""):
+        self.redirect_uri = redirect_uri
         super().__init__(status_code=401, detail="Token expired. Redirecting to refresh.")
 
     def get_redirect_response(self):
-        return RedirectResponse(url="/auth/refresh?backRouter=" + self.backRouter)
+        return RedirectResponse(url="/auth/refresh?redirect_uri=" + self.redirect_uri)

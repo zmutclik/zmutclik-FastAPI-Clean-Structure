@@ -1,0 +1,106 @@
+{% extends "core/html/layouts/base.html" %}
+
+{% block title %} Form Scope System {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% include 'core/html/includes/form/stylesheets.html' %}
+{% include 'core/html/includes/core/stylesheets.html' %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="float-start mr-2">FORM Client SSO</h1>
+                    <h3 class="card-title mt-2"></h3>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-end"><button type="button" class="btn btn-block btn-secondary btn-sm btnBack">KEMBALI</button></div>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <form id="form_">
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Client ID</label>
+                                    <input type="text" class="form-control" placeholder="ClientID" id="clientsso_id" {% if data_clientsso %} value="{{data_clientsso.clientsso_id}}" {% endif %} readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Nama</label>
+                                    <input type="text" class="form-control" name="nama" placeholder="Nama" {% if data_clientsso %} value="{{data_clientsso.nama}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="full_name" class="form-label">Secrect</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Secret Key" {% if data_clientsso %} value="{{data_clientsso.clientsso_secret}}" {% endif %} readonly>
+                                        <button class="btn btn-outline-secondary" type="button" id="btn-reset">RESET</button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">IP Address</label>
+                                    <input type="text" class="form-control" name="ipaddress" placeholder="Ip Adress" {% if data_clientsso %} value="{{data_clientsso.ipaddress}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">CallBack URL</label>
+                                    <input type="text" class="form-control" name="callback_uri" placeholder="https://client.id/calback" {% if data_clientsso %} value="{{data_clientsso.callback_uri}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Status</label>
+                                    <select class="form-select" aria-label="Default select" name="disabled">
+                                        <option value="1" {% if data_clientsso %}{% if data_clientsso.disabled %} selected {% endif %}{% endif %}>Tidak Aktif</option>
+                                        <option value="0" {% if data_clientsso %}{% if not data_clientsso.disabled %} selected {% endif %}{% endif %}>Aktif</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 mt-5 float-end">
+                                    <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                </div>
+
+                            </form>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% include 'core/html/includes/core/javascripts.html' %}
+{% include 'core/html/includes/form/javascripts.html' %}
+<!-- ------------------- -->
+<script>const api = axios.create({ baseURL: '{{prefix_url_post}}{% if data_clientsso %}/{{data_clientsso.clientsso_id}}{% endif %}', timeout: 2000, withCredentials: true });</script>
+<script src="{{prefix_url_js}}/form.js"></script>
+
+{% endblock javascripts %}

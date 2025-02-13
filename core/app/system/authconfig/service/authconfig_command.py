@@ -32,6 +32,14 @@ class AuthConfigService:
             updates["refresh_exp"] = dataIn.refresh_exp
         if data_get.timeout_exp != dataIn.timeout_exp:
             updates["timeout_exp"] = dataIn.timeout_exp
+        if data_get.sso_environment != dataIn.sso_environment:
+            updates["sso_environment"] = dataIn.sso_environment
+        if data_get.sso_login_url != dataIn.sso_login_url:
+            updates["sso_login_url"] = dataIn.sso_login_url
+        if data_get.sso_token_url != dataIn.sso_token_url:
+            updates["sso_token_url"] = dataIn.sso_token_url
+        if data_get.sso_client_id != dataIn.sso_client_id:
+            updates["sso_client_id"] = dataIn.sso_client_id
 
         data_updated = await self.authconfig_repo.update(data_get, **updates)
         return data_updated

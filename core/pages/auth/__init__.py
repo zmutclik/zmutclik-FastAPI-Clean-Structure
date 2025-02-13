@@ -7,6 +7,8 @@ from .timeout import timeout_router
 from .register import register_router
 from .profile import profile_router
 from .refresh import refresh_router
+from .token import token_router
+from .callback  import callback_router
 
 from core import config
 
@@ -21,13 +23,16 @@ pages_auth = FastAPI(
 )
 
 ### Sub FastAPI ###
-pages_auth.include_router(login_router)
-pages_auth.include_router(loggedin_router)
-pages_auth.include_router(logout_router)
-pages_auth.include_router(timeout_router)
 pages_auth.include_router(register_router)
+pages_auth.include_router(loggedin_router)
+pages_auth.include_router(login_router)
 pages_auth.include_router(profile_router)
 pages_auth.include_router(refresh_router)
+pages_auth.include_router(timeout_router)
+pages_auth.include_router(logout_router)
+
+pages_auth.include_router(token_router)
+pages_auth.include_router(callback_router)
 
 
 #######################################################################################################################
@@ -45,7 +50,7 @@ pages_auth.add_middleware(RedirectMiddleware)
 
 @pages_auth.exception_handler(RequiresLoginException)
 async def requires_login(request: Request, _: Exception):
-    return RedirectResponse(_.nextRouter)
+    return RedirectResponse(_.redirect_uri)
 
 
 @pages_auth.exception_handler(CustomException)

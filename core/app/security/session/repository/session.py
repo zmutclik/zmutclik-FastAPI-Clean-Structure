@@ -2,7 +2,7 @@ from typing import Optional, List, Union
 from datetime import datetime
 
 from abc import ABCMeta, abstractmethod
-from sqlalchemy import or_, select,func
+from sqlalchemy import or_, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -17,6 +17,10 @@ class SessionRepo:
     async def get_session_id(self, db: AsyncSession, session_id: str) -> Optional[Session]:
         result = await db.execute(select(Session).where(Session.session_id == session_id, Session.session_end >= func.now(), Session.active == True))
         return result.scalars().first()
+
+    async def get_sessions(self, db: AsyncSession, client_id: str) -> List[Session]:
+        result = await db.execute(select(Session).where(Session.client_id == client_id, Session.session_end >= func.now()))
+        return result.scalars().all()
 
     async def save_session(self, db: AsyncSession, session: Session) -> Session:
         try:

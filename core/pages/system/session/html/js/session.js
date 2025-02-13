@@ -34,9 +34,6 @@ $(document).ready(function () {
                 "data": "Lastipaddress", "title": "IPADDRESS",
             },
             {
-                "data": "LastPage", "title": "LASTPAGE",
-            },
-            {
                 "data": "id", "title": "-", "orderable": false, "searchable": false,
             },
         ],

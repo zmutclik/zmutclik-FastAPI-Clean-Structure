@@ -21,7 +21,7 @@ class Session(Base):
     session_update = Column(DateTime, nullable=True)
     session_end = Column(DateTime)
     Lastipaddress = Column(String(50), index=True)
-    LastPage = Column(String(256), nullable=True)
+    # LastPage = Column(String(256), nullable=True)
     active = Column(Boolean, default=True)
 
     @classmethod

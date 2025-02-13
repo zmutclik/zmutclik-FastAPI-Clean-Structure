@@ -36,6 +36,7 @@ class ClientRepo:
                     setattr(client, key, value)
             await db.commit()
             await db.refresh(client)
+            return client
         except SQLAlchemyError as e:
             await db.rollback()
             raise DatabaseUpdatingException(f"Error updating client: {str(e)}")

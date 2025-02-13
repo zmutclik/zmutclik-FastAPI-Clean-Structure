@@ -69,6 +69,10 @@
                                     <input type="number" class="form-control" name="app_port" value="{{data_coresystem.app_port}}" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="host_url" class="form-label">Host URL</label>
+                                    <input type="text" class="form-control" name="host_url" value="{{data_coresystem.host_url}}" required>
+                                </div>
+                                <div class="mb-3">
                                     <label for="environment" class="form-label">Environment</label>
                                     <select class="form-select" aria-label="Default select" name="environment" required>
                                         <option value="local" {% if data_coresystem.debug=="local" %} selected {% endif %}>LocalHost</option>
@@ -91,6 +95,26 @@
                         </div>
                         <div class="tab-pane fade" id="nav-auth" role="tabpanel" aria-labelledby="nav-auth-tab" tabindex="0">
                             <form id="form_auth">
+                                <div class="mb-3">
+                                    <label for="sso_environment" class="form-label">SSO Environment</label>
+                                    <select class="form-select" aria-label="Default select" id="sso_environment" name="sso_environment" required>
+                                        <option value="self" {% if data_authsystem.sso_environment=="self" %} selected {% endif %}>Self Login</option>
+                                        <option value="client" {% if data_authsystem.sso_environment=="client" %} selected {% endif %}>SSO Client</option>
+                                        <option value="server" {% if data_authsystem.sso_environment=="server" %} selected {% endif %}>SSO Server</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 sso_login_div" style="display: none;">
+                                    <label for="sso_login_url" class="form-label">SSO Authorization URL</label>
+                                    <input type="text" class="form-control" name="sso_login_url" value="{{data_authsystem.sso_login_url}}" required>
+                                </div>
+                                <div class="mb-3 sso_token_div" style="display: none;">
+                                    <label for="sso_token_url" class="form-label">SSO Token URL</label>
+                                    <input type="text" class="form-control" name="sso_token_url" value="{{data_authsystem.sso_token_url}}" required>
+                                </div>
+                                <div class="mb-3 sso_client_div" style="display: none;">
+                                    <label for="sso_client_id" class="form-label">SSO Client ID</label>
+                                    <input type="text" class="form-control" name="sso_client_id" value="{{data_authsystem.sso_client_id}}" required>
+                                </div>
                                 <div class="mb-3">
                                     <label for="jwt_scret_key" class="form-label">JWT Secret</label>
                                     <input type="text" class="form-control" name="jwt_scret_key" value="{{data_authsystem.jwt_scret_key}}" required>

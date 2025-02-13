@@ -37,20 +37,11 @@ class UserAuthService:
         self.privilege_menu_repo = privilege_menu_repo
         self.scope_repo = scope_repo
 
-    async def token_create(self, user: User, client_id: str, ipaddress: str, data_session: Session = None):
+    async def token_create(self, jwt_secret: str, user: User, session_id: str):
         roles = []
         scopes = []
         roles_by_id = await self.user_privilege_repo.get_userprivileges(user.id)
         scope_by_id = await self.user_scope_repo.get_userscopes(user.id)
-
-        if data_session is None: ### create new session
-            session_end = datetime.now(timezone.utc) + timedelta(minutes=config_auth.REFRESH_EXPIRED)
-            data_session = await SessionService().create_session(
-                client_id=client_id,
-                user=user.username,
-                session_end=session_end,
-                ipaddress=ipaddress,
-            )
 
         for item in roles_by_id:
             dataget = await self.privilege_repo.get_privilege(item.privilege_id)
@@ -60,18 +51,20 @@ class UserAuthService:
             scopes.append(dataget.scope)
 
         access_token = token_jwt(
+            jwt_secret,
             data={
                 "sub": user.username,
                 "roles": roles,
                 "permissions": scopes,
-                "jti": data_session.session_id,
+                "jti": session_id,
             },
             expires_delta=timedelta(minutes=config_auth.COOKIES_EXPIRED),
         )
-        return access_token, data_session
+        return access_token
 
     async def refresh_create(self, user: User, client_id: str, session_id: str) -> str:
         access_token = token_jwt(
+            config_auth.JWT_SECRET_KEY,
             data={
                 "sub": user.username,
                 "client": client_id,

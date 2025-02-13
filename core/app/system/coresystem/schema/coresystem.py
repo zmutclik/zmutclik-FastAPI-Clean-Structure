@@ -9,5 +9,6 @@ class CoreSYSTEMSchema(BaseModel):
     app_desc: str
     app_host: str
     app_port: int
+    host_url: str
     debug: bool
 

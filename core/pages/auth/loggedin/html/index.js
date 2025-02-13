@@ -40,7 +40,7 @@ $(document).ready(function () {
             $("#card_login").LoadingOverlay("show");
             axios.post('{{prefix_url_post}}/login', { "email": $("#email").val(), "code": optcode }, { withCredentials: true })
                 .then(function (response) {
-                    window.location.href = "{{nextpage}}";
+                    window.location.href = "{{redirect_uri}}";
                 })
                 .catch(function (error) {
                     switch (error.response.data.error_code) {

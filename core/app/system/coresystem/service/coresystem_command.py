@@ -28,6 +28,8 @@ class CoreSYSTEMService:
             updates["app_host"] = dataIn.app_host
         if data_get.app_port != dataIn.app_port:
             updates["app_port"] = dataIn.app_port
+        if data_get.host_url != dataIn.host_url:
+            updates["host_url"] = dataIn.host_url
         if data_get.debug != dataIn.debug:
             updates["debug"] = dataIn.debug
 

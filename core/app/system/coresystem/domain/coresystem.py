@@ -16,4 +16,5 @@ class CoreSYSTEM(Base):
     app_desc = Column(String(256))
     app_host = Column(String(256))
     app_port = Column(Integer)
+    host_url = Column(String(256))
     debug = Column(Boolean)

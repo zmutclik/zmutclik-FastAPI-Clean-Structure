@@ -6,7 +6,11 @@ $(document).ready(function () {
         if (formLogin.valid()) {
             $('#formLogin input,#formLogin button').blur();
             $("#formLogin").LoadingOverlay("show");
-            axios.post('{{prefix_url_post}}', { "email": $('#formLogin input[name=email]').val(), "password": $('#formLogin input[name=password]').val() }, { withCredentials: true })
+            var datapost = {};
+            {% if clientsso_id != '-' %} datapost["client_id"] = "{{clientsso_id}}"; {% endif %}
+            datapost["email"] = $('#formLogin input[name=email]').val();
+            datapost["password"] = $('#formLogin input[name=password]').val();
+            axios.post('{{prefix_url_post}}', datapost, { withCredentials: true })
                 .then(function (response) {
                     Swal.fire({
                         icon: "success",
@@ -14,7 +18,7 @@ $(document).ready(function () {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = "{{nextpage}}";
+                        window.location.href = response.data['redirect_uri'];
                     });
                 })
                 .catch(function (error) {

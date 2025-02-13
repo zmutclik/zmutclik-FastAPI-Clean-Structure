@@ -28,6 +28,7 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
+      <input id="redirect_uri" type="hidden" value="{{redirect_uri}}">
       <form id="formLogin" autocomplete="off">
         <div class="mb-3">
           <div class="input-group">
@@ -95,6 +96,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script> setTimeout(function () { window.location.href = "/auth/timeout/formlogin" }, 30 * 60 * 1000);</script>
-<script src="{{prefix_url_js}}.js?next={{nextpage}}"></script>
+<script src="{{prefix_url_js}}.js{% if clientsso_id!='-' %}?client_id={{clientsso_id}}{% endif %}"></script>
 
 {% endblock javascripts %}

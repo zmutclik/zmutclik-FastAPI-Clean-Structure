@@ -39,7 +39,7 @@ class AuthBackend(AuthenticationBackend):
             current_user.channel = "static"
         if "page" in conn.scope["path"] and ".js" in conn.scope["path"]:
             current_user.channel = "page_js"
-
+        
         if conn.url.path == "/auth/refresh":
             return False, current_user
 
@@ -53,7 +53,7 @@ class AuthBackend(AuthenticationBackend):
         elif authorization_cookies is not None and current_user.channel != "api":
             credentials = authorization_cookies
         elif authorization_refresh is not None and current_user.channel != "api":
-            raise TokenExpiredException(back_router=conn.url.path)
+            raise TokenExpiredException(redirect_uri=conn.url.path)
         else:
             return False, current_user
 
@@ -72,7 +72,7 @@ class AuthBackend(AuthenticationBackend):
             user_username = payload.get("sub")
             user_session_id = payload.get("jti")
         except jwt.ExpiredSignatureError:
-            raise TokenExpiredException(back_router=conn.url.path)
+            raise TokenExpiredException(redirect_uri=conn.url.path)
         except jwt.exceptions.PyJWTError:
             return False, current_user
 

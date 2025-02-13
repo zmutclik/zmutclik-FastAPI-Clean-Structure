@@ -2,6 +2,30 @@ var form_setting = $("#form_setting").validate({ errorElement: "div", errorPlace
 var form_auth = $("#form_auth").validate({ errorElement: "div", errorPlacement: function (i, a) { i.addClass("invalid-feedback"), a.after(i) }, highlight: function (i, a, e) { $(i).addClass("is-invalid") }, unhighlight: function (i, a, e) { $(i).removeClass("is-invalid") } });
 
 $(document).ready(function () {
+    const ssoEnvironmentActions = {
+        "client": function () {
+            $(".sso_login_div").show(300);
+            $(".sso_token_div").show(300);
+            $(".sso_client_div").show(300);
+        },
+        "server": function () {
+            $(".sso_login_div").show(300);
+            $(".sso_token_div").show(300);
+            $(".sso_client_div").hide(300);
+        },
+        "default": function () {
+            $(".sso_login_div").hide(300);
+            $(".sso_token_div").hide(300);
+            $(".sso_client_div").hide(300);
+        }
+    };
+
+    (ssoEnvironmentActions[$("#sso_environment").val()] || ssoEnvironmentActions["default"])();
+
+    $("#sso_environment").on("change", function () {
+        (ssoEnvironmentActions[$("#sso_environment").val()] || ssoEnvironmentActions["default"])();
+    });
+
     $("#form_setting").on("submit", function () {
         if (form_setting.valid()) {
             $("form input, form button").blur();
@@ -12,6 +36,7 @@ $(document).ready(function () {
                 "app_desc": $("#form_setting input[name='app_desc']").val(),
                 "app_host": $("#form_setting input[name='app_host']").val(),
                 "app_port": $("#form_setting input[name='app_port']").val(),
+                "host_url": $("#form_setting input[name='host_url']").val(),
                 "environment": $("#form_setting select[name='environment']").val(),
                 "debug": $("#form_setting select[name='debug']").val(),
             })
@@ -57,6 +82,10 @@ $(document).ready(function () {
             $("#form_auth").LoadingOverlay("show");
 
             api.post('auth', {
+                "sso_environment": $("#form_auth select[name='sso_environment']").val(),
+                "sso_login_url": $("#form_auth input[name='sso_login_url']").val(),
+                "sso_token_url": $("#form_auth input[name='sso_token_url']").val(),
+                "sso_client_id": $("#form_auth input[name='sso_client_id']").val(),
                 "jwt_scret_key": $("#form_auth input[name='jwt_scret_key']").val(),
                 "jwt_algorithm": $("#form_auth select[name='jwt_algorithm']").val(),
                 "cookies_prefix": $("#form_auth input[name='cookies_prefix']").val(),

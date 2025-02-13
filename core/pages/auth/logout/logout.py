@@ -12,13 +12,16 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("/{username}", status_code=201, dependencies=page.dependencies())
-async def page_auth_logout(response: Response, request: page_req):
+async def page_auth_logout(response: Response, request: page_req, redirect_uri: str = None):
     response.delete_cookie(key=config_auth.COOKIES_KEY)
     response.delete_cookie(key=config_auth.REFRESH_KEY)
 
-    await SessionService().update_session(request.user.session_id, active=False)
+    await SessionService().deavtive_session(request.user.client_id)
 
     sleep(1)
     response.status_code = 302  # Bisa diganti 301 atau 307 sesuai kebutuhan
-    response.headers["Location"] = f"/auth/loggedin"
+    if redirect_uri is None:
+        redirect_uri = f"/auth/loggedin"
+        
+    response.headers["Location"] = redirect_uri
     return response
