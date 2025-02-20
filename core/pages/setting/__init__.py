@@ -3,10 +3,11 @@ from fastapi import FastAPI, Request
 from .akun import akun_router
 from .privilege import privilege_router
 from core import config
+from core.utils import remove_html_tags
 
 #######################################################################################################################
 pages_settings = FastAPI(
-    title=config.APP_NAME + " [ Pages / Settings ]",
+    title=remove_html_tags(config.APP_NAME) + " [ Pages / Settings ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},

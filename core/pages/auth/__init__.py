@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from core.utils import remove_html_tags
 
 from .login import login_router
 from .loggedin import loggedin_router
@@ -8,13 +9,14 @@ from .register import register_router
 from .profile import profile_router
 from .refresh import refresh_router
 from .token import token_router
-from .callback  import callback_router
+from .callback import callback_router
+from .password import forget_router
 
 from core import config
 
 #######################################################################################################################
 pages_auth = FastAPI(
-    title=config.APP_NAME + " [ AUTH ]",
+    title=remove_html_tags(config.APP_NAME) + " [ AUTH ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},
@@ -30,6 +32,7 @@ pages_auth.include_router(profile_router)
 pages_auth.include_router(refresh_router)
 pages_auth.include_router(timeout_router)
 pages_auth.include_router(logout_router)
+pages_auth.include_router(forget_router)
 
 pages_auth.include_router(token_router)
 pages_auth.include_router(callback_router)

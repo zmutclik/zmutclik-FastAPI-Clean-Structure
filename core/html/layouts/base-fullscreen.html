@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name=”robots” content=”noindex”>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>
-    {% block title %}{% endblock %} - {{ global_context().app_name }}
+    {% block title %}{% endblock %} - {{ remove_html_tags(global_context().app_name) }}
   </title>
 
   <!-- Specific Page CSS goes HERE  -->

@@ -5,10 +5,11 @@ from core.pages.system import pages_sys
 
 from .dashboard import dashboard_router
 from .documentation import documentation_router
+from core.utils import remove_html_tags
 
 #######################################################################################################################
 pages_app = FastAPI(
-    title=config.APP_NAME + " [ Pages ]",
+    title=remove_html_tags(config.APP_NAME) + " [ Pages ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},

@@ -9,10 +9,11 @@ from .session import session_router
 from .message import message_router
 from .clientsso import clientsso_router
 from core import config
+from core.utils import remove_html_tags
 
 #######################################################################################################################
 pages_sys = FastAPI(
-    title=config.APP_NAME + " [ Pages / System ]",
+    title=remove_html_tags(config.APP_NAME) + " [ Pages / System ]",
     description=config.APP_DESCRIPTION,
     version=config.APP_VERSION,
     # swagger_ui_parameters={"defaultModelsExpandDepth": -1},

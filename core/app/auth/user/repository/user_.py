@@ -35,11 +35,6 @@ class UserRepo:
     async def delete_user(self, user: User, deleted_user: str) -> None:
         pass
 
-    @abstractmethod
-    async def verify_password_user(self, user: User, hashed_password: str) -> bool:
-        pass
-
-
 class UserSQLRepo(UserRepo):
     async def get_user(self, user_id: int) -> Optional[User]:
         return await session.get(User, user_id)
@@ -91,6 +86,3 @@ class UserSQLRepo(UserRepo):
         except SQLAlchemyError as e:
             await session.rollback()
             raise DatabaseDeletingException(f"Error deleting user: {str(e)}")
-
-    async def verify_password_user(self, user: User, plain_password: str) -> bool:
-        return

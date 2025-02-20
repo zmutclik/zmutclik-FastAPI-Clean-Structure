@@ -131,27 +131,12 @@ def menudb_create_all():
                 db.add(
                     Menu(
                         **{
-                            "text": "Session",
-                            "segment": "session",
-                            "href": "/page/sys/session",
-                            "icon": "fas fa-door-open",
-                            "icon_color": "",
-                            "sort": 3,
-                            "menutype_id": 1,
-                            "parent_id": 5,
-                            "created_user": "SeMuT-CiLiK",
-                        }
-                    )
-                )
-                db.add(
-                    Menu(
-                        **{
                             "text": "Scope",
                             "segment": "scope",
                             "href": "/page/sys/scope",
                             "icon": "fas fa-map-marker-alt",
                             "icon_color": "",
-                            "sort": 4,
+                            "sort": 3,
                             "menutype_id": 1,
                             "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
@@ -166,7 +151,37 @@ def menudb_create_all():
                             "href": "/page/sys/menutype",
                             "icon_color": "",
                             "icon": "fas fa-list-alt",
+                            "sort": 4,
+                            "menutype_id": 1,
+                            "parent_id": 5,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "Session",
+                            "segment": "session",
+                            "href": "/page/sys/session",
+                            "icon": "fas fa-door-open",
+                            "icon_color": "",
                             "sort": 5,
+                            "menutype_id": 1,
+                            "parent_id": 5,
+                            "created_user": "SeMuT-CiLiK",
+                        }
+                    )
+                )
+                db.add(
+                    Menu(
+                        **{
+                            "text": "Client SSO",
+                            "segment": "clientsso",
+                            "href": "/page/sys/client_sso",
+                            "icon": "fas fa-user-lock",
+                            "icon_color": "",
+                            "sort": 6,
                             "menutype_id": 1,
                             "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
@@ -181,7 +196,7 @@ def menudb_create_all():
                             "href": "/page/sys/message",
                             "icon": "fas fa-envelope-open-text",
                             "icon_color": "",
-                            "sort": 6,
+                            "sort": 7,
                             "menutype_id": 1,
                             "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",
@@ -196,7 +211,7 @@ def menudb_create_all():
                             "href": "/page/sys/logs",
                             "icon": "fas fa-map-marked-alt",
                             "icon_color": "",
-                            "sort": 7,
+                            "sort": 8,
                             "menutype_id": 1,
                             "parent_id": 5,
                             "created_user": "SeMuT-CiLiK",

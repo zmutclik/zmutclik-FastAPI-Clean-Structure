@@ -29,10 +29,13 @@ class AuthBackend(AuthenticationBackend):
             current_user.channel = "api"
         if (
             "page" in conn.scope["path"]
-            or "auth/pro" in conn.scope["path"]
-            or "auth/tim" in conn.scope["path"]
-            or "auth/log" in conn.scope["path"]
-            or "auth/re" in conn.scope["path"]
+            or "auth/profile" in conn.scope["path"]
+            or "auth/timeout" in conn.scope["path"]
+            or "auth/login" in conn.scope["path"]
+            or "auth/loggedin" in conn.scope["path"]
+            or "auth/register" in conn.scope["path"]
+            or "auth/refresh" in conn.scope["path"]
+            or "auth/forget" in conn.scope["path"]
         ):
             current_user.channel = "page"
         if "static" in conn.scope["path"] or "favicon" in conn.scope["path"] or "openapi.json" in conn.scope["path"]:

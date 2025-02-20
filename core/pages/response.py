@@ -9,7 +9,7 @@ from core.app.auth.user.service import UserQueryService
 
 from core.fastapi.dependencies import PermissionDependency, RoleDependency, IsAuthenticated, ScopeDependency
 from core.exceptions import RequiresLoginException
-from core.utils import menu_to_html
+from core.utils import menu_to_html, remove_html_tags
 from jinja2 import TemplateNotFound
 
 root_path = os.getcwd()
@@ -18,6 +18,7 @@ root_path = os.getcwd()
 def global_context():
     return {
         "app_name": config.APP_NAME,
+        "app_name_no_tag": remove_html_tags(config.APP_NAME),
         "app_version": config.APP_VERSION,
     }
 
@@ -31,6 +32,7 @@ class PageResponse:
     def __init__(self, path_template: str, prefix_url: str, depend_roles: list[str] = []):
         self.templates = Jinja2Templates(directory="./")
         self.templates.env.globals.update(global_context=global_context)
+        self.templates.env.globals.update(remove_html_tags=remove_html_tags)
         self.path = path_template.replace(root_path, "")
         self.context = {}
         self.user = None

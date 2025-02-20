@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name=”robots” content=”noindex”>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>
-    {% block title %}{% endblock %} - {{global_context().app_name}}
-  </title> 
+    {% block title %}{% endblock %} - {{ remove_html_tags(global_context().app_name) }}
+  </title>
 
   {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
 <body class="hold-transition {% block body_class %}{% endblock body_class %}">
-<div class="wrapper">
+  <div class="wrapper">
 
     {% include 'core/html/includes/navigation.html' %}
 
@@ -28,11 +28,11 @@
     </aside> -->
     <!-- /.control-sidebar -->
 
-</div>
-<!-- ./wrapper -->
+  </div>
+  <!-- ./wrapper -->
 
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+  <!-- Specific Page JS goes HERE  -->
+  {% block javascripts %}{% endblock javascripts %}
 
 </body>
 </html>

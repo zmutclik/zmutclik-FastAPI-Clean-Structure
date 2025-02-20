@@ -9,6 +9,7 @@ from core.app.security.clientsso.exceptions import ClientSSONotFoundException
 from .request import ClientSSORequest
 from .response import ClientSSOResponse
 from fastapi.exceptions import RequestValidationError
+from core import config_auth
 
 router = APIRouter(prefix="/client_sso")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url="/sys" + router.prefix, depend_roles=["system"])
@@ -32,7 +33,10 @@ async def page_system_clientsso_js(req: page_req, pathFile: EnumJS):
 
 @router.get("/{PathCheck}/form/{clientsso_id}", response_class=HTMLResponse, dependencies=page.depend_w())
 async def page_system_clientsso_form_edit(clientsso_id: str, req: page_req):
-    page.addContext("data_clientsso", await ClientSSOService().get_clientsso(clientsso_id))
+    data_get = await ClientSSOService().get_clientsso(clientsso_id)
+    page.addContext("data_clientsso", data_get)
+    page.addContext("data_login_url", f"{config_auth.SSO_LOGIN_URL}?client_id={data_get.clientsso_id}&callback_uri={data_get.callback_uri}")
+    page.addContext("data_token_url", f"{config_auth.SSO_TOKEN_URL}")
     return page.response(req, "/html/form.html")
 
 

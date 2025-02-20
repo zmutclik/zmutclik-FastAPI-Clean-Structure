@@ -42,16 +42,7 @@ class User(Base, TimestampLogMixin):
         return password1 == password2
 
     @classmethod
-    def create(
-        cls,
-        created_user: str,
-        username: str,
-        password1: str,
-        password2: str,
-        email: str,
-        nohp: str,
-        full_name: str
-    ) -> "User":
+    def create(cls, created_user: str, username: str, password1: str, password2: str, email: str, nohp: str, full_name: str) -> "User":
         if not cls._is_password_match(password1=password1, password2=password2):
             raise PasswordNotMatchException
 
@@ -69,8 +60,7 @@ class User(Base, TimestampLogMixin):
     def change_password(self, password1: str, password2: str) -> None:
         if not self._is_password_match(password1=password1, password2=password2):
             raise PasswordNotMatchException
-
-        self.password = get_password_hash(password1)
+        return get_password_hash(password1)
 
     def verify_password(self, plain_password: str) -> bool:
         return pwd_context.verify(plain_password, self.hashed_password)

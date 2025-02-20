@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated, Any
 from fastapi import APIRouter, Response, Depends
 from fastapi.responses import HTMLResponse
-from core import config_auth
+from core import config_auth, config
 from core.fastapi.helper import get_ipaddress, set_refresh_cookies, set_token_cookies
 from core.pages.response import PageResponse
 from core.app.auth.user.service import UserQueryService, UserAuthService
@@ -26,12 +26,14 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 @router.get("", response_class=HTMLResponse)
 async def page_auth_login(req: page_req, res: Response, redirect_uri: str = None, client_id: str = None):
+    title_form = config.APP_NAME
     if client_id is not None:
         data_clientsso = await ClientSSOService().get_clientsso(client_id)
         if data_clientsso is None or redirect_uri is None:
             return await page_auth_logout(res, req)
         if data_clientsso.callback_uri != redirect_uri:
             return await page_auth_logout(res, req)
+        title_form = data_clientsso.nama
     else:
         client_id = "-"
 
@@ -40,6 +42,8 @@ async def page_auth_login(req: page_req, res: Response, redirect_uri: str = None
 
     page.addContext("redirect_uri", redirect_uri)
     page.addContext("clientsso_id", client_id)
+    page.addContext("title_form", title_form)
+    page.addContext("register_account", config_auth.REGISTER_ACCOUNT)
     return page.response(req, "/html/login.html")
 
 

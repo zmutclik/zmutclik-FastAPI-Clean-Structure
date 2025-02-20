@@ -64,7 +64,6 @@ configdefault = {
     "debug": True,
 }
 authconfigdefault = {
-    "sso_environment": "self",
     "sso_login_url": "http://",
     "sso_token_url": "http://",
     "sso_client_id": "",
@@ -75,6 +74,7 @@ authconfigdefault = {
     "cookies_exp": 15,
     "refresh_exp": 60 * 8,
     "timeout_exp": 30,
+    "register_account": True,
 }
 
 if os.path.exists(DBCORE_FILE):
@@ -115,7 +115,6 @@ if os.path.exists(DBCORE_FILE):
 
 
 class ConfigAuth(BaseModel):
-    SSO_ENV: str = authconfigdefault["sso_environment"]
     SSO_LOGIN_URL: str = authconfigdefault["sso_login_url"]
     SSO_TOKEN_URL: str = authconfigdefault["sso_token_url"]
     SSO_CLIENT_ID: str = authconfigdefault["sso_client_id"]
@@ -129,6 +128,7 @@ class ConfigAuth(BaseModel):
     CLIENT_KEY: str = authconfigdefault["cookies_prefix"] + "client"
     COOKIES_KEY: str = authconfigdefault["cookies_prefix"] + "token"
     REFRESH_KEY: str = authconfigdefault["cookies_prefix"] + "refresh"
+    REGISTER_ACCOUNT: bool = authconfigdefault["register_account"]
 
 
 class Config(BaseModel):

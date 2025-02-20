@@ -3,14 +3,16 @@ import requests
 import threading
 from time import sleep
 from typing import Annotated, Any
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.responses import HTMLResponse
 from core.app.auth.user.service import UserQueryService, UserCommandService
 from core.pages.auth.register.request import RegisterRequest
 from fastapi.exceptions import RequestValidationError
-from core import config
+from core import config, config_auth
 from core.pages.response import PageResponse
 from core.utils import telegram_bot_sendtext
+from core.exceptions import BadRequestException
+from ..logout.logout import page_auth_logout
 
 router = APIRouter(prefix="/register")
 page = PageResponse(path_template=os.path.dirname(__file__), prefix_url=router.prefix)
@@ -19,7 +21,9 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def page_register(req: page_req):
+async def page_register(req: page_req, response: Response):
+    if not config_auth.REGISTER_ACCOUNT:
+        return await page_auth_logout(response, req)
     return page.response(req, "/html/register.html")
 
 
@@ -30,7 +34,9 @@ async def page_js_register(req: page_req):
 
 @router.post("/{PathCheck}/register", status_code=201)
 async def post_register(dataIn: RegisterRequest, req: page_req):
-    sleep(1)
+    if not config_auth.REGISTER_ACCOUNT:
+        raise BadRequestException
+
     if dataIn.password != dataIn.password2:
         errors = [{"loc": ["body", "password"], "msg": "password tidak sama", "type": "value_error.duplicate"}]
         raise RequestValidationError(errors)
@@ -48,3 +54,5 @@ async def post_register(dataIn: RegisterRequest, req: page_req):
     )
 
     await telegram_bot_sendtext("register_alert", {"app": config.APP_NAME, "user": data_created.username, "email": data_created.email})
+
+    sleep(1)

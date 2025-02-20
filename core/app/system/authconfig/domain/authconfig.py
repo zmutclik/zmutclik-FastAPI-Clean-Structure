@@ -12,10 +12,9 @@ from core.db.mixins import TimestampLogMixin
 class AuthConfig(Base):
     __tablename__ = "authconfig"
 
-    sso_environment = Column(String(256), primary_key=True)
     sso_login_url = Column(String(256))
     sso_token_url = Column(String(256))
-    sso_client_id = Column(String(256))
+    sso_client_id = Column(String(256), primary_key=True)
     jwt_scret_key = Column(String(256))
     jwt_algorithm = Column(String(256))
     cookies_prefix = Column(String(256))
@@ -23,3 +22,4 @@ class AuthConfig(Base):
     cookies_exp = Column(Integer)
     refresh_exp = Column(Integer)
     timeout_exp = Column(Integer)
+    register_account = Column(Boolean)

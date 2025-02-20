@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Response
 from fastapi.responses import HTMLResponse
 
-from core import config_auth
+from core import config_auth, config
 from core.fastapi.helper import get_ipaddress, set_refresh_cookies, set_token_cookies
 from ..logout.logout import page_auth_logout
 from core.pages.response import PageResponse
@@ -13,6 +13,8 @@ from core.app.auth.user.service import UserQueryService, UserAuthService
 from core.app.auth.user.exceptions import UserNotFoundException
 from core.app.security.client.exceptions import ClientNotFoundException
 from core.app.security.client.service import ClientUserOTPService, ClientService, ClientUserService
+from core.app.security.clientsso.service import ClientSSOService
+from core.app.security.clientsso.exceptions import ClientSSONotFoundException
 from fastapi.exceptions import RequestValidationError
 
 from .request import OtpRequest, OtpLoginRequest
@@ -25,7 +27,7 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 
 @router.get("", response_class=HTMLResponse)
-async def page_auth_loggedin(response: Response, request: page_req, redirect_uri: str = None):
+async def page_auth_loggedin(response: Response, request: page_req, redirect_uri: str = None, client_id: str = None):
     data_clientusers = await ClientUserService().get_clientusers(request.user.client_id)
     if data_clientusers is None:
         return await page_auth_logout(response, request, "/auth/login")
@@ -36,17 +38,36 @@ async def page_auth_loggedin(response: Response, request: page_req, redirect_uri
             data_users.append(data_user)
     if data_users == []:
         return await page_auth_logout(response, request, "/auth/login")
-
     page.addContext("redirect_uri", redirect_uri)
     page.addContext("data_users", data_users)
+
+    ###################################################################################################################
+    title_form = config.APP_NAME
+    if client_id is not None:
+        data_clientsso = await ClientSSOService().get_clientsso(client_id)
+        if data_clientsso is None or redirect_uri is None:
+            return await page_auth_logout(response, request)
+        if data_clientsso.callback_uri != redirect_uri:
+            return await page_auth_logout(response, request)
+        title_form = data_clientsso.nama
+    else:
+        client_id = "-"
+
+    if redirect_uri is None or redirect_uri == "None":
+        redirect_uri = "/page/dashboard"
+
+    page.addContext("redirect_uri", redirect_uri)
+    page.addContext("clientsso_id", client_id)
+    page.addContext("title_form", title_form)
+    ###################################################################################################################
     return page.response(request, "/html/index.html")
 
 
 @router.get("/{PathCheck}.js")
-async def page_auth_loggedin_js(redirect_uri: str, req: page_req):
-    if redirect_uri is None or redirect_uri == "None":
-        redirect_uri = "/page/dashboard"
-    page.addContext("redirect_uri", redirect_uri)
+async def page_auth_loggedin_js(req: page_req, client_id: str = None):
+    if client_id is None or client_id == "None":
+        client_id = "-"
+    page.addContext("clientsso_id", client_id)
     return page.response(req, "/html/index.js")
 
 
@@ -68,10 +89,12 @@ async def req_check(email: str, client_id: str):
 async def page_auth_loggedin_send_otp(dataIn: OtpRequest, req: page_req):
     data_client, data_user, data_otp = await req_check(dataIn.email, req.user.client_id)
     if data_otp is None:
-        token_time = datetime.now(timezone.utc) + timedelta(minutes=10)
+        token_time = datetime.now(timezone.utc) + timedelta(minutes=5)
         data_clientusers_otp = await ClientUserOTPService().create_clientuser(data_client.client_id, data_user.username, token_time)
         await fonnte_bot_sendtext(message_key="otp", target=data_user.nohp, data={"code": data_clientusers_otp.otp})
         sleep(4)
+    else:
+        raise RequestValidationError([{"loc": ["body", "otp"], "msg": f"Kode OTP sudah diterbitkan...", "type": ""}])
     sleep(1)
 
 
@@ -81,18 +104,21 @@ async def page_auth_loggedin_login(dataIn: OtpLoginRequest, req: page_req, res: 
     if data_otp is not None:
         if data_otp.otp != dataIn.code:
             raise RequestValidationError([{"loc": ["body", "otp"], "msg": f"Kode OTP tidak Cocok", "type": ""}])
+        if data_otp.user != data_user.username:
+            raise RequestValidationError([{"loc": ["body", "otp"], "msg": f"akun OTP tidak Cocok", "type": ""}])
 
         await ClientUserOTPService().delete_clientusers_otp(data_client.id, data_user.username)
-        ### Create Session
-        ipaddress, ipproxy = get_ipaddress(req)
 
-        access_token, data_session = await UserAuthService().token_create(config_auth.JWT_SECRET_KEY, data_user, data_client.client_id, ipaddress)
-        refresh_token = await UserAuthService().refresh_create(data_user, data_client.client_id, data_session.session_id)
+        if dataIn.client_id is not None:
+            data_clientsso = await ClientSSOService().get_clientsso(dataIn.client_id)
+            if data_clientsso is None:
+                raise ClientSSONotFoundException
+            redirect_uri = data_clientsso.callback_uri
+            clientsso_id = data_clientsso.clientsso_id
+        else:
+            clientsso_id = config_auth.SSO_CLIENT_ID
+            redirect_uri = "/auth/callback"
 
-        res = set_token_cookies(res, access_token)
-        res = set_refresh_cookies(res, refresh_token)
-
-        await ClientUserService().add_clientuser(data_client.id, data_user.username)
-        await UserAuthService().generate_cache_user(data_user)
-        await UserAuthService().generate_cache_menu(data_user)
+        data_clientsso_code = await ClientSSOService().create_clientsso_code(clientsso_id, data_user.id, req.user.client_id)
         sleep(1)
+        return {"redirect_uri": f"{redirect_uri}?code={data_clientsso_code.code}"}  # Redirect to callback

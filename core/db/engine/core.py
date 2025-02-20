@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from core.config import DBCORE_FILE
 from ._func import check_exits, check_sizes
-import requests
+import requests, random, string
 
 
 def coredb_create_all():
@@ -23,7 +23,7 @@ def coredb_create_all():
                     CoreSYSTEM(
                         **{
                             "environment": "local",
-                            "app_name": "FastAPI cleanStructure",
+                            "app_name": "<b>FastAPI</b> cleanStrukture",
                             "app_desc": "This is a very fancy project, with auto docs for the API and everything.",
                             "app_host": "127.0.0.1",
                             "app_port": 8016,
@@ -35,10 +35,9 @@ def coredb_create_all():
                 db.add(
                     AuthConfig(
                         **{
-                            "sso_environment": "self",
-                            "sso_login_url": "http://",
-                            "sso_token_url": "http://",
-                            "sso_client_id": "-",
+                            "sso_login_url": "http://127.0.0.1:8016/auth/loggedin",
+                            "sso_token_url": "http://127.0.0.1:8016/auth/token",
+                            "sso_client_id": "".join(random.choices(string.ascii_letters + string.digits, k=8)),
                             "jwt_scret_key": "fastapi",
                             "jwt_algorithm": "HS512",
                             "cookies_prefix": "fastapi-clean-structure_",
@@ -46,6 +45,7 @@ def coredb_create_all():
                             "cookies_exp": 10,
                             "refresh_exp": 60 * 8,
                             "timeout_exp": 30,
+                            "register_account": True,
                         }
                     )
                 )

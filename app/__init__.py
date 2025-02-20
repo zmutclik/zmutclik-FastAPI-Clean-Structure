@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from core import config
+from core.utils import remove_html_tags
 from core.fastapi.middlewares import (
     AuthBackend,
     AuthenticationMiddleware,
@@ -79,7 +80,7 @@ def init_middleware(app: FastAPI) -> None:
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title=config.APP_NAME,
+        title=remove_html_tags(config.APP_NAME),
         description=config.APP_DESCRIPTION,
         version=config.APP_VERSION,
         docs_url=None if config.ENV == "production" else "/docs",

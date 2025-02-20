@@ -96,22 +96,14 @@
                         <div class="tab-pane fade" id="nav-auth" role="tabpanel" aria-labelledby="nav-auth-tab" tabindex="0">
                             <form id="form_auth">
                                 <div class="mb-3">
-                                    <label for="sso_environment" class="form-label">SSO Environment</label>
-                                    <select class="form-select" aria-label="Default select" id="sso_environment" name="sso_environment" required>
-                                        <option value="self" {% if data_authsystem.sso_environment=="self" %} selected {% endif %}>Self Login</option>
-                                        <option value="client" {% if data_authsystem.sso_environment=="client" %} selected {% endif %}>SSO Client</option>
-                                        <option value="server" {% if data_authsystem.sso_environment=="server" %} selected {% endif %}>SSO Server</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3 sso_login_div" style="display: none;">
                                     <label for="sso_login_url" class="form-label">SSO Authorization URL</label>
                                     <input type="text" class="form-control" name="sso_login_url" value="{{data_authsystem.sso_login_url}}" required>
                                 </div>
-                                <div class="mb-3 sso_token_div" style="display: none;">
+                                <div class="mb-3">
                                     <label for="sso_token_url" class="form-label">SSO Token URL</label>
                                     <input type="text" class="form-control" name="sso_token_url" value="{{data_authsystem.sso_token_url}}" required>
                                 </div>
-                                <div class="mb-3 sso_client_div" style="display: none;">
+                                <div class="mb-3">
                                     <label for="sso_client_id" class="form-label">SSO Client ID</label>
                                     <input type="text" class="form-control" name="sso_client_id" value="{{data_authsystem.sso_client_id}}" required>
                                 </div>
@@ -158,6 +150,13 @@
                                 <div class="mb-3">
                                     <label for="timeout_exp" class="form-label">TimeOut Expired</label>
                                     <input type="number" class="form-control" name="timeout_exp" value="{{data_authsystem.timeout_exp}}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register_account" class="form-label">Register Akun baru di Login</label>
+                                    <select class="form-select" aria-label="Default select" name="register_account" required>
+                                        <option value="1" {% if data_authsystem.register_account %} selected {% endif %}>Aktif</option>
+                                        <option value="0" {% if not data_authsystem.register_account %} selected {% endif %}>Tidak Aktif</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3 mt-5 float-end">
                                     <button type="submit" class="btn btn-primary">SIMPAN</button>

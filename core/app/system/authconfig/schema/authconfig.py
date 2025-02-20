@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class AuthConfigSchema(BaseModel):
-    sso_environment: str
     sso_login_url: str
     sso_token_url: str
     sso_client_id: str
@@ -15,3 +14,4 @@ class AuthConfigSchema(BaseModel):
     cookies_exp: int
     refresh_exp: int
     timeout_exp: int
+    register_account: bool

@@ -137,11 +137,13 @@ async def page_auth_token(response: Response, request: Request):
 
         data_clientsso_code = await ClientSSOService().get_clientsso_code(clientsso_id, data_validated.code)
         if data_clientsso_code is None:
+            print("Code not found")
             raise UnauthorizedException
         await ClientSSOService().delete_clientsso_code(data_clientsso_code.client_id)
 
         data_client = await ClientService().get_client_id(data_clientsso_code.client_id)
         if data_client is None:
+            print("Client not found")
             raise UnauthorizedException
         if data_client.disabled:
             raise UnauthorizedException

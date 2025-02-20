@@ -61,7 +61,8 @@ class UserCommandService:
         data_get = await self.user_repo.get_user(user_id)
         if not data_get:
             raise UserNotFoundException
-        data_updated = data_get.change_password(password1, password2)
+        hashed_password = data_get.change_password(password1, password2)
+        data_updated = await self.user_repo.update_user(data_get, hashed_password=hashed_password)
         return data_updated
 
     async def update_user(

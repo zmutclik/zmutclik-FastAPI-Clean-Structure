@@ -42,7 +42,7 @@
 <div class="login-box">
 
   <div class="login-logo">
-    <a href="/"><b>FastAPI</b> CleanSTRUCTURE</a>
+    <a href="#">{{title_form | safe}}</a>
   </div>
 
   <!-- /.login-logo -->
@@ -74,9 +74,11 @@
           </div>
           <div id="otp-error" class="error invalid-feedback"></div>
           <input type="hidden" id="email">
+          <input type="hidden" id="username">
           <button type="submit" class="btn btn-info mt-3 mb-2">Verif Akun</button>
         </form>
-        <p class="resend">Tidak menerima kode? <a href="#">Resend</a></p>
+        <p id="resend">Tidak menerima kode? <a id="timer">00:00</a></p>
+        
       </div>
       <p class="mb-1 mt-3">
         <a href="/auth/login">Login Akun lain</a>

@@ -56,16 +56,20 @@ class ClientUserResetCode(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user = Column(String(128), nullable=False, index=True)
-    code = Column(String(64))
-    session_end = Column(DateTime)
+    salt = Column(String(64), nullable=False)
+    code = Column(String(12), nullable=False)
+    session_end = Column(DateTime, nullable=False)
+    active = Column(Boolean, default=True)
 
     @classmethod
-    def create(cls, user: str, code: str) -> "ClientUserResetCode":
+    def create(cls, user: str, code: str, salt: str) -> "ClientUserResetCode":
         session_end = datetime.now(timezone.utc) + timedelta(minutes=15)
         return cls(
             user=user,
             code=code,
+            salt=salt,
             session_end=session_end,
+            active=True,
         )
 
 

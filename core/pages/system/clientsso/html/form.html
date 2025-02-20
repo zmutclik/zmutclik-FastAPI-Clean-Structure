@@ -48,7 +48,7 @@
                                     <input type="text" class="form-control" placeholder="ClientID" id="clientsso_id" {% if data_clientsso %} value="{{data_clientsso.clientsso_id}}" {% endif %} readonly>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="full_name" class="form-label">Nama</label>
+                                    <label for="full_name" class="form-label">Nama Apps</label>
                                     <input type="text" class="form-control" name="nama" placeholder="Nama" {% if data_clientsso %} value="{{data_clientsso.nama}}" {% endif %} required>
                                 </div>
                                 <div class="mb-3">
@@ -65,6 +65,14 @@
                                 <div class="mb-3">
                                     <label for="username" class="form-label">CallBack URL</label>
                                     <input type="text" class="form-control" name="callback_uri" placeholder="https://client.id/calback" {% if data_clientsso %} value="{{data_clientsso.callback_uri}}" {% endif %} required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Authorization URL</label>
+                                    <input type="text" class="form-control"  {% if data_clientsso %} value="{{data_login_url}}" {% endif %} readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Token URL</label>
+                                    <input type="text" class="form-control"  {% if data_clientsso %} value="{{data_token_url}}" {% endif %} readonly>
                                 </div>
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Status</label>
