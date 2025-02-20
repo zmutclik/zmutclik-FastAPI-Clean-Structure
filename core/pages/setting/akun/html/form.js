@@ -28,6 +28,29 @@ $(document).ready(function () {
     $(".btnBack").on("click", function () {
         window.location.href = '{{prefix_url}}';
     });
+    $("#reset_password").on("click", function () {
+
+        Swal.fire({
+            title: "Apakah yakin ingin mengirim link <b>Reset Password</b>?",
+            showCancelButton: true,
+            confirmButtonText: "KIRIM",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#form_").LoadingOverlay("show");
+                api.post('/reset').then(function (response) {
+                    Swal.fire("Link Reset Password telah dikirim ke email user", "", "success");
+                }).catch(function (error) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: error.response.status + " : " + error.response.data.message,
+                    });
+                }).finally(() => {
+                    $("#form_").LoadingOverlay("hide");
+                });
+            }
+        });
+    });
 
     $("#form_").on("submit", function () {
         if (form_.valid()) {

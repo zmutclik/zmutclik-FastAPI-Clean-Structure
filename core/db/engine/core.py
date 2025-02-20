@@ -45,7 +45,8 @@ def coredb_create_all():
                             "cookies_exp": 10,
                             "refresh_exp": 60 * 8,
                             "timeout_exp": 30,
-                            "register_account": True,
+                            "register_account": False,
+                            "login_by_otp": False,
                         }
                     )
                 )

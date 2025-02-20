@@ -2,6 +2,7 @@ import os
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from fastapi.responses import HTMLResponse
+from fastapi.exceptions import RequestValidationError
 from core.pages.response import PageResponse, EnumJS
 
 from core.app.auth.user.service import UserQueryService, UserCommandService
@@ -62,7 +63,7 @@ async def page_settings_akun_datatables(params: dict[str, Any], req: page_req) -
     return await UserQueryService().datatable(params=params)
 
 
-@router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w(), deprecated=True)
+@router.post("/{PathCheck}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w())
 async def page_settings_akun_create(dataIn: AkunRequest, req: page_req):
     await UserQueryService().validate_user(dataIn.username, dataIn.email, dataIn.nohp)
 
@@ -76,12 +77,31 @@ async def page_settings_akun_create(dataIn: AkunRequest, req: page_req):
     return data_created
 
 
+@router.post("/{PathCheck}/{user_id}/reset", status_code=201, dependencies=page.depend_w())
+async def page_settings_akun_send_reset_password(user_id: int, req: page_req):
+    from core.app.security.client.service import ClientUserResetService
+    from core import config
+    from core.utils import fonnte_bot_sendtext
+
+    data_user = await UserQueryService().get_user(user_id)
+    await ClientUserResetService().delete_clientusers_reset(data_user.username)
+    data_clientsso_reset = await ClientUserResetService().create_clientuser_reset(data_user.username)
+    reset_url = f"{config.HOST_URL}/auth/forget_password/{data_clientsso_reset.salt}"
+    await fonnte_bot_sendtext(message_key="reset_code", target=data_user.nohp, data={"code": data_clientsso_reset.code, "link": reset_url})
+
+
 @router.post("/{PathCheck}/{user_id:int}", status_code=201, response_model=AkunResponse, dependencies=page.depend_w())
 async def page_settings_akun_update(user_id: int, dataIn: AkunRequest, req: page_req):
     data_get = await UserQueryService().get_user(user_id)
+    data_update = {}
+    if dataIn.username != data_get.username:
+        data_update["username"] = dataIn.username
+    if dataIn.email != data_get.email:
+        data_update["email"] = dataIn.email
+    if dataIn.nohp != data_get.nohp:
+        data_update["nohp"] = dataIn.nohp
 
-    if dataIn.username != data_get.username or dataIn.email != data_get.email or dataIn.nohp != data_get.nohp:
-        await UserQueryService().validate_user(dataIn.username, dataIn.email, dataIn.nohp)
+    await UserQueryService().validate_user(**data_update)
 
     data_updated = await UserCommandService().update_user(
         user_id=user_id,

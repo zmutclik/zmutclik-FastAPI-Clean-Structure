@@ -11,44 +11,48 @@ $(document).ready(function () {
 
     $("#form_").on("submit", function () {
         if (form_.valid()) {
-            $('#form_ input,#form_ button').blur();
-            $("#form_").LoadingOverlay("show");
-            var datapost = {};
-            datapost["email"] = $('#form_ input[name=email]').val();
-            datapost["code"] = $('#form_ input[name=code]').val();
-            datapost["password"] = $('#form_ input[name=password]').val();
-            datapost["password2"] = $('#form_ input[name=password2]').val();
-            axios.post('{{prefix_url_post}}/{{salt}}', datapost, { withCredentials: true })
-                .then(function (response) {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Reset Password berhasil.!",
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        window.location.href = response.data['redirect_uri'];
+            if (percentage <= 70) {
+                form_.showErrors({ "password": "Mohon kombinasi PASSWORD bernilai minimal 70%. !" });
+            } else {
+                $('#form_ input,#form_ button').blur();
+                $("#form_").LoadingOverlay("show");
+                var datapost = {};
+                datapost["email"] = $('#form_ input[name=email]').val();
+                datapost["code"] = $('#form_ input[name=code]').val();
+                datapost["password"] = $('#form_ input[name=password]').val();
+                datapost["password2"] = $('#form_ input[name=password2]').val();
+                axios.post('{{prefix_url_post}}/{{salt}}', datapost, { withCredentials: true })
+                    .then(function (response) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Reset Password berhasil.!",
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = response.data['redirect_uri'];
+                        });
+                    })
+                    .catch(function (error) {
+                        switch (error.response.data.error_code) {
+                            case 422:
+                                de = {}
+                                $.each(error.response.data.detail, function (i, v) {
+                                    de[v.loc[1]] = v["message"];
+                                });
+                                form_.showErrors(de);
+                                break;
+                            default:
+                                Swal.fire({
+                                    position: "top-end",
+                                    icon: "error",
+                                    title: error.response.status + " : " + error.response.data.message,
+                                });
+                        }
+                    })
+                    .finally(() => {
+                        $("#form_").LoadingOverlay("hide");
                     });
-                })
-                .catch(function (error) {
-                    switch (error.response.data.error_code) {
-                        case 422:
-                            de = {}
-                            $.each(error.response.data.detail, function (i, v) {
-                                de[v.loc[1]] = v["message"];
-                            });
-                            form_.showErrors(de);
-                            break;
-                        default:
-                            Swal.fire({
-                                position: "top-end",
-                                icon: "error",
-                                title: error.response.status + " : " + error.response.data.message,
-                            });
-                    }
-                })
-                .finally(() => {
-                    $("#form_").LoadingOverlay("hide");
-                });
+            }
         }
         return false;
     });

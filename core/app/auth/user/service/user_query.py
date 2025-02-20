@@ -40,23 +40,26 @@ class UserQueryService:
     async def get_user_by(
         self, username: Union[str, None] = None, email: Union[str, None] = None, nohp: Union[str, None] = None
     ) -> Optional[UserSchema]:
-        data_get = await self.user_repo.get_user_by(username, email, nohp)
-        return data_get
+        return await self.user_repo.get_user_by(username, email, nohp)
 
-    async def validate_user(self, username: str, email: str, nohp: str) -> Optional[UserSchema]:
-        data_filter_user = await UserQueryService().get_user_by(username=username)
-        data_filter_emil = await UserQueryService().get_user_by(email=email)
-        data_filter_nohp = await UserQueryService().get_user_by(nohp=nohp)
+    async def validate_user(self, username: str = None, email: str = None, nohp: str = None) -> None:
         errors = []
-        if data_filter_user is not None:
-            errors.append({"loc": ["body", "username"], "msg": f"duplicate username {username} is use", "type": "value_error.duplicate"})
-        if data_filter_emil is not None:
-            errors.append({"loc": ["body", "username"], "msg": f"duplicate email {email} is use", "type": "value_error.duplicate"})
-        if data_filter_nohp is not None:
-            errors.append({"loc": ["body", "username"], "msg": f"duplicate nohp {nohp} is use", "type": "value_error.duplicate"})
+
+        if username is not None:
+            data_filter_user = await UserQueryService().get_user_by(username=username)
+            if data_filter_user is not None:
+                errors.append({"loc": ["body", "username"], "msg": f"duplicate username {username} is use", "type": "value_error.duplicate"})
+        if email is not None:
+            data_filter_emil = await UserQueryService().get_user_by(email=email)
+            if data_filter_emil is not None:
+                errors.append({"loc": ["body", "email"], "msg": f"duplicate email {email} is use", "type": "value_error.duplicate"})
+        if nohp is not None:
+            data_filter_nohp = await UserQueryService().get_user_by(nohp=nohp)
+            if data_filter_nohp is not None:
+                errors.append({"loc": ["body", "nohp"], "msg": f"duplicate nohp {nohp} is use", "type": "value_error.duplicate"})
+
         if len(errors) > 0:
             raise RequestValidationError(errors)
-        return data_filter_user
 
     async def datatable(self, params: dict[str, Any]):
         from sqlalchemy import or_, select

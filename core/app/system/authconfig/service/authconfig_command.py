@@ -40,6 +40,8 @@ class AuthConfigService:
             updates["sso_client_id"] = dataIn.sso_client_id
         if data_get.register_account != dataIn.register_account:
             updates["register_account"] = dataIn.register_account
+        if data_get.login_by_otp != dataIn.login_by_otp:
+            updates["login_by_otp"] = dataIn.login_by_otp
 
         data_updated = await self.authconfig_repo.update(data_get, **updates)
         return data_updated

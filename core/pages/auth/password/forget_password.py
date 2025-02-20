@@ -91,9 +91,9 @@ async def page_auth_forget_password_request(dataIn: ForgetPasswordRequest, req: 
             raise RequestValidationError([{"loc": ["body", "email"], "msg": f"kode reset password sudah diterbitkan", "type": ""}])
 
     data_clientsso_reset = await ClientUserResetService().create_clientuser_reset(data_user.username)
-
     reset_url = f"{config.HOST_URL}/auth/forget_password/{data_clientsso_reset.salt}"
     await fonnte_bot_sendtext(message_key="reset_code", target=data_user.nohp, data={"code": data_clientsso_reset.code, "link": reset_url})
+    
     sleep(5)
     return {"redirect_uri": f"{reset_url}"}  # Redirect to callback
 

@@ -22,4 +22,5 @@ class AuthConfig(Base):
     cookies_exp = Column(Integer)
     refresh_exp = Column(Integer)
     timeout_exp = Column(Integer)
+    login_by_otp = Column(Boolean)
     register_account = Column(Boolean)

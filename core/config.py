@@ -75,6 +75,7 @@ authconfigdefault = {
     "refresh_exp": 60 * 8,
     "timeout_exp": 30,
     "register_account": True,
+    "login_by_otp": False,
 }
 
 if os.path.exists(DBCORE_FILE):
@@ -129,6 +130,7 @@ class ConfigAuth(BaseModel):
     COOKIES_KEY: str = authconfigdefault["cookies_prefix"] + "token"
     REFRESH_KEY: str = authconfigdefault["cookies_prefix"] + "refresh"
     REGISTER_ACCOUNT: bool = authconfigdefault["register_account"]
+    LOGIN_BY_OTP: bool = authconfigdefault["login_by_otp"]
 
 
 class Config(BaseModel):

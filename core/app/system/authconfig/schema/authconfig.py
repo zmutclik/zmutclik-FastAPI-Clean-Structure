@@ -15,3 +15,4 @@ class AuthConfigSchema(BaseModel):
     refresh_exp: int
     timeout_exp: int
     register_account: bool
+    login_by_otp: bool

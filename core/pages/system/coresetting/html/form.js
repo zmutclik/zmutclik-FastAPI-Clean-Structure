@@ -69,6 +69,7 @@ $(document).ready(function () {
                 "refresh_exp": $("#form_auth input[name='refresh_exp']").val(),
                 "timeout_exp": $("#form_auth input[name='timeout_exp']").val(),
                 "register_account": $("#form_auth select[name='register_account']").val(),
+                "login_by_otp": $("#form_auth select[name='login_by_otp']").val(),
             })
                 .then(function (response) {
                     Swal.fire("Tersimpan!", "", "success")

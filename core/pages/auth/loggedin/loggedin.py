@@ -28,6 +28,9 @@ page_req = Annotated[PageResponse, Depends(page.request)]
 
 @router.get("", response_class=HTMLResponse)
 async def page_auth_loggedin(response: Response, request: page_req, redirect_uri: str = None, client_id: str = None):
+    if config_auth.LOGIN_BY_OTP is False:
+        return await page_auth_logout(response, request, "/auth/login")
+    
     data_clientusers = await ClientUserService().get_clientusers(request.user.client_id)
     if data_clientusers is None:
         return await page_auth_logout(response, request, "/auth/login")

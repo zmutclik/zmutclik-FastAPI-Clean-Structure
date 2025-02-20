@@ -152,6 +152,13 @@
                                     <input type="number" class="form-control" name="timeout_exp" value="{{data_authsystem.timeout_exp}}" required>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="login_by_otp" class="form-label">Login dengan OTP</label>
+                                    <select class="form-select" aria-label="Default select" name="login_by_otp" required>
+                                        <option value="1" {% if data_authsystem.login_by_otp %} selected {% endif %}>Aktif</option>
+                                        <option value="0" {% if not data_authsystem.login_by_otp %} selected {% endif %}>Tidak Aktif</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label for="register_account" class="form-label">Register Akun baru di Login</label>
                                     <select class="form-select" aria-label="Default select" name="register_account" required>
                                         <option value="1" {% if data_authsystem.register_account %} selected {% endif %}>Aktif</option>
